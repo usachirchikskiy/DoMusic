@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/homeFragment">
+    <fragment
+        android:id="@+id/itemSelectedFragment"
+        android:name="com.example.do_music.main.ui.home.ui.itemSelected.ItemSelectedFragment"
+        android:label=""
+        tools:layout="@layout/fragment_item_selected" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.do_music.main.ui.home.HomeFragment"
+        android:label=""
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_itemSelectedFragment"
+            app:destination="@id/itemSelectedFragment" />
+    </fragment>
+</navigation>

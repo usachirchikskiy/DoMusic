@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/home_nav">
+    <include app:graph="@navigation/home_nav"/>
+<!--    <fragment-->
+<!--        android:id="@+id/nav_home"-->
+<!--        android:name="com.example.do_music.main.ui.home.HomeFragment"-->
+<!--        android:label="fragment_home"-->
+<!--        tools:layout="@layout/fragment_home" />-->
+    <fragment
+        android:id="@+id/nav_favourites"
+        android:name="com.example.do_music.main.ui.favourites.FavouriteFragment"
+        android:label="fragment_favourite"
+        tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="com.example.do_music.main.ui.account.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
+</navigation>

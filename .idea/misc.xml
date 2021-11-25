@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.12342342342342343" />
+        <entry key="app/src/main/res/drawable/account_item.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/back_btn.xml" value="0.10859375" />
+        <entry key="app/src/main/res/drawable/back_btn_compositors.xml" value="0.1810810810810811" />
+        <entry key="app/src/main/res/drawable/back_et.xml" value="0.16" />
+        <entry key="app/src/main/res/drawable/back_search_ed.xml" value="0.1810810810810811" />
+        <entry key="app/src/main/res/drawable/back_textview.xml" value="0.14074074074074075" />
+        <entry key="app/src/main/res/drawable/favourite_item.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/home_item.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/ic_account_disabled.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/ic_acoount_enabled.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_favorite_border_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.10585585585585586" />
+        <entry key="app/src/main/res/drawable/ic_favourite_disabled.xml" value="0.12342342342342343" />
+        <entry key="app/src/main/res/drawable/ic_favourite_enabled.xml" value="0.12342342342342343" />
+        <entry key="app/src/main/res/drawable/ic_favourite_item_selected.xml" value="0.14074074074074075" />
+        <entry key="app/src/main/res/drawable/ic_home_enabled.xml" value="0.16" />
+        <entry key="app/src/main/res/drawable/ic_home_item_disabled.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/ic_item_not_selected.xml" value="0.1361111111111111" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.12342342342342343" />
+        <entry key="app/src/main/res/drawable/ic_login_logo.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_logo.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_selected_home.xml" value="0.17866666666666667" />
+        <entry key="app/src/main/res/drawable/ic_selected_in_card.xml" value="0.1361111111111111" />
+        <entry key="app/src/main/res/drawable/splash_image.xml" value="0.18796296296296297" />
+        <entry key="app/src/main/res/layout/activity_auth.xml" value="0.14" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.11126126126126126" />
+        <entry key="app/src/main/res/layout/card_of_home.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/card_of_theory.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/checkbox_card.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.1671171171171171" />
+        <entry key="app/src/main/res/layout/fragment_favourite.xml" value="0.1671171171171171" />
+        <entry key="app/src/main/res/layout/fragment_forgot_password.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home_child.xml" value="0.1671171171171171" />
+        <entry key="app/src/main/res/layout/fragment_home_compositors.xml" value="0.18108651911468812" />
+        <entry key="app/src/main/res/layout/fragment_instruments.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_item_selected.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_theory.xml" value="0.22" />
+        <entry key="app/src/main/res/menu/main_bottom_navigation_menu.xml" value="0.17" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

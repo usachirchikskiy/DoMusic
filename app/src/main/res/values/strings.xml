@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Do_Music</string>
+    <string name="do_music">DO\nMUSIC</string>
+    <string name="search_compositors">Поиск по композиторам</string>
+    <string name="search_by_author_and_name">Поиск по названию и автору книги</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_hint">Введите логин</string>
+    <string name="password_hint">Введите пароль</string>
+    <string name="confirm">Нажимая на кнопку, Вы соглашаетесь <u>с политикой конфединциальности.</u></string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="login">Войти</string>
+    <string name="download"><u>скачать</u></string>
+    <string name="rights">© 2021 DOM MUSIC. Все права защищены</string>
+</resources>

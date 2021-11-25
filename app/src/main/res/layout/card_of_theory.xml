@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="5dp"
+    android:layout_marginBottom="10dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/book_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedRectangleImageView" />
+
+        <TextView
+            android:text="Ларри Гай"
+            android:id="@+id/book_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="@font/montserrat_light"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/guideline4"
+            app:layout_constraintStart_toEndOf="@id/book_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:text="Класс"
+            android:id="@+id/book_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintEnd_toEndOf="@id/guideline4"
+            app:layout_constraintStart_toEndOf="@id/book_image"
+            app:layout_constraintTop_toBottomOf="@id/book_author"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            />
+
+        <TextView
+            android:visibility="gone"
+            android:text="Инструмент"
+            android:id="@+id/book_edition_not_changed_instr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintStart_toEndOf="@id/book_image"
+            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/opus"
+            android:textSize="10sp"
+            />
+
+        <TextView
+            android:visibility="gone"
+            android:text="Класс"
+            android:id="@+id/book_edition_changed_instr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
+            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            />
+
+        <TextView
+            android:text="Опус"
+            android:id="@+id/book_edition_not_changed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintStart_toEndOf="@id/book_image"
+            app:layout_constraintTop_toBottomOf="@id/book_name"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/opus"
+            android:textSize="10sp"
+            />
+
+        <TextView
+            android:text="Класс"
+            android:id="@+id/book_edition_changed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
+            app:layout_constraintTop_toBottomOf="@id/book_name"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.91" />
+
+        <ImageButton
+            android:id="@+id/book_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
+
