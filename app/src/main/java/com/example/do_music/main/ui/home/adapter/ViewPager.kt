@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.do_music.main.ui.home.ui.compositors.HomeCompositors
 import com.example.do_music.main.ui.home.ui.instruments.InstrumentsFragment
 import com.example.do_music.main.ui.home.ui.theory.TheoryFragment
+import com.example.do_music.main.ui.home.ui.vocals.VocalsFragment
 
 private const val NUM_TABS = 4
 
@@ -22,6 +23,7 @@ public class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifec
             0 -> return HomeCompositors()
             1 -> return TheoryFragment()
             2 -> return InstrumentsFragment()
+            3 -> return VocalsFragment()
         }
 //        Change
         return HomeCompositors()

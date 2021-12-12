@@ -8,5 +8,4 @@ data class InstrumentHelper(
     var GroupName:String = "",
     var Ansamble:String = "",
     var InstumentId:Int = -1,
-
     )

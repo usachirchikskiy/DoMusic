@@ -3,6 +3,8 @@ package com.example.do_music.network.main
 import com.example.do_music.session.SessionManager
 import okhttp3.Credentials
 import okhttp3.Interceptor
+import okio.Buffer
+import java.nio.charset.Charset
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,5 +19,6 @@ class BasicAuthInterceptor  @Inject constructor(
         var request = chain.request()
         request = request.newBuilder().header("Authorization", credentials).build()
         return chain.proceed(request)
+//        return originalResponse
     }
 }

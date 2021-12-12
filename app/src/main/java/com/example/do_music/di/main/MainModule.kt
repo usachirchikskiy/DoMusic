@@ -5,12 +5,10 @@ import com.example.do_music.data.home.compositors.CompositorsDao
 import com.example.do_music.data.home.favourites.FavouritesDao
 import com.example.do_music.data.home.instruments.InstrumentsDao
 import com.example.do_music.data.home.theory.TheoryDao
-import com.example.do_music.interactors.AddToFavourite
+import com.example.do_music.data.home.vocal.VocalsDao
+import com.example.do_music.interactors.*
 import com.example.do_music.network.main.BasicAuthInterceptor
 import com.example.do_music.network.main.OpenMainApiService
-import com.example.do_music.interactors.SearchCompositors
-import com.example.do_music.interactors.SearchInstruments
-import com.example.do_music.interactors.SearchTheory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,8 +45,14 @@ object MainModule {
 
     @Singleton
     @Provides
-    fun provideSearchTheory(theoryDao: TheoryDao, openMainApiService: OpenMainApiService): SearchTheory {
-        return SearchTheory(openMainApiService,theoryDao)
+    fun provideSearchVocals(vocalsDao: VocalsDao, openMainApiService: OpenMainApiService,favouritesDao: FavouritesDao): SearchVocals {
+        return SearchVocals(openMainApiService,vocalsDao,favouritesDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSearchTheory(theoryDao: TheoryDao, openMainApiService: OpenMainApiService,favouritesDao: FavouritesDao): SearchTheory {
+        return SearchTheory(openMainApiService,theoryDao,favouritesDao)
     }
 
     @Singleton
@@ -58,7 +62,7 @@ object MainModule {
     }
     @Singleton
     @Provides
-    fun provideSearchInstruments(instrumentsDao: InstrumentsDao, openMainApiService: OpenMainApiService): SearchInstruments {
-        return SearchInstruments(openMainApiService,instrumentsDao)
+    fun provideSearchInstruments(instrumentsDao: InstrumentsDao, openMainApiService: OpenMainApiService,favouritesDao: FavouritesDao): SearchInstruments {
+        return SearchInstruments(openMainApiService,instrumentsDao,favouritesDao)
     }
 }

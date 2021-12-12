@@ -1,130 +1,266 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="false"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:cardElevation="1dp"
-    app:cardCornerRadius="5dp"
-    android:layout_marginBottom="10dp">
+    android:orientation="vertical">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:padding="10dp"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="1dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/book_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedRectangleImageView" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
-        <TextView
-            android:text="Ларри Гай"
-            android:id="@+id/book_author"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:fontFamily="@font/montserrat_light"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/guideline4"
-            app:layout_constraintStart_toEndOf="@id/book_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/book_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedRectangleImageView" />
 
-        <TextView
-            android:text="Класс"
-            android:id="@+id/book_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            app:layout_constraintEnd_toEndOf="@id/guideline4"
-            app:layout_constraintStart_toEndOf="@id/book_image"
-            app:layout_constraintTop_toBottomOf="@id/book_author"
-            android:fontFamily="@font/montserrat_medium"
-            android:textColor="@color/black"
-            android:textSize="10sp"
-            />
+            <TextView
+                android:id="@+id/book_author"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_light"
+                android:text="Ларри Гай"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/guideline4"
+                app:layout_constraintStart_toEndOf="@id/book_image"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:visibility="gone"
-            android:text="Инструмент"
-            android:id="@+id/book_edition_not_changed_instr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            app:layout_constraintStart_toEndOf="@id/book_image"
-            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed"
-            android:fontFamily="@font/montserrat_medium"
-            android:textColor="@color/opus"
-            android:textSize="10sp"
-            />
+            <TextView
+                android:id="@+id/book_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Класс"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/guideline4"
+                app:layout_constraintStart_toEndOf="@id/book_image"
+                app:layout_constraintTop_toBottomOf="@id/book_author" />
 
-        <TextView
-            android:visibility="gone"
-            android:text="Класс"
-            android:id="@+id/book_edition_changed_instr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
-            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed"
-            android:fontFamily="@font/montserrat_medium"
-            android:textColor="@color/black"
-            android:textSize="10sp"
-            />
+            <TextView
+                android:id="@+id/book_edition_not_changed_instr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/instrument"
+                android:textColor="@color/opus"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/book_image"
+                app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed" />
 
-        <TextView
-            android:text="Опус"
-            android:id="@+id/book_edition_not_changed"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            app:layout_constraintStart_toEndOf="@id/book_image"
-            app:layout_constraintTop_toBottomOf="@id/book_name"
-            android:fontFamily="@font/montserrat_medium"
-            android:textColor="@color/opus"
-            android:textSize="10sp"
-            />
+            <TextView
+                android:id="@+id/book_edition_changed_instr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Класс"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/book_edition_not_changed_instr"
+                app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed" />
 
-        <TextView
-            android:text="Класс"
-            android:id="@+id/book_edition_changed"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
-            app:layout_constraintTop_toBottomOf="@id/book_name"
-            android:fontFamily="@font/montserrat_medium"
-            android:textColor="@color/black"
-            android:textSize="10sp"
-            />
+            <TextView
+                android:id="@+id/book_edition_not_changed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/opus"
+                android:textColor="@color/opus"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/book_image"
+                app:layout_constraintTop_toBottomOf="@id/book_name" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.91" />
+            <TextView
+                android:id="@+id/book_edition_changed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Класс"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
+                app:layout_constraintTop_toBottomOf="@id/book_name" />
 
-        <ImageButton
-            android:id="@+id/book_like"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.91" />
 
+            <ImageButton
+                android:id="@+id/book_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_favorite_border_24"
+                app:layout_constraintBottom_toTopOf="@+id/book_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="1dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/classes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_light"
+                android:text="@string/classes"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <CheckBox
+                android:id="@+id/one"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="10dp"
+                android:text="1"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classes"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/two"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="9dp"
+                android:text="2"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/one"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/three"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="9dp"
+                android:text="3"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/two"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/four"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="9dp"
+                android:text="4"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/three"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/five"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="9dp"
+                android:text="5"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/four"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/six"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/circle_back_btn"
+                android:button="@android:color/transparent"
+                android:elevation="5dp"
+                android:fontFamily="@font/montserrat_light"
+                android:paddingHorizontal="1.5dp"
+                android:text="6-7"
+                android:textAllCaps="false"
+                android:textColor="@drawable/back_btn_compositors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/five"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.ui.home.ui.itemSelected.ItemSelectedFragment">
+    tools:context=".main.ui.home.ui.itemSelected.ItemSelectedInstrument">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -32,19 +32,20 @@
 
         <TextView
             android:layout_marginTop="15dp"
-            android:id="@+id/book_author"
+            android:id="@+id/instrument_author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_bold"
             android:text="Ларри Гай"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/is_favourite"
             app:layout_constraintStart_toEndOf="@id/guideline7"
+            app:layout_constraintEnd_toStartOf="@+id/is_favourite"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/book_name"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/instrument_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -54,12 +55,11 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toBottomOf="@id/book_author" />
+            app:layout_constraintTop_toBottomOf="@id/instrument_author" />
 
         <TextView
             android:visibility="gone"
-            android:layout_marginTop="10dp"
-            android:id="@+id/book_edition_not_changed"
+            android:id="@+id/instrument_edition_not_changed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_medium"
@@ -67,12 +67,11 @@
             android:textColor="@color/opus"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toBottomOf="@id/book_name" />
+            app:layout_constraintTop_toBottomOf="@id/instrument_name" />
 
         <TextView
             android:visibility="gone"
-            android:layout_marginTop="10dp"
-            android:id="@+id/book_edition_changed"
+            android:id="@+id/instrument_edition_changed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -80,24 +79,50 @@
             android:text="Класс"
             android:textColor="@color/black"
             android:textSize="10sp"
-            app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
-            app:layout_constraintTop_toBottomOf="@id/book_name" />
+            app:layout_constraintStart_toEndOf="@id/instrument_edition_not_changed"
+            app:layout_constraintTop_toBottomOf="@id/instrument_name" />
 
         <TextView
-            android:id="@+id/book"
+            android:id="@+id/instrument_edition_not_changed2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/instrument"
+            android:textColor="@color/opus"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@id/guideline7"
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
+
+        <TextView
+            android:id="@+id/instrument_edition_changed2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Класс"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@id/instrument_edition_not_changed2"
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_changed" />
+
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/instrument"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="25dp"
             android:fontFamily="@font/montserrat_light"
-            android:text="@string/book"
+            android:text="@string/clavir"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed" />
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed2" />
 
         <TextView
-            android:id="@+id/book_download"
+            android:visibility="gone"
+            android:id="@+id/instrument_download"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -107,8 +132,35 @@
             android:text="@string/download"
             android:textColor="@color/black"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/book"
-            app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed" />
+            app:layout_constraintStart_toEndOf="@id/instrument"
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed2" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/instrument2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/montserrat_light"
+            android:text="@string/part"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/guideline7"
+            app:layout_constraintTop_toBottomOf="@id/instrument" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/instrument_download2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/montserrat_light"
+            android:text="@string/download"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/instrument"
+            app:layout_constraintTop_toBottomOf="@id/instrument" />
 
         <ImageButton
             android:layout_marginTop="15dp"
@@ -118,7 +170,7 @@
             android:background="#F6F6F6"
             android:padding="8dp"
             android:src="@drawable/ic_item_not_selected"
-            app:layout_constraintBottom_toBottomOf="@id/book_author"
+            app:layout_constraintBottom_toBottomOf="@id/instrument_author"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

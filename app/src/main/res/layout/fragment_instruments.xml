@@ -6,13 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".main.ui.home.ui.instruments.InstrumentsFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/toolbar"
-        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -29,6 +22,7 @@
         app:layout_constraintGuide_percent="0.96" />
 
     <EditText
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_et"
         style="@style/HintEditText"
         android:layout_width="0dp"
@@ -44,8 +38,7 @@
         android:inputType="textPersonName"
         android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintStart_toEndOf="@id/guideline2" />
 
 
 <androidx.recyclerview.widget.RecyclerView
@@ -57,41 +50,6 @@
     app:layout_constraintStart_toEndOf="@id/guideline2"
     app:layout_constraintTop_toBottomOf="@id/search_et"
     />
-<!--    <CheckBox-->
-<!--        app:layout_constraintStart_toEndOf="@id/guideline2"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/search_et"-->
-<!--        android:id="@+id/theory_salfedjo"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="25dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:background="@drawable/back_btn_compositors"-->
-<!--        android:button="@android:color/transparent"-->
-<!--        android:focusable="true"-->
-<!--        android:fontFamily="@font/montserrat_medium"-->
-<!--        android:paddingHorizontal="10dp"-->
-<!--        android:text="Теория и сольфеджио"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:textColor="@drawable/back_btn_compositors"-->
-<!--        android:textSize="12sp"-->
-<!--        />-->
-
-
-<!--    <CheckBox-->
-<!--        android:id="@+id/literature"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="25dp"-->
-<!--        android:layout_marginLeft="10dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:background="@drawable/back_btn_compositors"-->
-<!--        android:button="@android:color/transparent"-->
-<!--        android:fontFamily="@font/montserrat_medium"-->
-<!--        android:paddingHorizontal="10dp"-->
-<!--        android:text="Литература"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:textColor="@drawable/back_btn_compositors"-->
-<!--        android:textSize="12sp"-->
-<!--        app:layout_constraintStart_toEndOf="@id/theory_salfedjo"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/search_et" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         tools:listitem="@layout/card_of_theory"

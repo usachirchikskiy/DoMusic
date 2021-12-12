@@ -9,30 +9,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.do_music.R
 import com.example.do_music.databinding.FragmentHomeCompositorsBinding
 import com.example.do_music.main.ui.home.adapter.CompositorsAdapter
+import com.example.do_music.main.ui.home.adapter.InteractionCompositor
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "HomeCompositors"
 
 @AndroidEntryPoint
 class HomeCompositors : Fragment(), TextWatcher,
-    View.OnClickListener {
+    View.OnClickListener, InteractionCompositor {
     private lateinit var homeadapter: CompositorsAdapter
     private lateinit var binding: FragmentHomeCompositorsBinding
-//    private val binding get() = _binding
 
     private val viewModel: HomeCompositorViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeCompositorsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,7 +57,7 @@ class HomeCompositors : Fragment(), TextWatcher,
 
 
     private fun setupRecyclerView() {
-        homeadapter = CompositorsAdapter()
+        homeadapter = CompositorsAdapter(this)
         binding.recv.apply {
             layoutManager = LinearLayoutManager(this@HomeCompositors.context)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -63,7 +66,7 @@ class HomeCompositors : Fragment(), TextWatcher,
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
                     if (
-                        lastPosition == homeadapter?.itemCount?.minus(1)
+                        lastPosition == homeadapter.itemCount.minus(1)
                     ) {
                         viewModel.getpage(true)
 //                        setPadding(0, 0, 0, 0)
@@ -77,30 +80,29 @@ class HomeCompositors : Fragment(), TextWatcher,
     }
 
 
-    private fun hideProgressBar() {
-        binding.paginationProgressBar.visibility = View.INVISIBLE
-
-    }
-
-    private fun showProgressBar() {
-        binding.paginationProgressBar.visibility = View.VISIBLE
+    private fun showProgressBar(isLoading: Boolean) {
+        if (isLoading) {
+            binding.paginationProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.paginationProgressBar.visibility = View.INVISIBLE
+        }
 
     }
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-//            if (it.isLoading==true){
-//                showProgressBar()
-//            }
-//            else{
-//                hideProgressBar()
-//            }
-            Log.d(TAG, "setupObservers: " + it.compositors.toString())
-            homeadapter?.submitList(compositorList = it.compositors)
 
+            showProgressBar(it.isLoading)
+            homeadapter.submitList(compositorList = it.compositors)
+            it.error?.let {
+                showError(it)
+            }
         })
     }
 
+    private fun showError(it: Throwable) {
+
+    }
 
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -124,14 +126,12 @@ class HomeCompositors : Fragment(), TextWatcher,
         disable_second: CheckBox,
         filter: String
     ) {
-        Log.d(TAG, "filtersearch: " + enable.isChecked.toString())
         if (enable.isChecked == true) {
             enable.setChecked(true)
             disable_first.setChecked(false)
             disable_second.setChecked(false)
             setCountryFilter(filter)
-        }
-        else{
+        } else {
             setCountryFilter("")
         }
 //        else {
@@ -154,8 +154,17 @@ class HomeCompositors : Fragment(), TextWatcher,
         } else if (p0 == binding.foreignBtn) {
             filtersearch(binding.foreignBtn, binding.uzbekBtn, binding.russianBtn, "FOREIGN")
         } else {
-            filtersearch(binding.russianBtn, binding.foreignBtn, binding.uzbekBtn ,"RUSSIAN")
+            filtersearch(binding.russianBtn, binding.foreignBtn, binding.uzbekBtn, "RUSSIAN")
         }
+    }
+
+    override fun onItemSelected(compositorId: Int) {
+        Log.d(TAG, "onItemSelected: " + compositorId)
+        val bundle = bundleOf("id" to compositorId)
+        findNavController().navigate(
+            R.id.action_homeFragment_to_homeCompositorSelectedFragment,
+            bundle
+        )
     }
 //
 //    override fun onDestroyView() {

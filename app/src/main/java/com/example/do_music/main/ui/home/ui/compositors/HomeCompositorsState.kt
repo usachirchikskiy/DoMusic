@@ -7,6 +7,6 @@ data class HomeCompositorsState(
     val compositors: List<CompositorInfo> = listOf(),
     val searchText: String = "",
     val page:Int = 0,
-    val error:String = "",
+    val error: Throwable?=null,
     val country_filter:String = "",
 )

@@ -11,6 +11,7 @@ class LoginViewModel  @Inject constructor(
     private val authRepository: AuthRepository
 ): ViewModel() {
 
+
     var login_boolean : MutableLiveData<Boolean> = authRepository.login_boolean
     fun login(log:String,password:String)=authRepository.login(log,password)
 }

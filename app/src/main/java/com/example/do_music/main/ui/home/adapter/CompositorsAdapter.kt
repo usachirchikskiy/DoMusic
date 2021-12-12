@@ -11,8 +11,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.do_music.R
 import com.example.do_music.databinding.CardOfHomeBinding
 import com.example.do_music.model.CompositorInfo
+import com.example.do_music.model.Instrument
 
-class CompositorsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
+class CompositorsAdapter(
+    private val interaction: InteractionCompositor
+): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
     private val differCallback = object : DiffUtil.ItemCallback<CompositorInfo>() {
@@ -32,11 +35,16 @@ class CompositorsAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
             AsyncDifferConfig.Builder(differCallback).build()
         )
 
-class CompositorViewHolder (private val binding: CardOfHomeBinding) :
+class CompositorViewHolder (
+    private val interaction: InteractionCompositor,
+    private val binding: CardOfHomeBinding
+    ) :
     RecyclerView.ViewHolder(binding.root) {
 
         fun bind(compositor: CompositorInfo) {
-
+                binding.root.setOnClickListener{
+                    interaction?.onItemSelected(compositor.id)
+                }
                  Glide.with(binding.root)
                     .load("https://domusic.uz/api/doc/logo?mini=true&uniqueName="+compositor.fileId)
                     .into(binding.compositorImage)
@@ -48,7 +56,7 @@ class CompositorViewHolder (private val binding: CardOfHomeBinding) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompositorViewHolder {
         val binding =
             CardOfHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CompositorViewHolder(binding)
+        return CompositorViewHolder(interaction,binding)
     }
 
     internal inner class BlogRecyclerChangeCallback(
@@ -88,4 +96,9 @@ class CompositorViewHolder (private val binding: CardOfHomeBinding) :
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+}
+
+
+interface InteractionCompositor {
+    fun onItemSelected(id: Int)
 }

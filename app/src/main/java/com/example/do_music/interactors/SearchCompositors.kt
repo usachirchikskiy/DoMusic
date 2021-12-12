@@ -33,8 +33,6 @@ class SearchCompositors(
                 searchText = searchText,
                 country = country_filter
             ).rows
-//            Log.d(TAG, "\nSearchtext: " + searchText + "\nPage: "+page+"\nCountryFilter"+country_filter)
-//            Log.d(TAG,"API RESPONSE")
 
             for (compositor in compositors_response) {
                 try {
@@ -44,7 +42,6 @@ class SearchCompositors(
                     e.printStackTrace()
                 }
             }
-//            Log.d(TAG,"DAO RESPONSE")
 
             var cashed_compositors = compositors.returnOrderedCompositorQuery(
                 page = page + 1,
@@ -56,7 +53,7 @@ class SearchCompositors(
 
             emit(Resource.success(data = cashed_compositors))
         } catch (throwable: Throwable) {
-            Log.d("Error", throwable.message.toString())
+            Log.d("Error", throwable.toString()+" " +throwable.message.toString())
             emit(
                 Resource.error<List<CompositorInfo>>(throwable)
             )

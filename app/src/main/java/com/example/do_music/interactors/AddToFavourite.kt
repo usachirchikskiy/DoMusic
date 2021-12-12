@@ -16,7 +16,7 @@ class AddToFavourite(
     private val service: OpenMainApiService,
     private val favouritesDao: FavouritesDao
 ) {
-    private val TAG: String = "AppDebug"
+    private val TAG: String = "AddToFavourite"
 
     fun execute(
         noteId: Int = -1,
@@ -31,50 +31,54 @@ class AddToFavourite(
 
             var docType = ""
             var property = ""
-            var id:Int = -1
-            bookId.let {
+            var id: Int = -1
+            if (bookId != -1) {
                 docType = "BOOK"
                 property = "bookId"
                 id = bookId
-            }
-            noteId.let {
+
+            } else if (noteId != -1) {
+
                 docType = "NOTES"
                 property = "noteId"
                 id = noteId
-            }
-            vocalsId.let {
+
+            } else if (vocalsId != -1) {
+
                 docType = "VOCALS"
                 property = "vocalsId"
                 id = vocalsId
             }
-                    when {
-                    isFavourite->{
-                        body_request.addProperty(property, id)
-                        addApi = service.addtoFavourite(body_request.toString())
-                        var favourites = service.getFavouriteItems(
-                            pageNumber = 0,
+            when {
+                isFavourite -> {
+                    body_request.addProperty(property, id)
+                    addApi = service.addtoFavourite(body_request.toString())
+                    Log.d(TAG, "execute: " + addApi.toString())
+                    var favourites = service.getFavouriteItems(
+                        pageNumber = 0,
+                        docType = docType
+                    )
+                    favouritesDao.insertFavourite(favourite = favourites.rows)
+                    val total_page: Int = favourites.total / 10
+                    for (i in 1..total_page) {
+                        favourites = service.getFavouriteItems(
+                            pageNumber = i,
                             docType = docType
                         )
                         favouritesDao.insertFavourite(favourite = favourites.rows)
-                        val total_page:Int = favourites.total/10
-                        for(i in 1..total_page){
-                            favourites = service.getFavouriteItems(
-                                pageNumber = i,
-                                docType = docType
-                            )
-                            favouritesDao.insertFavourite(favourite = favourites.rows)
-                        }
                     }
-                    else->{
-                        val removeId = favouritesDao.getFavId(noteId,bookId, vocalsId)
-                        val response = service.removeFromFavourites(removeId)
-                        Log.d(TAG, "Deleted: " + response)
-                        favouritesDao.delete(removeId)
-                    }
+                }
+                else -> {
+                    val removeId = favouritesDao.getFavId(noteId, bookId, vocalsId)
+                    val response = service.removeFromFavourites(removeId)
+
+                    Log.d(TAG, "Deleted: " + response)
+                    favouritesDao.delete(removeId)
+                }
             }
             emit(Resource.success("Updated"))
         } catch (throwable: Throwable) {
-            Log.d("Error", throwable.message.toString())
+            Log.d(TAG," Error " +  throwable.message.toString())
             emit(
                 Resource.error<String>(throwable)
             )

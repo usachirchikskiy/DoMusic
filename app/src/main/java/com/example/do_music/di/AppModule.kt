@@ -10,6 +10,7 @@ import com.example.do_music.data.home.compositors.CompositorsDao
 import com.example.do_music.data.home.favourites.FavouritesDao
 import com.example.do_music.data.home.instruments.InstrumentsDao
 import com.example.do_music.data.home.theory.TheoryDao
+import com.example.do_music.data.home.vocal.VocalsDao
 import com.example.do_music.util.Constants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -84,6 +85,13 @@ object AppModule {
     @Provides
     fun provideInstrumentsDao(db: DoMusicDatabase): InstrumentsDao {
         return db.instrumentsDao()
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideVocalsDao(db: DoMusicDatabase): VocalsDao {
+        return db.vocalsDao()
     }
 
 

@@ -17,5 +17,25 @@
         <action
             android:id="@+id/action_homeFragment_to_itemSelectedFragment"
             app:destination="@id/itemSelectedFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_itemSelectedInstrument"
+            app:destination="@id/itemSelectedInstrument" />
+        <action
+            android:id="@+id/action_homeFragment_to_homeCompositorSelectedFragment"
+            app:destination="@id/homeCompositorSelectedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemSelectedInstrument"
+        android:name="com.example.do_music.main.ui.home.ui.itemSelected.ItemSelectedInstrument"
+        android:label=""
+        tools:layout="@layout/fragment_item_selected_instrument" />
+    <fragment
+        android:id="@+id/homeCompositorSelectedFragment"
+        android:name="com.example.do_music.main.ui.home.ui.compositors.HomeCompositorSelectedFragment"
+        android:label=""
+        tools:layout="@layout/fragment_home_compositor_selected" >
+        <action
+            android:id="@+id/action_homeCompositorSelectedFragment_to_itemSelectedInstrument"
+            app:destination="@id/itemSelectedInstrument" />
     </fragment>
 </navigation>

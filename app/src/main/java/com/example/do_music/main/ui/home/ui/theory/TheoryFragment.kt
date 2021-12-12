@@ -65,7 +65,6 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 //            })
 
 
-
     }
 
     override fun onCreateView(
@@ -144,29 +143,41 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
         binding.paginationProgressBar.visibility = View.INVISIBLE
     }
 
-    private fun showProgressBar() {
-        binding.paginationProgressBar.visibility = View.VISIBLE
+    private fun showProgressBar(isLoading: Boolean) {
+        if (isLoading) {
+            binding.paginationProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.paginationProgressBar.visibility = View.INVISIBLE
+        }
 
     }
 
+
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-//            if (it.isLoading==true){
-//                showProgressBar()
-//            }
-//            else{
-//                hideProgressBar()
-//            }
-//            Log.d(TAG, "setupObservers: " + it.compositors.toString())
-            if (it.isFavourite) {
-                theoryAdapter?.notifyItemChanged(it.position)
-            }
+
+            showProgressBar(it.isLoading)
 
             theoryAdapter?.apply {
                 submitList(books = it.books)
+                Log.d(TAG, "setupObservers: ")
+            }
+
+            it.error?.let {
+                showError(it)
             }
 
         })
+
+        viewModel.favourite.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                viewModel.state.value?.let { it1 -> theoryAdapter?.notifyItemChanged(it1.position) }
+            }
+        })
+    }
+
+    private fun showError(it: Throwable) {
+
     }
 
 
@@ -213,7 +224,6 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
     }
 
     override fun onItemSelected(position: Int, item: TheoryInfo) {
-
         viewModel.state.value?.let { state ->
             val bundle = bundleOf("position" to position)
             findNavController().navigate(R.id.action_homeFragment_to_itemSelectedFragment, bundle)

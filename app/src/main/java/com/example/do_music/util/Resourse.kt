@@ -12,7 +12,7 @@ data class Resource<T>(
         }
         fun <T>loading(data: T? = null) : Resource<T> = Resource(isLoading = true)
 
-        fun <T>error(throwable: Throwable, data: T? = null) : Resource<T> = Resource(error=throwable)
+        fun <T>error(throwable: Throwable) : Resource<T> = Resource(error=throwable)
     }
 
 }

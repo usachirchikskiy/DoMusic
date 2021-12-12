@@ -49,9 +49,14 @@ class HomeCompositorViewModel @Inject constructor(
                 country_filter = state.country_filter,
                 searchText = state.searchText
             ).onEach {
+
+                this.state.value = state.copy(isLoading = it.isLoading)
+
                 it.data?.let { list ->
                     this.state.value = state.copy(compositors = list)
                 }
+
+                this.state.value = state.copy(error = it.error)
 
             }.launchIn(viewModelScope)
         }

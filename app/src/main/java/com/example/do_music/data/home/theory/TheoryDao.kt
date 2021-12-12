@@ -15,6 +15,14 @@ interface TheoryDao {
         """)
     suspend fun updateBook(bookId: Int, isFavourite: Boolean)
 
+    @Query(
+        """
+        UPDATE theory_and_literature SET 
+        isFavourite = :isFavourite 
+        WHERE bookId NOT IN (:bookIds)
+        """
+    )
+    suspend fun updateBooksFalse(bookIds: List<Int>, isFavourite: Boolean = false)
 
     @Query(
         """

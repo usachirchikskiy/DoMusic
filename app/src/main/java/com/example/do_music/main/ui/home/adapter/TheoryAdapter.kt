@@ -19,7 +19,7 @@ class TheoryAdapter(
         }
 
         override fun areContentsTheSame(oldItem: TheoryInfo, newItem: TheoryInfo): Boolean {
-            return newItem==oldItem
+            return newItem == oldItem
 //            return newItem == oldItem
         }
     }
@@ -48,7 +48,13 @@ class TheoryAdapter(
 
             binding.bookAuthor.text = book.authorName
             binding.bookName.text = book.bookName
-            binding.bookEditionChanged.text = book.opusEdition
+            book.opusEdition.let {
+                if (it != "") {
+                    binding.bookEditionChanged.text = book.opusEdition
+                    binding.bookEditionChanged.visibility = View.VISIBLE
+                    binding.bookEditionNotChanged.visibility = View.VISIBLE
+                }
+            }
 
             binding.bookLike.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(p0: View?) {

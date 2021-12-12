@@ -3,11 +3,33 @@ package com.example.do_music.network.main
 import com.example.do_music.data.home.favourites.FavouriteItem
 import com.example.do_music.model.Instrument
 import com.example.do_music.model.TheoryInfo
+import com.example.do_music.model.Vocal
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface OpenMainApiService {
+
+    @GET("/api/vocals/{vocalsId}")
+    suspend fun getVocalById(@Path("vocalsId") vocalsId: Int): Vocal
+
+    @GET("/api/vocals/list")
+    suspend fun getVocals(
+        @Query("searchText") searchText : String,
+        @Query("pageNumber") pageNumber : Int,
+        @Query("pageSize") pageSize: Int = 10
+    ): GetVocalsResponse
+
+
+    @GET("api/notes/musician")
+    suspend fun getNotesByCompositor(
+        @Query("compositorId") compositorId : Int,
+        @Query("noteGroupType") noteGroupType : String,
+        @Query("searchText") searchText : String,
+        @Query("pageNumber") pageNumber : Int,
+        @Query("pageSize") pageSize: Int = 10
+    ): GetInstrumentsResponse
+
 
     @GET("/api/instruments/by-name/{instrumentGroupName}")
     suspend fun getInstrumentsByGroupName(@Path("instrumentGroupName") instrumentGroupName: String): List<InstrumentByGroup>
@@ -26,12 +48,6 @@ interface OpenMainApiService {
         @Query("favoriteClass") favoriteClass: String = ""
     ): GetFavouritesResponse
 
-    @GET("api/notes/list/notes")
-    suspend fun getListNotes(
-        @Query("pageNumber") pageNumber: Int,
-        @Query("pageSize") pageSize: Int = 10,
-        @Query("searchText") searchText: String = ""
-    ): GetInstrumentsResponse
 
     @GET("api/notes/instruments")
     suspend fun getInstruments(

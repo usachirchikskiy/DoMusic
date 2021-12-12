@@ -5,22 +5,66 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.do_music.data.home.theory.TheoryDao
 import com.example.do_music.model.Instrument
-import com.example.do_music.model.TheoryInfo
 import com.example.do_music.util.Constants
 
 private const val TAG = "InstrumentsDao"
+
 @Dao
 interface InstrumentsDao {
 
+//    SELECT OrderID, Quantity,
+//    CASE WHEN Quantity > 30 THEN 'The quantity is greater than 30'
+//    WHEN Quantity = 30 THEN 'The quantity is 30'
+//    ELSE 'The quantity is under 30'
+//    END AS QuantityText
+//    FROM OrderDetails
+
+
     @Query(
         """
-        UPDATE instruments SET isFavourite = :isFavourite
+        SELECT * FROM instruments 
+        WHERE compositorId = :compositorId 
+        AND noteName LIKE '%' || :searchText || '%'
+        """
+    )
+    suspend fun getNotesByCompositor(compositorId: Int,searchText: String): List<Instrument>
+
+
+    @Query(
+        """
+        SELECT * FROM instruments 
+        WHERE compositorId = :compositorId AND 
+        (concertsAndFantasies = :concertAndFantasies 
+        OR sonatas = :ensembles) AND noteName LIKE '%' || :searchText || '%'
+        """
+    )
+    suspend fun getNotesByCompositorAndNoteGroup(
+        compositorId: Int,
+        concertAndFantasies: String,
+        ensembles: String,
+        searchText: String
+    ): List<Instrument>
+
+
+    @Query(
+        """
+        UPDATE instruments SET 
+        isFavourite = :isFavourite 
         WHERE noteId = :noteId
         """
     )
-    suspend fun updateInstrument(noteId: Int, isFavourite: Boolean)
+    suspend fun updateInstrument(noteId: Int, isFavourite: Boolean = true)
+
+
+    @Query(
+        """
+        UPDATE instruments SET 
+        isFavourite = :isFavourite 
+        WHERE noteId NOT IN (:noteIds)
+        """
+    )
+    suspend fun updateInstrumentFalse(noteIds: List<Int>, isFavourite: Boolean = false)
 
 
     @Query(
@@ -38,17 +82,15 @@ interface InstrumentsDao {
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<Instrument>
 
-    @Query(
-        """
-    SELECT * FROM instruments
-    ORDER BY noteId DESC
-    LIMIT (:page * :pageSize)
-    """
-    )
-    suspend fun getAllInstruments(
-        page: Int,
-        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Instrument>
+//    @Query(
+//        """
+//    SELECT * FROM instruments
+//    WHERE isFavourite == :isFav
+//    """
+//    )
+//
+//    suspend fun getFav(isFav:Boolean = true): List<Instrument>
+
 
     @Query(
         """
@@ -56,7 +98,7 @@ interface InstrumentsDao {
     WHERE (noteName LIKE '%' || :searchText || '%'
     OR instrumentName  LIKE '%' || :searchText || '%')
     AND instrumentGroupName = :instrumentGroupName
-    ORDER BY noteName ASC
+    ORDER BY noteId DESC
     LIMIT (:page * :pageSize)
     """
     )
@@ -81,6 +123,7 @@ interface InstrumentsDao {
     OR sonatas = :sonatas
     OR studiesAndExercises = :studiesAndExercises)
     AND instrumentId = :instrumentId)
+    ORDER BY noteId DESC
     LIMIT (:page * :pageSize)
     
     """
@@ -114,7 +157,7 @@ interface InstrumentsDao {
     OR sonatas = :sonatas
     OR studiesAndExercises = :studiesAndExercises
 ))
-    ORDER BY noteName ASC
+    ORDER BY noteId DESC
     LIMIT (:page * :pageSize)
     """
     )
@@ -137,7 +180,24 @@ interface InstrumentsDao {
 
     @Query("DELETE FROM instruments")
     suspend fun deleteAllInstruments()
+
+//    @Query("SELECT noteId FROM instruments WHERE noteId = :id LIMIT 1")
+//    suspend fun getItemId(id: Int): Int?
+//
+//
+//    suspend fun insertOrUpdate(item: Instrument) {
+//        database.runInTransaction {
+//            val id = getItemDao().getItemId(item.id)
+//
+//            if(id == null)
+//                getItemDao().insert(item)
+//            else
+//                getItemDao().update(item)
+//        }
+//    }
+
 }
+
 
 suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
     noteGroupType: String,
@@ -152,11 +212,12 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
     var playsAndSolos = "-1"
     var sonatas = "-1"
     var studiesAndExercises = "-1"
-    Log.d(TAG, "instrgroupname: " + instrumentGroupName +"\n"+
-            "ansamble "+ noteGroupType + "\n"+
-            "instumentId " + instrumentId + "\n"+
-            "page" +page.toString()+"\n"+
-            "searchText "+ searchText+"\n"
+    Log.d(
+        TAG, "instrgroupname: " + instrumentGroupName + "\n" +
+                "ansamble " + noteGroupType + "\n" +
+                "instumentId " + instrumentId + "\n" +
+                "page" + page.toString() + "\n" +
+                "searchText " + searchText + "\n"
     )
     when (noteGroupType) {
         "ENSEMBLES" -> {
@@ -183,9 +244,9 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
         }
     }
 
-    if (instrumentId == -1 && noteGroupType!="") {
+    if (instrumentId == -1 && noteGroupType != "") {
 
-        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "HERE3")
+        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "ByAnsamble")
         return getInstrumentsByEnsembles(
             ensembles = ensembles,
             instrumentGroupName = instrumentGroupName,
@@ -198,7 +259,7 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
             page = page
         )
     } else if (instrumentId != -1) {
-        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "HERE2")
+        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "instrumentId")
         return getInstrumentsByInstrumentId(
             instrumentId = instrumentId,
             ensembles = ensembles,
@@ -211,15 +272,17 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
             searchText = searchText,
             page = page
         )
+    } else if (instrumentGroupName != "") {
+        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "instrumentGroupName")
+        return getInstrumentsByGroupId(
+            instrumentGroupName = instrumentGroupName,
+            page = page,
+            searchText = searchText
+        )
     }
 
-    if (searchText!=" "){
-        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "HERE1")
-        return getAllInstrumentsSearch(searchText = searchText, page = page)
-    }
-    Log.d(TAG, "returnOrderedInstrumentsQuery: " + "HERE")
-    return getAllInstruments(page=page)
-
+    Log.d(TAG, "returnOrderedInstrumentsQuery: " + "getALL")
+    return getAllInstrumentsSearch(searchText = searchText, page = page)
 
 }
 

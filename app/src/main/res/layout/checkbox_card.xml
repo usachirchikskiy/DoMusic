@@ -18,7 +18,6 @@
         android:button="@android:color/transparent"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
-        android:text="Литература"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
         android:textSize="12sp" />

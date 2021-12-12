@@ -24,7 +24,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.loginBtn.setOnClickListener(this)
@@ -39,6 +39,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
     private fun subscribeObservers() {
         loginViewModel.login_boolean.observe(viewLifecycleOwner, Observer {
             if (it == true) {
+                binding.paginationProgressBar.visibility = View.INVISIBLE
                 requireActivity().run {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish() // If activity no more needed in back stack
@@ -51,6 +52,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
     fun String.isValid(): Boolean = this.isNotEmpty()
 
     override fun onClick(p0: View?) {
+        binding.paginationProgressBar.visibility = View.VISIBLE
         if (binding.loginEt.text.toString().isValid() && binding.passwordEt.text.toString()
                 .isValid()
         ) {

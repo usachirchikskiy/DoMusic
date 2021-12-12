@@ -44,7 +44,6 @@
 
 
         <CheckBox
-
             android:elevation="5dp"
             app:layout_constraintStart_toEndOf="@id/guideline2"
             app:layout_constraintTop_toBottomOf="@id/search_et"
@@ -57,7 +56,7 @@
             android:focusable="true"
             android:fontFamily="@font/montserrat_medium"
             android:paddingHorizontal="10dp"
-            android:text="Узбекские"
+            android:text="@string/uzbek_filter"
             android:textAllCaps="false"
             android:textColor="@drawable/back_btn_compositors"
             android:textSize="12sp"
@@ -76,7 +75,7 @@
             android:button="@android:color/transparent"
             android:fontFamily="@font/montserrat_medium"
             android:paddingHorizontal="10dp"
-            android:text="Русские"
+            android:text="@string/russian_filter"
             android:textAllCaps="false"
             android:textColor="@drawable/back_btn_compositors"
             android:textSize="12sp"
@@ -84,7 +83,6 @@
             app:layout_constraintTop_toBottomOf="@id/search_et" />
 
         <CheckBox
-
             android:elevation="5dp"
             android:id="@+id/foreign_btn"
             android:layout_width="wrap_content"
@@ -95,7 +93,7 @@
             android:button="@android:color/transparent"
             android:fontFamily="@font/montserrat_medium"
             android:paddingHorizontal="10dp"
-            android:text="Зарубежные"
+            android:text="@string/foreign_filters"
             android:textAllCaps="false"
             android:textColor="@drawable/back_btn_compositors"
             android:textSize="12sp"

@@ -4,8 +4,8 @@ import com.example.do_music.main.ui.home.adapter.InstrumentHelper
 import com.example.do_music.model.Instrument
 
 data class InstrumentState(
+    val isLoading: Boolean = false,
     val position: Int = -1,
-    val isFavourite: Boolean = false,
     val instrumentId: Int= -1,
     val instrumentGroupName: String="",
     val noteGroupType: String="",
@@ -13,6 +13,5 @@ data class InstrumentState(
     val instruments: List<Instrument> = listOf(),
     val searchText: String = " ",
     val page: Int = 0,
-    val error: String = "",
-
-)
+    var error: Throwable? = null,
+    )

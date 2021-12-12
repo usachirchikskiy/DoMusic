@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Do_Music</string>
+    <string name="app_name">Domusic</string>
     <string name="do_music">DO\nMUSIC</string>
     <string name="search_compositors">Поиск по композиторам</string>
     <string name="search_by_author_and_name">Поиск по названию и автору книги</string>
@@ -11,4 +11,21 @@
     <string name="login">Войти</string>
     <string name="download"><u>скачать</u></string>
     <string name="rights">© 2021 DOM MUSIC. Все права защищены</string>
+    <string name="opus">Опус/Издание:</string>
+    <string name="uzbek_filter">Узбекские</string>
+    <string name="russian_filter">Русские</string>
+    <string name="foreign_filters">Зарубежные</string>
+    <string name="theory_salfedgio_filter">Теория и сольфеджио</string>
+    <string name="book">Книга:</string>
+    <string name="clavir">Клавир:</string>
+    <string name="instrument">Инструмент:</string>
+    <string name="part">Партия:</string>
+    <string name="sonata">Соната</string>
+    <string name="concerts">Концерты и соло</string>
+    <string name="search_nameNote">Поиск по названию ноты</string>
+    <string name="favourite">Избранное</string>
+    <string name="notes">Ноты</string>
+    <string name="books">Книги</string>
+    <string name="vocals">Вокал</string>
+    <string name="classes">Классы:</string>
 </resources>
