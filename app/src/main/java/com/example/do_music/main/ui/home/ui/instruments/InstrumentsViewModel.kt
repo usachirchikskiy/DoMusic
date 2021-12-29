@@ -11,6 +11,7 @@ import com.example.do_music.model.Instrument
 import com.example.do_music.network.main.InstrumentByGroup
 import com.example.do_music.util.Constants.Companion.FILTERS
 import com.example.do_music.util.Constants.Companion.FILTERSANSAMBLE
+import com.example.do_music.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,11 +25,11 @@ class InstrumentsViewModel @Inject constructor(
     private val update: AddToFavourite
 ) : ViewModel() {
     val state: MutableLiveData<InstrumentState> = MutableLiveData(InstrumentState())
-    val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> = MutableLiveData()
-    val favourite: MutableLiveData<Boolean> = MutableLiveData()
-    val favouriteCompositorNotes: MutableLiveData<Boolean> = MutableLiveData()
-    val notesByCompositor: MutableLiveData<NotesByCompositorState> = MutableLiveData(NotesByCompositorState())
-
+    private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> = MutableLiveData()
+    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    val notesByCompositor: MutableLiveData<NotesByCompositorState> =
+        MutableLiveData(NotesByCompositorState())
+//    val isNoteUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
     init {
         setFilters(FILTERS)
@@ -36,26 +37,43 @@ class InstrumentsViewModel @Inject constructor(
     }
 
 
-    fun getNotesByCompositor(compositorId: Int,next:Boolean = false) {
+    fun setCompositorId(compositorId: Int) {
+        notesByCompositor.value?.let { notesByCompositor ->
+            this.notesByCompositor.value = notesByCompositor.copy(compositorId = compositorId)
+        }
+    }
+
+    fun getNotesByCompositor(next: Boolean = false, update: Boolean = false) {
         if (next) {
             incrementpagecompositorsnotes()
         } else {
-            pagetozerocompositorsnotes()
-            clearlistcompositorsnotes()
+            if(!update) {
+                pagetozerocompositorsnotes()
+                clearlistcompositorsnotes()
+            }
+
         }
         notesByCompositor.value?.let { notesByCompositor ->
-            Log.d(TAG, "getNotesByCompositor: " + compositorId + " " + notesByCompositor)
             searchInstruments.executeCompositors(
                 noteGroupType = notesByCompositor.noteGroupType,
                 searchText = notesByCompositor.searchText,
                 pageNumber = notesByCompositor.pageNumber,
-                compositorId = compositorId
+                compositorId = notesByCompositor.compositorId,
+                update = update
             ).onEach {
+
                 this.notesByCompositor.value = notesByCompositor.copy(isLoading = it.isLoading)
+
+
                 it.data?.let { instruments ->
                     this.notesByCompositor.value = notesByCompositor.copy(instruments = instruments)
                 }
-                this.notesByCompositor.value = notesByCompositor.copy(error = it.error)
+
+                it.error?.let { error ->
+                    this.notesByCompositor.value = notesByCompositor.copy(error = error)
+                }
+
+
             }.launchIn(viewModelScope)
         }
     }
@@ -63,13 +81,13 @@ class InstrumentsViewModel @Inject constructor(
     fun noteGroupTypeCompositor(noteGroupType: String) {
         notesByCompositor.value?.let { notesByCompositor ->
             this.notesByCompositor.value = notesByCompositor.copy(noteGroupType = noteGroupType)
-
         }
     }
 
     private fun incrementpagecompositorsnotes() {
         notesByCompositor.value?.let { notesByCompositor ->
-            this.notesByCompositor.value = notesByCompositor.copy(pageNumber = notesByCompositor.pageNumber + 1)
+            this.notesByCompositor.value =
+                notesByCompositor.copy(pageNumber = notesByCompositor.pageNumber + 1)
         }
     }
 
@@ -88,50 +106,6 @@ class InstrumentsViewModel @Inject constructor(
     fun setSearchTextCompositorNotes(search: String) {
         notesByCompositor.value?.let { notesByCompositor ->
             this.notesByCompositor.value = notesByCompositor.copy(searchText = search)
-        }
-    }
-
-
-    fun getCompositorNoteInstrument(position: Int): Instrument? {
-        return notesByCompositor.value!!.instruments[position]
-    }
-
-    private fun setPositionCompositorNotes(position: Int) {
-        notesByCompositor.value?.let { notesByCompositor ->
-            this.notesByCompositor.value = notesByCompositor.copy(position = position)
-        }
-    }
-
-//    private fun setCompositorId(id: Int) {
-//        notesByCompositor.value?.let { notesByCompositor ->
-//            this.notesByCompositor.value = notesByCompositor.copy(compositorId = id)
-//        }
-//    }
-
-    fun isLikedCompositorsNotes(position: Int, bindRec: Boolean = false) {
-        notesByCompositor.value?.let {
-            setPositionCompositorNotes(position)
-            val isFavourite = this.notesByCompositor.value!!.instruments[position].isFavourite
-            this.notesByCompositor.value!!.instruments[position].isFavourite = isFavourite != true
-            this.notesByCompositor.value?.let {
-                it.instruments[position].isFavourite?.let { it1 ->
-                    Log.d(TAG, "isLiked: " + it1)
-                    it.instruments[position].noteId?.let { it2 ->
-                        update.execute(
-                            noteId = it2,
-                            isFavourite = it1
-                        )
-                            .onEach { resource ->
-                                if (bindRec) {
-                                    resource.data?.let {
-                                        favouriteCompositorNotes.value = true
-                                    }
-                                }
-                            }
-                            .launchIn(viewModelScope)
-                    }
-                }
-            }
         }
     }
 
@@ -182,7 +156,8 @@ class InstrumentsViewModel @Inject constructor(
                 getpage()
                 return
             } else if (instrumentHelper.isAnsamble) {
-                Log.d("", "isAnsmble: ")
+                setInstrumentId(-1)
+                Log.d("", "isAnsamble: ")
                 noteGroupType("")
                 for (i in state.instrumentsGroup) {
                     if (i.isGroupName) {
@@ -191,8 +166,10 @@ class InstrumentsViewModel @Inject constructor(
                 }
                 list_group.addAll(FILTERSANSAMBLE)
             } else {
+                noteGroupType("")
                 instrumentGroupName("")
                 list_group.addAll(FILTERS)
+                Log.d("", "isinstrumentGroup: ")
             }
 
             setFilters(list_group)
@@ -232,9 +209,6 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    fun getInstrument(position: Int): Instrument? {
-        return state.value!!.instruments[position]
-    }
 
     fun getInstrumentHelper(position: Int): InstrumentHelper? {
         return state.value?.let {
@@ -242,39 +216,36 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    fun isLiked(position: Int, bindRec: Boolean = false) {
-        state.value?.let {
-            setPosition(position)
-            val isFavourite = this.state.value!!.instruments[position].isFavourite
-            this.state.value!!.instruments[position].isFavourite = isFavourite != true
-            this.state.value?.let {
-                it.instruments[position].isFavourite?.let { it1 ->
-                    Log.d(TAG, "isLiked: " + it1)
-                    it.instruments[position].noteId?.let { it2 ->
-                        update.execute(
-                            noteId = it2,
-                            isFavourite = it1
-                        )
-                            .onEach { resource ->
-                                if (bindRec) {
-                                    resource.data?.let {
-                                        favourite.value = true
-                                    }
-                                }
-                            }
-                            .launchIn(viewModelScope)
-                    }
-                }
+    fun isLiked(favId: Int, isFav: Boolean) {//position: Int, bindRec: Boolean = false) {
+        state.value?.let { state ->
+            var noteId = -1
+            var favouriteId = -1
+            if (isFav) {
+                noteId = favId
+            } else {
+                favouriteId = favId
             }
+            update.execute(
+                noteId = noteId,
+                favouriteId = favouriteId,
+                isFavourite = isFav,
+                property = "noteId"
+            ).onEach {
+                it.data?.let {
+                    isUpdated.value = true
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
-    fun getpage(next: Boolean = false) {
+    fun getpage(next: Boolean = false, update: Boolean = false) {
         if (next) {
             incrementpage()
         } else {
-            pagetozero()
-            clearlist()
+            if (!update) {
+                pagetozero()
+                clearlist()
+            }
         }
         state.value?.let { state ->
             searchInstruments.execute(
@@ -282,7 +253,8 @@ class InstrumentsViewModel @Inject constructor(
                 instrumentGroupName = state.instrumentGroupName,
                 noteGroupType = state.noteGroupType,
                 searchText = state.searchText,
-                page = state.page
+                page = state.page,
+                update = update
             ).onEach {
 
                 this.state.value = state.copy(isLoading = it.isLoading)
@@ -290,8 +262,9 @@ class InstrumentsViewModel @Inject constructor(
                 it.data?.let { list ->
                     this.state.value = state.copy(instruments = list)
                 }
-
-                this.state.value = state.copy(error = it.error)
+                it.error?.let { error ->
+                    this.state.value = state.copy(error = error)
+                }
 
             }.launchIn(viewModelScope)
         }
@@ -315,9 +288,4 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    private fun setPosition(position: Int) {
-        state.value?.let { state ->
-            this.state.value = state.copy(position = position)
-        }
-    }
 }

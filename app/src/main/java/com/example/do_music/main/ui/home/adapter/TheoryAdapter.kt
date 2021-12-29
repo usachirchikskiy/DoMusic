@@ -10,7 +10,7 @@ import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.model.TheoryInfo
 
 class TheoryAdapter(
-    private val interaction: Interaction? = null
+    private val interaction: Interaction_Instrument? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differCallback = object : DiffUtil.ItemCallback<TheoryInfo>() {
@@ -26,16 +26,16 @@ class TheoryAdapter(
 
 
     class TheoryViewHolder(
-        private val interaction: Interaction?,
+        private val interaction: Interaction_Instrument?,
         private val binding: CardOfTheoryBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(book: TheoryInfo) {
             binding.root.setOnClickListener {
-                interaction?.onItemSelected(adapterPosition, book)
+                interaction?.onItemSelected(book.bookId)
             }
-            if (book.isFavourite != false && book.isFavourite != null) {
+            if (book.favorite) {
                 binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
             } else {
                 binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
@@ -58,11 +58,17 @@ class TheoryAdapter(
 
             binding.bookLike.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(p0: View?) {
-                    interaction?.onLikeSelected(position = adapterPosition)
-                    if (book.isFavourite != false) {
-                        binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
-                    } else {
-                        binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+
+//                    if (book.favourite == false) {
+//                        binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
+//                    } else {
+//                        binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+//                    }
+                    if(book.favorite) {
+                        interaction?.onLikeSelected(book.favoriteId!!, !book.favorite)
+                    }
+                    else{
+                        interaction?.onLikeSelected(book.bookId, !book.favorite)
                     }
                 }
 
@@ -124,9 +130,4 @@ class TheoryAdapter(
         return differ.currentList.size
     }
 
-}
-
-interface Interaction {
-    fun onItemSelected(position: Int, item: TheoryInfo)
-    fun onLikeSelected(position: Int)
 }

@@ -36,7 +36,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Ларри Гай"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@id/guideline7"
@@ -45,12 +44,11 @@
 
         <TextView
             android:layout_marginBottom="10dp"
-            android:id="@+id/instrument_name"
+            android:id="@+id/name_of_Item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/montserrat_light"
-            android:text="Класс"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +65,7 @@
             android:textColor="@color/opus"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toBottomOf="@id/instrument_name" />
+            app:layout_constraintTop_toBottomOf="@id/name_of_Item" />
 
         <TextView
             android:visibility="gone"
@@ -76,13 +74,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Класс"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@id/instrument_edition_not_changed"
-            app:layout_constraintTop_toBottomOf="@id/instrument_name" />
+            app:layout_constraintTop_toBottomOf="@id/name_of_Item" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/instrument_edition_not_changed2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -94,12 +93,13 @@
             app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/instrument_edition_changed2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Класс"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@id/instrument_edition_not_changed2"
@@ -161,6 +161,33 @@
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/instrument"
             app:layout_constraintTop_toBottomOf="@id/instrument" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/book_not_changed_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/montserrat_light"
+            android:text="@string/book"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/guideline7"
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/book_changed_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/montserrat_light"
+            android:text="@string/download"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/book_not_changed_download"
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
 
         <ImageButton
             android:layout_marginTop="15dp"

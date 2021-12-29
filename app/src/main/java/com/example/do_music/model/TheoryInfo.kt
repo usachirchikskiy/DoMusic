@@ -1,11 +1,9 @@
 package com.example.do_music.model
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
+
 @Entity(tableName = "theory_and_literature")
 data class TheoryInfo(
     val authorId: Int,
@@ -18,5 +16,6 @@ data class TheoryInfo(
     val bookType: String,
     val logoId: String,
     val opusEdition: String,
-    var isFavourite:Boolean?= false
-):Parcelable
+    val favorite:Boolean,
+    val favoriteId:Int?=null
+)

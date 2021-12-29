@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <CheckBox
-        android:elevation="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/instrument_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:background="@drawable/back_btn_compositors"
         android:button="@android:color/transparent"
+        android:elevation="5dp"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

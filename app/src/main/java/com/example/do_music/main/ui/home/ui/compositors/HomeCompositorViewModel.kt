@@ -1,5 +1,6 @@
 package com.example.do_music.main.ui.home.ui.compositors
 
+import android.util.Log
 import androidx.lifecycle.*
 
 import com.example.do_music.interactors.SearchCompositors
@@ -13,7 +14,7 @@ private const val TAG = "HomeCompositorViewModel"
 
 @HiltViewModel
 class HomeCompositorViewModel @Inject constructor(
-    private val searchCompositors: SearchCompositors,
+    private val searchCompositors: SearchCompositors
 ) : ViewModel() {
 
     val state: MutableLiveData<HomeCompositorsState> = MutableLiveData(HomeCompositorsState())
@@ -50,13 +51,14 @@ class HomeCompositorViewModel @Inject constructor(
                 searchText = state.searchText
             ).onEach {
 
-                this.state.value = state.copy(isLoading = it.isLoading)
+//                this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
                     this.state.value = state.copy(compositors = list)
                 }
 
-                this.state.value = state.copy(error = it.error)
+//                this.state.value = state.copy(error = it.error)
+
 
             }.launchIn(viewModelScope)
         }

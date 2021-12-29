@@ -1,8 +1,6 @@
 package com.example.do_music.data.home.theory
 
 import androidx.room.*
-import com.example.do_music.data.home.compositors.CompositorEntity
-import com.example.do_music.data.home.compositors.CompositorsDao
 import com.example.do_music.model.TheoryInfo
 import com.example.do_music.util.Constants
 
@@ -10,19 +8,27 @@ import com.example.do_music.util.Constants
 interface TheoryDao {
 
     @Query("""
-        UPDATE theory_and_literature SET isFavourite = :isFavourite 
+        UPDATE theory_and_literature SET favoriteId = :favoriteId, favorite = :favorite
         WHERE bookId = :bookId
         """)
-    suspend fun updateBook(bookId: Int, isFavourite: Boolean)
+    suspend fun updateBook(favoriteId:Int?,favorite: Boolean,bookId: Int)
+
+    @Query("""
+        UPDATE theory_and_literature SET favoriteId = null, favorite = :favorite
+        WHERE favoriteId = :favoriteId
+        """)
+    suspend fun updateBookToFalse(favoriteId:Int?,favorite: Boolean)
+
 
     @Query(
         """
-        UPDATE theory_and_literature SET 
-        isFavourite = :isFavourite 
-        WHERE bookId NOT IN (:bookIds)
-        """
+    SELECT * FROM theory_and_literature 
+    WHERE bookId =:bookId
+    """
     )
-    suspend fun updateBooksFalse(bookIds: List<Int>, isFavourite: Boolean = false)
+    suspend fun getBook(
+        bookId:Int
+    ): TheoryInfo
 
     @Query(
         """

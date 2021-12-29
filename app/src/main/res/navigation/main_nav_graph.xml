@@ -10,11 +10,13 @@
 <!--        android:name="com.example.do_music.main.ui.home.HomeFragment"-->
 <!--        android:label="fragment_home"-->
 <!--        tools:layout="@layout/fragment_home" />-->
-    <fragment
-        android:id="@+id/nav_favourites"
-        android:name="com.example.do_music.main.ui.favourites.FavouriteFragment"
-        android:label="fragment_favourite"
-        tools:layout="@layout/fragment_favourite" />
+
+    <include app:graph="@navigation/fav_nav"/>
+<!--    <fragment-->
+<!--        android:id="@+id/nav_favourites"-->
+<!--        android:name="com.example.do_music.main.ui.favourites.FavouriteFragment"-->
+<!--        android:label="fragment_favourite"-->
+<!--        tools:layout="@layout/fragment_favourite" />-->
     <fragment
         android:id="@+id/nav_account"
         android:name="com.example.do_music.main.ui.account.AccountFragment"

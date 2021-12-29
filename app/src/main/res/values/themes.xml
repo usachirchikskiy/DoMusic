@@ -11,9 +11,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="buttonStyle">@style/CustomButton</item>
-        <!-- Customize your theme here. -->
+
     </style>
+
 
     <style name="CustomTabText" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">30sp</item>
@@ -21,31 +21,24 @@
         <item name="android:fontFamily">@font/montserrat_bold</item>
     </style>
 
-    <style name="HintEditText">
-        <item name="fontFamily">@font/montserrat_medium</item>
-        <item name="android:textColor">#A7A7A7</item>
-        <item name="android:textSize">14sp</item></style>
-
     <style name="SearchEditText">
         <item name="fontFamily">@font/montserrat_medium</item>
         <item name="android:textColor">#A7A7A7</item>
-        <item name="android:textSize">14sp</item>
-    </style>
+        <item name="android:textSize">14sp</item></style>
 
     <style name="roundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">25dp</item>
     </style>
 
+    <style name="roundedProfilePhoto" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50dp</item>
+    </style>
+
     <style name="roundedRectangleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">5dp</item>
-    </style>
-
-    <style name="CustomButton" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/back_btn_compositors</item>
-
-        <item name="android:stateListAnimator">@null</item>
     </style>
 
 

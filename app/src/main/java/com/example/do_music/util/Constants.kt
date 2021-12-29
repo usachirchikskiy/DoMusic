@@ -5,6 +5,7 @@ import com.example.do_music.main.ui.home.adapter.InstrumentHelper
 class Constants {
 
     companion object {
+        const val SHOULD_REFRESH = "should_refresh"
         const val PAGINATION_PAGE_SIZE: Int = 10
         const val PREF_NAME: String = "LoginSession"
         const val BASE_URL = "https://domusic.uz/"

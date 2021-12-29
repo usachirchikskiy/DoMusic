@@ -5,7 +5,7 @@ import com.example.do_music.model.Instrument
 
 data class InstrumentState(
     val isLoading: Boolean = false,
-    val position: Int = -1,
+//    val position: Int = -1,
     val instrumentId: Int= -1,
     val instrumentGroupName: String="",
     val noteGroupType: String="",

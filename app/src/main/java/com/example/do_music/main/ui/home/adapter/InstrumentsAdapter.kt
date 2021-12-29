@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.example.do_music.R
 import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.model.Instrument
 
-class InstrumentsAdapter (
+class InstrumentsAdapter(
     private val context: Context,
-    private val fragmentName:String? = null,
+    private val fragmentName: String? = null,
     private val interaction: Interaction_Instrument? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,14 +26,14 @@ class InstrumentsAdapter (
         }
 
         override fun areContentsTheSame(oldItem: Instrument, newItem: Instrument): Boolean {
-            return newItem==oldItem
+            return newItem == oldItem
         }
     }
 
 
     class InstrumentViewHolder(
         private val context: Context,
-        private val fragmentName:String? = null,
+        private val fragmentName: String? = null,
         private val interaction: Interaction_Instrument?,
         private val binding: CardOfTheoryBinding
     ) :
@@ -40,10 +41,10 @@ class InstrumentsAdapter (
 
         fun bind(instrument: Instrument) {
             binding.root.setOnClickListener {
-                interaction?.onItemSelected(adapterPosition)
+                instrument.noteId?.let { it1 -> interaction?.onItemSelected(it1) }
             }
 
-            if (instrument.isFavourite != false && instrument.isFavourite != null) {
+            if (instrument.favorite == true) {
                 binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
             } else {
                 binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
@@ -53,33 +54,41 @@ class InstrumentsAdapter (
             Glide.with(binding.root)
                 .load("https://domusic.uz/api/doc/logo?mini=true&uniqueName=" + instrument.logoId)
                 .into(binding.bookImage)
+
             fragmentName?.let {
-                binding.bookAuthor.visibility = View.GONE
+                binding.bookName.visibility = View.GONE
                 val typeface = ResourcesCompat.getFont(context, R.font.montserrat_medium)
-                binding.bookName.typeface = typeface
-                binding.bookName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.toFloat())
+                binding.bookAuthor.typeface = typeface
+                Log.d("InstrumentsAdapter", "bind: ")
+                binding.bookAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.toFloat())
+                binding.bookAuthor.text = instrument.noteName
             }
-            binding.bookAuthor.text = instrument.compositorName
-            binding.bookName.text = instrument.noteName
-            instrument.opusEdition?.let{
-                if (it!="") {
+            if(fragmentName==null){
+                binding.bookAuthor.text = instrument.compositorName
+                binding.bookName.text = instrument.noteName
+            }
+            instrument.opusEdition?.let {
+                if (it != "") {
                     binding.bookEditionNotChanged.visibility = View.VISIBLE
                     binding.bookEditionChanged.visibility = View.VISIBLE
                     binding.bookEditionChanged.text = instrument.opusEdition
                 }
             }
             instrument.instrumentName?.let {
+                binding.bookEditionNotChangedInstr.visibility = View.VISIBLE
                 binding.bookEditionChangedInstr.visibility = View.VISIBLE
                 binding.bookEditionChangedInstr.text = instrument.instrumentName
             }
             binding.bookLike.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(p0: View?) {
-                    interaction?.onLikeSelected(position = adapterPosition)
-                    if (instrument.isFavourite != false) {
-                        binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
-                    } else {
-                        binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+
+                    if(instrument.favorite!!) {
+                        interaction?.onLikeSelected(instrument.favoriteId!!, !instrument.favorite)
                     }
+                    else{
+                        interaction?.onLikeSelected(instrument.noteId!!,!instrument.favorite)
+                    }
+
                 }
 
             })
@@ -119,7 +128,7 @@ class InstrumentsAdapter (
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding =
             CardOfTheoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return InstrumentsAdapter.InstrumentViewHolder(context,fragmentName,interaction, binding)
+        return InstrumentsAdapter.InstrumentViewHolder(context, fragmentName, interaction, binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -143,6 +152,6 @@ class InstrumentsAdapter (
 }
 
 interface Interaction_Instrument {
-    fun onItemSelected(position: Int)
-    fun onLikeSelected(position: Int)
+    fun onItemSelected(itemId: Int,nameOfCompositor:String = "")
+    fun onLikeSelected(itemId: Int, isFav: Boolean)
 }

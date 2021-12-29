@@ -10,7 +10,6 @@
         android:id="@+id/container"
         >
 
-
     <FrameLayout
         android:id="@+id/flFragment"
         android:layout_width="match_parent"

@@ -8,8 +8,11 @@ import com.example.do_music.interactors.AddToFavourite
 import com.example.do_music.interactors.SearchTheory
 import com.example.do_music.model.TheoryInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -21,9 +24,10 @@ class TheoryViewModel @Inject constructor(
     private val update: AddToFavourite
 ) : ViewModel() {
     val state: MutableLiveData<TheoryState> = MutableLiveData(TheoryState())
-    val favourite: MutableLiveData<Boolean> = MutableLiveData()
+    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
     init {
+        Log.d(TAG, "INIT")
         getpage()
     }
 
@@ -31,6 +35,10 @@ class TheoryViewModel @Inject constructor(
         state.value?.let { state ->
             this.state.value = state.copy(books = listOf())
         }
+    }
+
+    fun resetLoading(){
+        this.state.value = state.value?.copy(isLoading = false)
     }
 
     fun setSearchText(searchText: String) {
@@ -51,65 +59,60 @@ class TheoryViewModel @Inject constructor(
         }
     }
 
-    fun getBook(position: Int): TheoryInfo? {
-        return state.value?.let {
-            this.state.value!!.books[position]
-        }
-    }
 
-    fun isLiked(position: Int, bindRec: Boolean = false) {
+    fun isLiked(favId: Int, isFav: Boolean) {
         state.value?.let {
-            setPosition(position)
-            val isFavourite = this.state.value!!.books[position].isFavourite
-            this.state.value!!.books[position].isFavourite = isFavourite != true
-            this.state.value?.let {
-                it.books[position].isFavourite?.let { it1 ->
-                    Log.d(TAG, "isLiked: " + it1)
-                    update.execute(
-                        bookId = it.books[position].bookId,
-                        isFavourite = it1
-                    )
-                        .onEach { resource ->
-                            if (bindRec) {
-                                resource.data?.let {
-                                    favourite.value = true
-                                }
-                            }
-                        }
-                        .launchIn(viewModelScope)
-                }
+            var bookId = -1
+            var favouriteId = -1
+            if (isFav) {
+                bookId = favId
+            } else {
+                favouriteId = favId
             }
+            update.execute(
+                bookId = bookId,
+                favouriteId = favouriteId,
+                isFavourite = isFav,
+                property = "bookId"
+            ).onEach {
+                it.data?.let {
+                    isUpdated.value = true
+                }
+            }.launchIn(viewModelScope)
         }
-
-
     }
 
-    fun getpage(next: Boolean = false) {
+    fun getpage(next: Boolean = false, update: Boolean = false) {
         if (next) {
             incrementpage()
         } else {
-            pagetozero()
-            clearlist()
+            if(!update) {
+                pagetozero()
+                clearlist()
+            }
         }
         state.value?.let { state ->
             searchBooks.execute(
                 page = state.page,
                 bookType = state.bookType,
-                searchText = state.searchText
+                searchText = state.searchText,
+                update = update
             ).onEach {
-                this.state.value = state.copy(isLoading =  it.isLoading)
+
+                this.state.value = state.copy(isLoading = it.isLoading)
+
+
                 it.data?.let { list ->
                     this.state.value = state.copy(books = list)
                 }
-                this.state.value = state.copy(error =  it.error)
+
+                it.error?.let { error->
+                    this.state.value = state.copy(error = error)
+                }
+
             }.launchIn(viewModelScope)
         }
     }
 
-    private fun setPosition(position: Int) {
-        state.value?.let { state ->
-            this.state.value = state.copy(position = position)
-        }
-    }
 
 }

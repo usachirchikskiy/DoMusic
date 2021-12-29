@@ -2,7 +2,7 @@ package com.example.do_music.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.do_music.data.home.compositors.CompositorEntity
+import com.example.do_music.model.CompositorEntity
 import com.example.do_music.data.home.compositors.CompositorsDao
 import com.example.do_music.data.home.favourites.FavouritesDao
 import com.example.do_music.data.home.instruments.InstrumentsDao

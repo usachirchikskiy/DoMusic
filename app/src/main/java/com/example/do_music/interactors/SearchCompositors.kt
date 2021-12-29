@@ -3,9 +3,7 @@ package com.example.do_music.interactors
 import android.util.Log
 import com.example.do_music.data.home.compositors.CompositorsDao
 import com.example.do_music.data.home.compositors.returnOrderedCompositorQuery
-import com.example.do_music.data.home.compositors.toCompositorInfo
-import com.example.do_music.data.home.compositors.toEntity
-import com.example.do_music.model.CompositorInfo
+import com.example.do_music.model.CompositorEntity
 import com.example.do_music.network.main.OpenMainApiService
 import com.example.do_music.network.main.returnOrderedCompositorQuery
 import com.example.do_music.util.Resource
@@ -23,8 +21,8 @@ class SearchCompositors(
         searchText: String,
         country_filter: String,
         page: Int
-    ): Flow<Resource<List<CompositorInfo>>> = flow {
-        emit(Resource.loading<List<CompositorInfo>>())
+    ): Flow<Resource<List<CompositorEntity>>> = flow {
+        emit(Resource.loading<List<CompositorEntity>>())
 
         try {
             // catch network exception
@@ -36,7 +34,7 @@ class SearchCompositors(
 
             for (compositor in compositors_response) {
                 try {
-                    compositors.insertCompositor(compositor.toEntity())
+                    compositors.insertCompositor(compositor)
                 } catch (e: Exception) {
                     Log.d(TAG + " Error", e.message.toString())
                     e.printStackTrace()
@@ -47,15 +45,13 @@ class SearchCompositors(
                 page = page + 1,
                 country_filter = country_filter,
                 searchText = searchText
-            ).map {
-                it.toCompositorInfo()
-            }
+            )
 
             emit(Resource.success(data = cashed_compositors))
         } catch (throwable: Throwable) {
             Log.d("Error", throwable.toString()+" " +throwable.message.toString())
             emit(
-                Resource.error<List<CompositorInfo>>(throwable)
+                Resource.error<List<CompositorEntity>>(throwable)
             )
         }
     }

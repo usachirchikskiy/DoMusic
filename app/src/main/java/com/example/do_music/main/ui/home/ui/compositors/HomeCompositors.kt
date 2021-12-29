@@ -19,17 +19,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentHomeCompositorsBinding
 import com.example.do_music.main.ui.home.adapter.CompositorsAdapter
-import com.example.do_music.main.ui.home.adapter.InteractionCompositor
+import com.example.do_music.main.ui.home.adapter.Interaction_Instrument
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "HomeCompositors"
 
 @AndroidEntryPoint
 class HomeCompositors : Fragment(), TextWatcher,
-    View.OnClickListener, InteractionCompositor {
-    private lateinit var homeadapter: CompositorsAdapter
+    View.OnClickListener, Interaction_Instrument {
+    private var homeAdapter: CompositorsAdapter?=null
     private lateinit var binding: FragmentHomeCompositorsBinding
-
     private val viewModel: HomeCompositorViewModel by viewModels()
 
     override fun onCreateView(
@@ -42,10 +41,10 @@ class HomeCompositors : Fragment(), TextWatcher,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
-        setupObservers()
-        setupViews()
 
+        setupViews()
+        setupObservers()
+        setupRecyclerView()
     }
 
     private fun setupViews() {
@@ -57,16 +56,19 @@ class HomeCompositors : Fragment(), TextWatcher,
 
 
     private fun setupRecyclerView() {
-        homeadapter = CompositorsAdapter(this)
         binding.recv.apply {
             layoutManager = LinearLayoutManager(this@HomeCompositors.context)
+            homeAdapter = CompositorsAdapter(
+                interaction = this@HomeCompositors
+            )
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
                     if (
-                        lastPosition == homeadapter.itemCount.minus(1)
+                        lastPosition == homeAdapter!!.itemCount.minus(1)
+                        && viewModel.state.value?.isLoading == false
                     ) {
                         viewModel.getpage(true)
 //                        setPadding(0, 0, 0, 0)
@@ -74,7 +76,7 @@ class HomeCompositors : Fragment(), TextWatcher,
 
                 }
             })
-            adapter = homeadapter
+            adapter = homeAdapter
         }
 
     }
@@ -93,7 +95,9 @@ class HomeCompositors : Fragment(), TextWatcher,
         viewModel.state.observe(viewLifecycleOwner, Observer {
 
             showProgressBar(it.isLoading)
-            homeadapter.submitList(compositorList = it.compositors)
+            homeAdapter?.apply {
+                submitList(compositorList = it.compositors)
+            }
             it.error?.let {
                 showError(it)
             }
@@ -158,18 +162,22 @@ class HomeCompositors : Fragment(), TextWatcher,
         }
     }
 
-    override fun onItemSelected(compositorId: Int) {
+    override fun onItemSelected(compositorId: Int,nameOfCompositor:String) {
         Log.d(TAG, "onItemSelected: " + compositorId)
-        val bundle = bundleOf("id" to compositorId)
+        val bundle = bundleOf("id" to compositorId,"nameOfCompositor" to nameOfCompositor)
         findNavController().navigate(
             R.id.action_homeFragment_to_homeCompositorSelectedFragment,
             bundle
         )
     }
+
+    override fun onLikeSelected(itemId: Int,isFav:Boolean) {
+
+    }
 //
 //    override fun onDestroyView() {
 //        super.onDestroyView()
-////        homeadapter = null
+////        homeAdapter = null
 ////        _binding=null
 //        viewModel.setCountryFilter("")
 //    }

@@ -1,29 +1,23 @@
 package com.example.do_music.main.ui.home.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
-import com.example.do_music.R
 import com.example.do_music.databinding.CardOfHomeBinding
-import com.example.do_music.model.CompositorInfo
-import com.example.do_music.model.Instrument
+import com.example.do_music.model.CompositorEntity
 
 class CompositorsAdapter(
-    private val interaction: InteractionCompositor
+    private val interaction: Interaction_Instrument
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
-    private val differCallback = object : DiffUtil.ItemCallback<CompositorInfo>() {
-        override fun areItemsTheSame(oldItem: CompositorInfo, newItem: CompositorInfo): Boolean {
+    private val differCallback = object : DiffUtil.ItemCallback<CompositorEntity>() {
+        override fun areItemsTheSame(oldItem: CompositorEntity, newItem: CompositorEntity): Boolean {
             return newItem.id==oldItem.id
         }
 
-        override fun areContentsTheSame(oldItem: CompositorInfo, newItem: CompositorInfo): Boolean {
+        override fun areContentsTheSame(oldItem: CompositorEntity, newItem: CompositorEntity): Boolean {
             return newItem == oldItem
         }
     }
@@ -36,14 +30,14 @@ class CompositorsAdapter(
         )
 
 class CompositorViewHolder (
-    private val interaction: InteractionCompositor,
+    private val interaction: Interaction_Instrument,//InteractionCompositor,
     private val binding: CardOfHomeBinding
     ) :
     RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(compositor: CompositorInfo) {
+        fun bind(compositor: CompositorEntity) {
                 binding.root.setOnClickListener{
-                    interaction?.onItemSelected(compositor.id)
+                    interaction.onItemSelected(compositor.id,compositor.name)
                 }
                  Glide.with(binding.root)
                     .load("https://domusic.uz/api/doc/logo?mini=true&uniqueName="+compositor.fileId)
@@ -88,7 +82,7 @@ class CompositorViewHolder (
             }
         }
     }
-    fun submitList(compositorList: List<CompositorInfo>?, ){
+    fun submitList(compositorList: List<CompositorEntity>?, ){
         val newList = compositorList?.toMutableList()
         differ.submitList(newList)
     }
@@ -99,6 +93,6 @@ class CompositorViewHolder (
 }
 
 
-interface InteractionCompositor {
-    fun onItemSelected(id: Int)
-}
+//interface InteractionCompositor {
+//    fun onItemSelected(id: Int)
+//}

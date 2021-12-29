@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.do_music.model.Favourite
 import com.example.do_music.model.Instrument
 import com.example.do_music.util.Constants
 
@@ -19,6 +20,15 @@ interface InstrumentsDao {
 //    ELSE 'The quantity is under 30'
 //    END AS QuantityText
 //    FROM OrderDetails
+
+    @Query(
+        """
+        SELECT * FROM instruments 
+        WHERE noteId = :noteId
+        """
+    )
+    suspend fun getInstrument(noteId:Int):Instrument
+
 
 
     @Query(
@@ -49,29 +59,9 @@ interface InstrumentsDao {
 
     @Query(
         """
-        UPDATE instruments SET 
-        isFavourite = :isFavourite 
-        WHERE noteId = :noteId
-        """
-    )
-    suspend fun updateInstrument(noteId: Int, isFavourite: Boolean = true)
-
-
-    @Query(
-        """
-        UPDATE instruments SET 
-        isFavourite = :isFavourite 
-        WHERE noteId NOT IN (:noteIds)
-        """
-    )
-    suspend fun updateInstrumentFalse(noteIds: List<Int>, isFavourite: Boolean = false)
-
-
-    @Query(
-        """
     SELECT * FROM instruments
     WHERE noteName LIKE '%' || :searchText || '%'
-    OR instrumentName  LIKE '%' || :searchText || '%'
+    OR compositorName  LIKE '%' || :searchText || '%'
     ORDER BY noteId DESC
     LIMIT (:page * :pageSize)
     """
@@ -82,21 +72,12 @@ interface InstrumentsDao {
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<Instrument>
 
-//    @Query(
-//        """
-//    SELECT * FROM instruments
-//    WHERE isFavourite == :isFav
-//    """
-//    )
-//
-//    suspend fun getFav(isFav:Boolean = true): List<Instrument>
-
 
     @Query(
         """
     SELECT * FROM instruments 
     WHERE (noteName LIKE '%' || :searchText || '%'
-    OR instrumentName  LIKE '%' || :searchText || '%')
+    OR compositorName  LIKE '%' || :searchText || '%')
     AND instrumentGroupName = :instrumentGroupName
     ORDER BY noteId DESC
     LIMIT (:page * :pageSize)
@@ -114,7 +95,7 @@ interface InstrumentsDao {
         """
     SELECT * FROM instruments 
     WHERE (noteName LIKE '%' || :searchText || '%'
-    OR instrumentName  LIKE '%' || :searchText || '%')
+    OR compositorName  LIKE '%' || :searchText || '%')
     AND (instrumentGroupName = :instrumentGroupName
     AND (ensembles= :ensembles 
     OR introductionsAndVariations = :introductionsAndVariations
@@ -148,7 +129,7 @@ interface InstrumentsDao {
         """
     SELECT * FROM instruments 
     WHERE (noteName LIKE '%' || :searchText || '%'
-    OR instrumentName  LIKE '%' || :searchText || '%')
+    OR compositorName  LIKE '%' || :searchText || '%')
     AND (instrumentGroupName = :instrumentGroupName
     AND (ensembles= :ensembles 
     OR introductionsAndVariations = :introductionsAndVariations
@@ -181,20 +162,11 @@ interface InstrumentsDao {
     @Query("DELETE FROM instruments")
     suspend fun deleteAllInstruments()
 
-//    @Query("SELECT noteId FROM instruments WHERE noteId = :id LIMIT 1")
-//    suspend fun getItemId(id: Int): Int?
-//
-//
-//    suspend fun insertOrUpdate(item: Instrument) {
-//        database.runInTransaction {
-//            val id = getItemDao().getItemId(item.id)
-//
-//            if(id == null)
-//                getItemDao().insert(item)
-//            else
-//                getItemDao().update(item)
-//        }
-//    }
+    @Query("UPDATE instruments SET favoriteId = :favoriteId , favorite = :favorite WHERE noteId =:noteId")
+    suspend fun instrumentUpdate(favoriteId:Int?,favorite:Boolean,noteId: Int)
+
+    @Query("UPDATE instruments SET favoriteId = null , favorite = :favorite WHERE favoriteId =:favoriteId")
+    suspend fun instrumentUpdateToFalse(favorite:Boolean,favoriteId: Int)
 
 }
 
@@ -212,13 +184,13 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
     var playsAndSolos = "-1"
     var sonatas = "-1"
     var studiesAndExercises = "-1"
-    Log.d(
-        TAG, "instrgroupname: " + instrumentGroupName + "\n" +
-                "ansamble " + noteGroupType + "\n" +
-                "instumentId " + instrumentId + "\n" +
-                "page" + page.toString() + "\n" +
-                "searchText " + searchText + "\n"
-    )
+//    Log.d(
+//        TAG, "instrgroupname: " + instrumentGroupName + "\n" +
+//                "ansamble " + noteGroupType + "\n" +
+//                "instumentId " + instrumentId + "\n" +
+//                "page" + page.toString() + "\n" +
+//                "searchText " + searchText + "\n"
+//    )
     when (noteGroupType) {
         "ENSEMBLES" -> {
             ensembles = "1"
@@ -281,7 +253,6 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
         )
     }
 
-    Log.d(TAG, "returnOrderedInstrumentsQuery: " + "getALL")
     return getAllInstrumentsSearch(searchText = searchText, page = page)
 
 }

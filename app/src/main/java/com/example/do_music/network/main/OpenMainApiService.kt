@@ -45,7 +45,8 @@ interface OpenMainApiService {
         @Query("pageNumber") pageNumber: Int,
         @Query("docType") docType: String,
         @Query("pageSize") pageSize: Int = 10,
-        @Query("favoriteClass") favoriteClass: String = ""
+        @Query("favoriteClass") favoriteClass: String = "",
+        @Query("searchText") searchText:String = ""
     ): GetFavouritesResponse
 
 
@@ -59,9 +60,9 @@ interface OpenMainApiService {
         @Query("searchText") searchText: String = " "
     ): GetInstrumentsResponse
 
-    @Streaming
-    @GET("api/doc")
-    suspend fun downloadFile(@Query("uniqueName") uniqueName: String): Response<ResponseBody>
+//    @Streaming
+//    @GET("api/doc")
+//    suspend fun downloadFile(@Query("uniqueName") uniqueName: String): Response<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("api/favorites/add")
@@ -69,9 +70,15 @@ interface OpenMainApiService {
         @Body id: String
     ): FavouriteItem
 
+    @Headers("Content-Type: application/json")
+    @POST("api/favorites/class")
+    suspend fun addFavouriteClass(
+        @Body body: String
+    ): FavouriteItem
+
+
     @DELETE("api/favorites/remove/{favoriteId}")
     suspend fun removeFromFavourites(@Path("favoriteId") favoriteId: Int): String
-
 
     @GET("api/books/list/books")
     suspend fun getBooks(

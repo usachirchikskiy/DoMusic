@@ -24,7 +24,7 @@
     <EditText
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_et"
-        style="@style/HintEditText"
+        style="@style/SearchEditText"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginTop="20dp"

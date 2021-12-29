@@ -1,6 +1,5 @@
 package com.example.do_music.main.ui.home.ui.theory
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,10 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.core.os.bundleOf
-import androidx.core.util.Preconditions
-import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -22,56 +18,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentTheoryBinding
-import com.example.do_music.main.ui.home.adapter.Interaction
+import com.example.do_music.main.ui.home.adapter.Interaction_Instrument
 import com.example.do_music.main.ui.home.adapter.TheoryAdapter
-import com.example.do_music.model.TheoryInfo
+import com.example.do_music.util.Constants.Companion.SHOULD_REFRESH
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.log
 
 
 private const val TAG = "TheoryFragment"
 
 @AndroidEntryPoint
-class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interaction {
+class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interaction_Instrument {
 
     private var theoryAdapter: TheoryAdapter? = null
     private var _binding: FragmentTheoryBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TheoryViewModel by activityViewModels()
-//
-//    companion object {
-//        const val REQUEST_KEY = "result-listener-request-key"
-//        const val KEY_NUMBER = "key-number"
-//    }
+    private val viewModel: TheoryViewModel by viewModels()
 
-//
-//    @SuppressLint("RestrictedApi")
-//    private fun onFragmentResult(requestKey: String, result: Bundle) {
-//        Preconditions.checkState(REQUEST_KEY == requestKey)
-//
-//        val number = result.getInt(KEY_NUMBER)
-//        Log.d(TAG, "onFragmentResult: " + number)
-//        viewModel.isLiked(number)
-//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         theoryAdapter = TheoryAdapter(this@TheoryFragment)
-//        parentFragmentManager.setFragmentResultListener(
-//            REQUEST_KEY,
-//            this,
-//            FragmentResultListener { requestKey, result ->
-//                onFragmentResult(requestKey, result)
-//            })
-
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentTheoryBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -79,33 +51,21 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
+            "BOOK"
+        )?.observe(viewLifecycleOwner) { shouldRefresh ->
+            shouldRefresh?.run {
 
-//        setFragmentResultListener("KEY") { key, bundle ->
-//            // read from the bundle
-//            Log.d(TAG, "onViewCreated: " + bundle)
-//        }
-//        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("key")?.observe(viewLifecycleOwner) {result ->
-//            Log.d(TAG, "onViewCreated: " + result)           // Do something with the result.
-//        }
-
+                viewModel.getpage(update = true)
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                    "BOOK",
+                    null
+                )
+            }
+        }
         setupObservers()
         setupRecyclerView()
         setupViews()
-//        setFragmentResultListener("requestKey") { key, bundle ->
-//            // We use a String here, but any type that can be put in a Bundle is supported
-//            val position = bundle.getInt("bundleKey")
-//
-//            Log.d(TAG, "onCreate: " + position)
-//            viewModel.isLiked(position)
-//
-//        }
-//        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("SHOULD_REFRESH")?.observe(viewLifecycleOwner) { shouldRefresh ->
-//            shouldRefresh?.run {
-//                Log.d(TAG, "onViewCreated: " + this.toString())
-//                viewModel.isLiked(0)
-//                findNavController().currentBackStackEntry?.savedStateHandle?.set("SHOULD_REFRESH", null)
-//            }
-//        }
 
     }
 
@@ -126,9 +86,9 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
                     if (
                         lastPosition == theoryAdapter?.itemCount?.minus(1)
+                        && viewModel.state.value?.isLoading == false
                     ) {
                         viewModel.getpage(true)
-//                        setPadding(0, 0, 0, 0)
                     }
 
                 }
@@ -138,10 +98,6 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 
     }
 
-
-    private fun hideProgressBar() {
-        binding.paginationProgressBar.visibility = View.INVISIBLE
-    }
 
     private fun showProgressBar(isLoading: Boolean) {
         if (isLoading) {
@@ -155,12 +111,18 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-
+            Log.d(TAG, "setupObservers: " + it)
             showProgressBar(it.isLoading)
 
+
             theoryAdapter?.apply {
-                submitList(books = it.books)
-                Log.d(TAG, "setupObservers: ")
+                it.books.isNotEmpty().let { isNotEmpty ->
+                    if (isNotEmpty) {
+                        submitList(books = it.books)
+                    }
+                }
+
+
             }
 
             it.error?.let {
@@ -169,9 +131,9 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 
         })
 
-        viewModel.favourite.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                viewModel.state.value?.let { it1 -> theoryAdapter?.notifyItemChanged(it1.position) }
+        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.getpage(update = true)
             }
         })
     }
@@ -188,6 +150,7 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
         val searchText = "" + p0.toString()
         viewModel.setSearchText(searchText)
         viewModel.getpage()
+        viewModel.resetLoading()
     }
 
     override fun afterTextChanged(p0: Editable?) {
@@ -199,7 +162,6 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
         disable: CheckBox,
         filter: String
     ) {
-        Log.d(TAG, "filtersearch: " + enable.isChecked.toString())
         if (enable.isChecked == true) {
             enable.setChecked(true)
             disable.setChecked(false)
@@ -223,15 +185,15 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
         }
     }
 
-    override fun onItemSelected(position: Int, item: TheoryInfo) {
+    override fun onItemSelected(itemId: Int, nameOfCompositor: String) {
         viewModel.state.value?.let { state ->
-            val bundle = bundleOf("position" to position)
-            findNavController().navigate(R.id.action_homeFragment_to_itemSelectedFragment, bundle)
+            val bundle = bundleOf("itemId" to itemId, "fragment" to "bookId")
+            findNavController().navigate(R.id.action_homeFragment_to_itemSelectedInstrument, bundle)
         }
     }
 
-    override fun onLikeSelected(position: Int) {
-        viewModel.isLiked(position)
+    override fun onLikeSelected(itemId: Int, isFav: Boolean) {
+        viewModel.isLiked(itemId, isFav)
     }
 
     override fun onDestroyView() {
