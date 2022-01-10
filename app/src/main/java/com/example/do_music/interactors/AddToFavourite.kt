@@ -100,8 +100,6 @@ class AddToFavourite(
             } catch (e: Throwable) {
                 Log.d(TAG, "Error: " + e.message.toString())
             }
-
-            Log.d(TAG, "favoriteChanged " + favorite)
             emit(Resource.success("Updated"))
         } catch (throwable: Throwable) {
             Log.d(TAG, " Error " + throwable.message.toString())

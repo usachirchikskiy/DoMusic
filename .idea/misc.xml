@@ -35,20 +35,20 @@
         <entry key="app/src/main/res/drawable/outline_file_download_20.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/splash_image.xml" value="0.18796296296296297" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.14" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.11126126126126126" />
         <entry key="app/src/main/res/layout/are_u_sure_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/card_device.xml" value="0.2" />
         <entry key="app/src/main/res/layout/card_of_home.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/card_of_theory.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/card_of_theory.xml" value="0.3037249283667622" />
         <entry key="app/src/main/res/layout/checkbox_card.xml" value="1.1" />
-        <entry key="app/src/main/res/layout/expand_about_us.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/expand_about_us.xml" value="0.18" />
         <entry key="app/src/main/res/layout/expand_devices.xml" value="0.1" />
         <entry key="app/src/main/res/layout/expand_language.xml" value="0.25" />
         <entry key="app/src/main/res/layout/expand_personal.xml" value="0.2" />
         <entry key="app/src/main/res/layout/expand_tech_support.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_favourite.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/fragment_favourite.xml" value="0.21327967806841047" />
         <entry key="app/src/main/res/layout/fragment_forgot_password.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_home_child.xml" value="0.1671171171171171" />
@@ -58,7 +58,7 @@
         <entry key="app/src/main/res/layout/fragment_item_selected.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_item_selected_instrument.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/fragment_theory.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_theory.xml" value="0.27439024390243905" />
         <entry key="app/src/main/res/layout/fragment_vocals.xml" value="0.25" />
         <entry key="app/src/main/res/menu/main_bottom_navigation_menu.xml" value="0.1" />
       </map>

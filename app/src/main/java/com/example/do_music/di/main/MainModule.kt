@@ -104,7 +104,11 @@ object MainModule {
 
     @Singleton
     @Provides
-    fun provideSearchItem(openMainApiService: OpenMainApiService): SearchItem {
-        return SearchItem(openMainApiService)
+    fun provideSearchItem(
+        vocalsDao: VocalsDao,
+        instrumentsDao: InstrumentsDao,
+        theoryDao: TheoryDao
+    ): SearchItem {
+        return SearchItem(vocalsDao, instrumentsDao, theoryDao)
     }
 }

@@ -62,5 +62,6 @@
     <string name="technical_problems">Техническая проблема</string>
     <string name="note_not_found">Не нашли ноту?</string>
     <string name="preferences">Пожелания и предпочтения</string>
-    <string name="input_here">Введите сообщение здесь</string>
+    <string name="input_here">Введите сообщение </string>
+    <string name="no_internet_connection">Неn интернет соединения</string>
 </resources>

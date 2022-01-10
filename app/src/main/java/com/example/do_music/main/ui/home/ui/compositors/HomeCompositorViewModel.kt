@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 
 import com.example.do_music.interactors.SearchCompositors
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -18,8 +19,10 @@ class HomeCompositorViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: MutableLiveData<HomeCompositorsState> = MutableLiveData(HomeCompositorsState())
+    private var getСompositorsJob: Job? = null
 
     init {
+        Log.d(TAG, ": INIT")
         getpage()
     }
 
@@ -27,6 +30,10 @@ class HomeCompositorViewModel @Inject constructor(
         state.value?.let { state ->
             this.state.value = state.copy(compositors = listOf())
         }
+    }
+
+    fun setLoadingToFalse(){
+        this.state.value = state.value?.copy(isLoading = false)
     }
 
     fun setSearchText(searchText: String) {
@@ -38,27 +45,31 @@ class HomeCompositorViewModel @Inject constructor(
     }
 
     fun getpage(next: Boolean = false) {
+        getСompositorsJob?.cancel()
+        Log.d(TAG, "getpage: " + getСompositorsJob.toString())
         if (next == true) {
             incrementpage()
         } else {
             pagetozero()
             clearlist()
         }
+
         state.value?.let { state ->
-            searchCompositors.execute(
+            getСompositorsJob = searchCompositors.execute(
                 page = state.page,
                 country_filter = state.country_filter,
                 searchText = state.searchText
             ).onEach {
 
-//                this.state.value = state.copy(isLoading = it.isLoading)
+                this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
                     this.state.value = state.copy(compositors = list)
                 }
 
-//                this.state.value = state.copy(error = it.error)
-
+                it.error?.let { error ->
+                    this.state.value = state.copy(error = error)
+                }
 
             }.launchIn(viewModelScope)
         }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentFavouriteBinding
+import com.example.do_music.main.StateMessageCallback
+import com.example.do_music.main.deleteNote
+import com.example.do_music.main.noInternet
+import com.example.do_music.main.ui.BaseFragment
 import com.example.do_music.main.ui.home.adapter.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,24 +28,34 @@ private const val TAG = "FavouriteFragment"
 
 
 @AndroidEntryPoint
-class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeListener,
-    Interaction_Favourite, CompoundButton.OnCheckedChangeListener {
-    private var arrayList = arrayListOf<CheckBox>()
-    private lateinit var _binding: FragmentFavouriteBinding
-    private val binding get() = _binding
+class FavouriteFragment : BaseFragment(), TextWatcher,
+    RadioGroup.OnCheckedChangeListener,
+    Interaction_Favourite
+//    CompoundButton.OnCheckedChangeListener
+{
+    //    private var arrayList = arrayListOf<CheckBox>()
+    private var _binding: FragmentFavouriteBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: FavouriteViewModel by viewModels()
     private var favouriteAdapter: FavouriteAdapter? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate: " + viewModel.toString())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFavouriteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated: ")
         val docType = viewModel.state.value?.docType
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(docType!!)
             ?.observe(viewLifecycleOwner) { shouldRefresh ->
@@ -61,6 +74,7 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
     }
 
     private fun setupRecyclerView() {
+        Log.d(TAG, "setupRecyclerView: ")
         binding.recv.apply {
             layoutManager = LinearLayoutManager(this@FavouriteFragment.context)
             favouriteAdapter = FavouriteAdapter(interaction = this@FavouriteFragment)
@@ -87,21 +101,21 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, {
 
-            showProgressBar(it.isLoading)
+            uiCommunicationListener.displayProgressBar(it.isLoading)
 
             favouriteAdapter?.apply {
-
                 submitList(favourites = it.favouriteItems)
             }
 
             it.error?.let {
-                showError(it)
+//                nointernet
             }
 
         })
 
         viewModel.isUpdated.observe(viewLifecycleOwner, {
             if (it) {
+                Log.d(TAG, "setupObservers: isUpdated")
                 viewModel.getPage(update = true)
                 val docType = viewModel.state.value?.docType
 
@@ -113,26 +127,22 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
         })
     }
 
-    private fun showError(it: Throwable) {
-
-    }
-
-    private fun showProgressBar(isLoading: Boolean) {
-        if (isLoading) {
-            binding.paginationProgressBar.visibility = View.VISIBLE
-        } else {
-            binding.paginationProgressBar.visibility = View.INVISIBLE
-        }
-
-    }
+//    private fun showProgressBar(isLoading: Boolean) {
+//        if (isLoading) {
+//            binding.paginationProgressBar.visibility = View.VISIBLE
+//        } else {
+//            binding.paginationProgressBar.visibility = View.INVISIBLE
+//        }
+//
+//    }
 
     private fun setupViews(docType: String) {
-        arrayList.add(binding.one)
-        arrayList.add(binding.two)
-        arrayList.add(binding.three)
-        arrayList.add(binding.four)
-        arrayList.add(binding.five)
-        arrayList.add(binding.six)
+//        arrayList.add(binding.one)
+//        arrayList.add(binding.two)
+//        arrayList.add(binding.three)
+//        arrayList.add(binding.four)
+//        arrayList.add(binding.five)
+//        arrayList.add(binding.six)
 
         when (docType) {
             "BOOK" -> {
@@ -147,12 +157,12 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
         }
         binding.searchEt.addTextChangedListener(this)
         binding.groupDocType.setOnCheckedChangeListener(this)
-        binding.one.setOnCheckedChangeListener(this)
-        binding.two.setOnCheckedChangeListener(this)
-        binding.three.setOnCheckedChangeListener(this)
-        binding.four.setOnCheckedChangeListener(this)
-        binding.five.setOnCheckedChangeListener(this)
-        binding.six.setOnCheckedChangeListener(this)
+//        binding.one.setOnCheckedChangeListener(this)
+//        binding.two.setOnCheckedChangeListener(this)
+//        binding.three.setOnCheckedChangeListener(this)
+//        binding.four.setOnCheckedChangeListener(this)
+//        binding.five.setOnCheckedChangeListener(this)
+//        binding.six.setOnCheckedChangeListener(this)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -161,21 +171,22 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
+        Log.d(TAG, "onTextChanged: " + s.toString())
         viewModel.setSearchText(searchText)
-        viewModel.getPage()
+//        viewModel.getPage()
     }
 
     override fun afterTextChanged(s: Editable?) {
 
     }
 
-    private fun changeState(checkBox: CompoundButton) {
-        for (i in arrayList) {
-            if (checkBox != i) {
-                i.isChecked = false
-            }
-        }
-    }
+//    private fun changeState(checkBox: CompoundButton) {
+//        for (i in arrayList) {
+//            if (checkBox != i) {
+//                i.isChecked = false
+//            }
+//        }
+//    }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
 
@@ -220,42 +231,43 @@ class FavouriteFragment : Fragment(), TextWatcher, RadioGroup.OnCheckedChangeLis
         }
     }
 
-    override fun onClassSelected(classText: String, position: Int) {
-        val favItem = viewModel.state.value!!.favouriteItems[position]
-        val favouriteId = favItem.favoriteId
-        favouriteId?.let { viewModel.addFavClass(it, classText) }
-        Log.d(TAG, "onClassSelected: " + classText)
-    }
+//    override fun onClassSelected(classText: String, position: Int) {
+//        val favItem = viewModel.state.value!!.favouriteItems[position]
+//        val favouriteId = favItem.favoriteId
+//        favouriteId?.let { viewModel.addFavClass(it, classText) }
+//        Log.d(TAG, "onClassSelected: " + classText)
+//    }
 
     override fun onDeleteSelected(itemId: Int, isFav: Boolean, compositorName: String) {
-
-        val dialog = MaterialDialog(this@FavouriteFragment.requireContext())
-            .customView(R.layout.are_u_sure_dialog)
-        dialog.findViewById<TextView>(R.id.body).text = compositorName
-        dialog.findViewById<TextView>(R.id.positive_button).setOnClickListener {
-            viewModel.isLiked(favId = itemId, isFav = isFav)
-            dialog.dismiss()
-        }
-        dialog.findViewById<TextView>(R.id.negative_button).setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
+        deleteNote(context,
+            compositorName = compositorName,
+            stateMessageCallback = object : StateMessageCallback {
+                override fun deleteNoteAgreed() {
+                    viewModel.isLiked(favId = itemId, isFav = isFav)
+                }
+            })
     }
 
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        var favClass = "UNKNOWN"
-        if (buttonView!!.isChecked) {
-            changeState(buttonView)
-            val btn_txt = buttonView.text.toString()
-            if(btn_txt.length>1){
-                favClass = "CLASS_" + btn_txt.replace("-","")
-            }
-            else{
-                favClass = "CLASS_" + btn_txt
-            }
-        }
-        viewModel.setFavClass(favClass)
-        viewModel.getPage()
+//    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+//        var favClass = "UNKNOWN"
+//        if (buttonView!!.isChecked) {
+//            changeState(buttonView)
+//            val btn_txt = buttonView.text.toString()
+//            if(btn_txt.length>1){
+//                favClass = "CLASS_" + btn_txt.replace("-","")
+//            }
+//            else{
+//                favClass = "CLASS_" + btn_txt
+//            }
+//        }
+//        viewModel.setFavClass(favClass)
+//        viewModel.getPage()
+//    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        favouriteAdapter = null
+        _binding = null
 
     }
 

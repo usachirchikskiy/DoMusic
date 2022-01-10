@@ -1,42 +1,62 @@
 package com.example.do_music.main
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.example.do_music.BaseActivity
 import com.example.do_music.R
 import com.example.do_music.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var navController: NavController
 
+
+    //    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityMainBinding
+
+    override fun hideKeyboadrd() {
+        if (currentFocus != null) {
+            val inputMethodManager = getSystemService(
+                Context.INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+            inputMethodManager
+                .hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+    }
+
+
+    override fun displayProgressBar(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         navController = navHostFragment.navController
-//        navController = findNavController(R.id.newsNavHostFragment)
         bottomNavigationView = binding.bottomNavigationView
-        bottomNavigationView.itemIconTintList=null
+        bottomNavigationView.itemIconTintList = null
         bottomNavigationView.setupWithNavController(navController)
 
-//        val appBarConfiguration = AppBarConfiguration(navController.graph)
-//        view.findViewById<Toolbar>(R.id.toolbar)
-//            .setupWithNavController(navController, appBarConfiguration)
-
+//        setSupportActionBar(binding.toolBar)
+//        appBarConfiguration = AppBarConfiguration(
+//            navController.graph
+//        )
+//        binding.toolBar.setupWithNavController(navController, appBarConfiguration)
     }
 }

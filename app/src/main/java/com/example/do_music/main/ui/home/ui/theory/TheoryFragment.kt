@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentTheoryBinding
+import com.example.do_music.main.ui.BaseFragment
 import com.example.do_music.main.ui.home.adapter.Interaction_Instrument
 import com.example.do_music.main.ui.home.adapter.TheoryAdapter
 import com.example.do_music.util.Constants.Companion.SHOULD_REFRESH
@@ -27,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "TheoryFragment"
 
 @AndroidEntryPoint
-class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interaction_Instrument {
+class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Interaction_Instrument {
 
     private var theoryAdapter: TheoryAdapter? = null
     private var _binding: FragmentTheoryBinding? = null
@@ -35,10 +36,6 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
     private val viewModel: TheoryViewModel by viewModels()
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        theoryAdapter = TheoryAdapter(this@TheoryFragment)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +60,7 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
                 )
             }
         }
+        Log.d(TAG, "onViewCreated: " + viewModel.toString())
         setupObservers()
         setupRecyclerView()
         setupViews()
@@ -73,12 +71,18 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
         binding.searchEt.addTextChangedListener(this)
         binding.theorySalfedjo.setOnClickListener(this)
         binding.literature.setOnClickListener(this)
+        viewModel.state.value?.let {
+            if(it.searchText!=""){
+                binding.searchEt.setText(it.searchText)
+            }
+        }
     }
 
 
     private fun setupRecyclerView() {
         binding.recv.apply {
             layoutManager = LinearLayoutManager(this@TheoryFragment.context)
+            theoryAdapter = TheoryAdapter(this@TheoryFragment)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
@@ -98,59 +102,40 @@ class TheoryFragment : Fragment(), TextWatcher, View.OnClickListener, Interactio
 
     }
 
-
-    private fun showProgressBar(isLoading: Boolean) {
-        if (isLoading) {
-            binding.paginationProgressBar.visibility = View.VISIBLE
-        } else {
-            binding.paginationProgressBar.visibility = View.INVISIBLE
-        }
-
-    }
-
-
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "setupObservers: " + it)
-            showProgressBar(it.isLoading)
-
+            uiCommunicationListener.displayProgressBar(it.isLoading)
+//            showProgressBar(it.isLoading)
 
             theoryAdapter?.apply {
-                it.books.isNotEmpty().let { isNotEmpty ->
-                    if (isNotEmpty) {
-                        submitList(books = it.books)
-                    }
-                }
-
-
+                submitList(books = it.books)
             }
 
             it.error?.let {
-                showError(it)
+
             }
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
+        viewModel.isUpdated.observe(viewLifecycleOwner, Observer
+        {
             if (it) {
                 viewModel.getpage(update = true)
             }
         })
     }
 
-    private fun showError(it: Throwable) {
-
-    }
-
-
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
     }
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
+        Log.d(TAG, "onTextChanged: ")
+        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getpage()
-        viewModel.resetLoading()
+
     }
 
     override fun afterTextChanged(p0: Editable?) {

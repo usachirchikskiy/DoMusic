@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentHomeCompositorsBinding
+import com.example.do_music.main.ui.BaseFragment
 import com.example.do_music.main.ui.home.adapter.CompositorsAdapter
 import com.example.do_music.main.ui.home.adapter.Interaction_Instrument
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,17 +25,26 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "HomeCompositors"
 
 @AndroidEntryPoint
-class HomeCompositors : Fragment(), TextWatcher,
+class HomeCompositors : BaseFragment(), TextWatcher,
     View.OnClickListener, Interaction_Instrument {
     private var homeAdapter: CompositorsAdapter?=null
-    private lateinit var binding: FragmentHomeCompositorsBinding
+    private var _binding: FragmentHomeCompositorsBinding?=null
+    private val binding get() = _binding!!
+
     private val viewModel: HomeCompositorViewModel by viewModels()
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate: " + viewModel.toString())
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeCompositorsBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeCompositorsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -71,7 +80,6 @@ class HomeCompositors : Fragment(), TextWatcher,
                         && viewModel.state.value?.isLoading == false
                     ) {
                         viewModel.getpage(true)
-//                        setPadding(0, 0, 0, 0)
                     }
 
                 }
@@ -82,19 +90,20 @@ class HomeCompositors : Fragment(), TextWatcher,
     }
 
 
-    private fun showProgressBar(isLoading: Boolean) {
-        if (isLoading) {
-            binding.paginationProgressBar.visibility = View.VISIBLE
-        } else {
-            binding.paginationProgressBar.visibility = View.INVISIBLE
-        }
-
-    }
+//    private fun showProgressBar(isLoading: Boolean) {
+//        if (isLoading) {
+//            binding.paginationProgressBar.visibility = View.VISIBLE
+//        } else {
+//            binding.paginationProgressBar.visibility = View.INVISIBLE
+//        }
+//
+//    }
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "setupObservers: " + it)
+            uiCommunicationListener.displayProgressBar(it.isLoading)
 
-            showProgressBar(it.isLoading)
             homeAdapter?.apply {
                 submitList(compositorList = it.compositors)
             }
@@ -114,9 +123,8 @@ class HomeCompositors : Fragment(), TextWatcher,
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
-//        if(searchText==""){
-//            binding.searchEt.setFocusable(false)
-//        }
+        Log.d(TAG, "onTextChanged: " + searchText)
+        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getpage()
     }
@@ -124,7 +132,7 @@ class HomeCompositors : Fragment(), TextWatcher,
     override fun afterTextChanged(p0: Editable?) {
     }
 
-    fun filtersearch(
+    private fun filtersearch(
         enable: CheckBox,
         disable_first: CheckBox,
         disable_second: CheckBox,
@@ -162,9 +170,9 @@ class HomeCompositors : Fragment(), TextWatcher,
         }
     }
 
-    override fun onItemSelected(compositorId: Int,nameOfCompositor:String) {
-        Log.d(TAG, "onItemSelected: " + compositorId)
-        val bundle = bundleOf("id" to compositorId,"nameOfCompositor" to nameOfCompositor)
+    override fun onItemSelected(itemId: Int, nameOfCompositor:String) {
+        Log.d(TAG, "onItemSelected: " + itemId)
+        val bundle = bundleOf("id" to itemId,"nameOfCompositor" to nameOfCompositor)
         findNavController().navigate(
             R.id.action_homeFragment_to_homeCompositorSelectedFragment,
             bundle
@@ -174,14 +182,13 @@ class HomeCompositors : Fragment(), TextWatcher,
     override fun onLikeSelected(itemId: Int,isFav:Boolean) {
 
     }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-////        homeAdapter = null
-////        _binding=null
-//        viewModel.setCountryFilter("")
-//    }
-//
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        homeAdapter = null
+        _binding = null
+    }
 
 }
 

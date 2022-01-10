@@ -1,21 +1,22 @@
 package com.example.do_music.main.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.do_music.R
+import androidx.viewpager2.widget.ViewPager2
 import com.example.do_music.databinding.FragmentHomeBinding
-import com.example.do_music.databinding.FragmentLoginBinding
+import com.example.do_music.main.ui.BaseFragment
 import com.example.do_music.main.ui.home.adapter.ViewPagerAdapter
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
 
 private const val TAG = "HomeFragment"
-class HomeFragment : Fragment() {
+
+@AndroidEntryPoint
+class HomeFragment : BaseFragment() {
     val home_elements = arrayOf(
         "Композиторы",
         "Теория",
@@ -23,26 +24,51 @@ class HomeFragment : Fragment() {
         "Вокал"
     )
 
-    private lateinit var binding: FragmentHomeBinding
+    private var mediator: TabLayoutMediator? = null
+    private var viewPager: ViewPager2? = null
+    private var tabLayout: TabLayout? = null
+
+    //    private var adapter: ViewPagerAdapter?=null
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
+//    private val homeCompositorViewModel: HomeCompositorViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val view = binding.root
-        val viewPager = binding.viewPager
-        val tabLayout = binding.tabLayout
-        val adapter = activity?.let { ViewPagerAdapter(it.supportFragmentManager, lifecycle) }
-
-        viewPager.adapter = adapter
-
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = home_elements[position]
-        }.attach()
-
-        return view
+    ): View {
+        _binding = FragmentHomeBinding.inflate(layoutInflater)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewPager = binding.viewPager
+        tabLayout = binding.tabLayout
 
+        viewPager!!.adapter = ViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+
+
+        mediator = TabLayoutMediator(tabLayout!!, viewPager!!) { tab, position ->
+            tab.text = home_elements[position]
+        }
+        mediator!!.attach()
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewPager?.let {
+            it.adapter = null
+        }
+        viewPager = null
+        mediator?.detach()
+        mediator = null
+        tabLayout = null
+        _binding = null
+
+//
+
+    }
 }

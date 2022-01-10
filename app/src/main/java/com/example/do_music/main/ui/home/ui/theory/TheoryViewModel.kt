@@ -37,7 +37,7 @@ class TheoryViewModel @Inject constructor(
         }
     }
 
-    fun resetLoading(){
+    fun setLoadingToFalse() {
         this.state.value = state.value?.copy(isLoading = false)
     }
 
@@ -61,7 +61,7 @@ class TheoryViewModel @Inject constructor(
 
 
     fun isLiked(favId: Int, isFav: Boolean) {
-        state.value?.let {
+        state.value?.let { state->
             var bookId = -1
             var favouriteId = -1
             if (isFav) {
@@ -75,9 +75,15 @@ class TheoryViewModel @Inject constructor(
                 isFavourite = isFav,
                 property = "bookId"
             ).onEach {
+
                 it.data?.let {
                     isUpdated.value = true
                 }
+
+                it.error?.let { error->
+                    this.state.value = state.copy(error = error)
+                }
+
             }.launchIn(viewModelScope)
         }
     }
@@ -86,7 +92,7 @@ class TheoryViewModel @Inject constructor(
         if (next) {
             incrementpage()
         } else {
-            if(!update) {
+            if (!update) {
                 pagetozero()
                 clearlist()
             }
@@ -99,14 +105,13 @@ class TheoryViewModel @Inject constructor(
                 update = update
             ).onEach {
 
-                this.state.value = state.copy(isLoading = it.isLoading)
-
+                if (!update) this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
                     this.state.value = state.copy(books = list)
                 }
 
-                it.error?.let { error->
+                it.error?.let { error ->
                     this.state.value = state.copy(error = error)
                 }
 

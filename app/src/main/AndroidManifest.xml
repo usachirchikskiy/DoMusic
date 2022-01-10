@@ -22,7 +22,7 @@
             android:windowSoftInputMode="adjustPan"
             android:name=".main.MainActivity" />
         <activity
-            android:name=".SplashScreen"
+            android:name=".main.SplashScreen"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>

@@ -29,7 +29,6 @@ class InstrumentsViewModel @Inject constructor(
     val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
     val notesByCompositor: MutableLiveData<NotesByCompositorState> =
         MutableLiveData(NotesByCompositorState())
-//    val isNoteUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
 
     init {
         setFilters(FILTERS)
@@ -47,7 +46,7 @@ class InstrumentsViewModel @Inject constructor(
         if (next) {
             incrementpagecompositorsnotes()
         } else {
-            if(!update) {
+            if (!update) {
                 pagetozerocompositorsnotes()
                 clearlistcompositorsnotes()
             }
@@ -118,9 +117,15 @@ class InstrumentsViewModel @Inject constructor(
                 list_group.addAll(FILTERSANSAMBLE)
                 instrumentGroupName(instrumentHelper.GroupName)
                 searchInstruments.getGroupOfInstruments(instrumentHelper.GroupName).onEach {
+
                     it.data?.let {
                         instrumentsGroup.value = it
                     }
+
+                    it.error?.let { error->
+                        this.state.value = state.copy(error = error)
+                    }
+
                 }.launchIn(viewModelScope)
             } else if (instrumentHelper.Ansamble != "" && !instrumentHelper.isAnsamble) {
                 for (i in state.instrumentsGroup) {
@@ -231,9 +236,16 @@ class InstrumentsViewModel @Inject constructor(
                 isFavourite = isFav,
                 property = "noteId"
             ).onEach {
+
                 it.data?.let {
                     isUpdated.value = true
                 }
+
+                it.error?.let { error ->
+                    this.state.value = state.copy(error = error)
+                }
+
+
             }.launchIn(viewModelScope)
         }
     }
@@ -256,8 +268,7 @@ class InstrumentsViewModel @Inject constructor(
                 page = state.page,
                 update = update
             ).onEach {
-
-                this.state.value = state.copy(isLoading = it.isLoading)
+                if (!update) this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
                     this.state.value = state.copy(instruments = list)
@@ -285,6 +296,18 @@ class InstrumentsViewModel @Inject constructor(
     fun setSearchText(search: String) {
         state.value?.let { state ->
             this.state.value = state.copy(searchText = search)
+        }
+    }
+
+    fun setLoadingToFalse() {
+        state.value?.let { state ->
+            this.state.value = state.copy(isLoading = false)
+        }
+    }
+
+    fun setLoadingNotesByCompositorToFalse() {
+        notesByCompositor.value?.let { state ->
+            this.notesByCompositor.value = state.copy(isLoading = false)
         }
     }
 

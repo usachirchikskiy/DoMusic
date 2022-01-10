@@ -22,6 +22,9 @@
         app:layout_constraintGuide_percent="0.96" />
 
     <EditText
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:saveEnabled="false"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_et"
         style="@style/SearchEditText"
@@ -33,9 +36,9 @@
         android:drawablePadding="8dp"
         android:drawableTint="@color/black"
         android:ems="10"
+        android:focusableInTouchMode="true"
         android:hint="@string/search_by_author_and_name"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
         android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
         app:layout_constraintStart_toEndOf="@id/guideline2" />
@@ -63,15 +66,4 @@
         app:layout_constraintTop_toBottomOf="@+id/recv_checkboxes"
         app:layout_constraintVertical_bias="0" />
 
-    <ProgressBar
-        android:id="@+id/paginationProgressBar"
-        style="?attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

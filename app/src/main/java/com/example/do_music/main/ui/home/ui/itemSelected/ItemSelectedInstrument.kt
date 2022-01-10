@@ -27,17 +27,17 @@ import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "ItemSelectedInstrument"
 
-@AndroidEntryPoint
 class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
     private val viewModel: ItemSelectedViewModel by viewModels()
-    private lateinit var binding: FragmentItemSelectedInstrumentBinding
+    private var _binding: FragmentItemSelectedInstrumentBinding?=null
+    private val binding get() = _binding!!
     private var itemId: Int = 0
     private var fragment: String = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentItemSelectedInstrumentBinding.inflate(inflater, container, false)
+        _binding = FragmentItemSelectedInstrumentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -52,8 +52,7 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         val navController = findNavController()
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        view.findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         binding.isFavourite.setOnClickListener(this)
         setupObservers()
 
@@ -216,21 +215,20 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
 
 
         } else {
-            Log.d(TAG, "onClick: " + v.toString())
             if (v == binding.instrumentDownload) {
                 if (fragment == "noteId") {
-                    download(
+                    uiCommunicationListener.downloadFile(
                         viewModel.state.value?.instrument?.clavierFileName!!,
                         viewModel.state.value?.instrument?.clavierId!!
                     )
                 } else if (fragment == "vocalsId") {
-                    download(
+                    uiCommunicationListener.downloadFile(
                         viewModel.state.value?.vocal?.clavierFileName!!,
                         viewModel.state.value?.vocal?.clavierId!!
                     )
                 }
             } else if (v == binding.instrumentDownload2) {
-                download(
+                uiCommunicationListener.downloadFile(
                     viewModel.state.value?.instrument?.clavierFileName!!,
                     viewModel.state.value?.instrument?.clavierId!!
                 )
@@ -239,12 +237,17 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                     TAG, "onClick: " + viewModel.state.value?.book?.bookFileName!! + "\n" +
                             viewModel.state.value?.book?.bookFileId!!
                 )
-                download(
+                uiCommunicationListener.downloadFile(
                     viewModel.state.value?.book?.bookFileName!!,
                     viewModel.state.value?.book?.bookFileId!!
                 )
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
