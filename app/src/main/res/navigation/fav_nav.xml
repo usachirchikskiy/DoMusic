@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fav_nav"
+    app:startDestination="@id/favouriteFragment">
+
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.do_music.main.ui.favourites.FavouriteFragment"
+        android:label=""
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_itemSelectedInstrument2"
+            app:destination="@id/itemSelectedInstrument2" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemSelectedInstrument2"
+        android:name="com.example.do_music.main.ui.home.ui.itemSelected.ItemSelectedInstrument"
+        android:label=""
+        tools:layout="@layout/fragment_item_selected_instrument" />
+
+</navigation>

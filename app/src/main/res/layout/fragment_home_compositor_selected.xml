@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".main.ui.home.ui.compositors.HomeCompositorSelectedFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
+
+    <EditText
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:hint="@string/search_nameNote"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:id="@+id/search_et"
+        style="@style/SearchEditText"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/back_search_ed"
+        android:drawableLeft="@drawable/ic_baseline_search_24"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/black"
+        android:ems="10"
+        android:importantForAutofill="no"
+        android:paddingLeft="10dp"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        />
+
+
+
+    <CheckBox
+
+        android:elevation="5dp"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/search_et"
+        android:id="@+id/sonata"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/back_btn_compositors"
+        android:button="@android:color/transparent"
+        android:focusable="true"
+        android:fontFamily="@font/montserrat_medium"
+        android:paddingHorizontal="10dp"
+        android:text="@string/sonata"
+        android:textAllCaps="false"
+        android:textColor="@drawable/back_btn_compositors"
+        android:textSize="12sp"
+        />
+
+
+    <CheckBox
+        android:elevation="5dp"
+        android:id="@+id/concerts"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/back_btn_compositors"
+        android:button="@android:color/transparent"
+        android:fontFamily="@font/montserrat_medium"
+        android:paddingHorizontal="10dp"
+        android:text="@string/concerts"
+        android:textAllCaps="false"
+        android:textColor="@drawable/back_btn_compositors"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/sonata"
+        app:layout_constraintTop_toBottomOf="@id/search_et" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/sonata"
+        app:layout_constraintVertical_bias="0" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
