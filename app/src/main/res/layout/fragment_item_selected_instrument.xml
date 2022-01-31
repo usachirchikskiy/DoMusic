@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.ui.home.ui.itemSelected.ItemSelectedInstrument">
+    tools:context=".ui.main.home.ui.itemSelected.ItemSelectedInstrument">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -31,23 +31,23 @@
             app:layout_constraintGuide_percent="0.04" />
 
         <TextView
-            android:layout_marginTop="15dp"
             android:id="@+id/instrument_author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:fontFamily="@font/montserrat_bold"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@id/guideline7"
             app:layout_constraintEnd_toStartOf="@+id/is_favourite"
+            app:layout_constraintStart_toEndOf="@id/guideline7"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:layout_marginBottom="10dp"
             android:id="@+id/name_of_Item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:fontFamily="@font/montserrat_light"
             android:textColor="@color/black"
             android:textSize="14sp"
@@ -68,7 +68,6 @@
             app:layout_constraintTop_toBottomOf="@id/name_of_Item" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/instrument_edition_changed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -93,7 +92,6 @@
             app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/instrument_edition_changed2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -107,7 +105,6 @@
 
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/instrument"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -117,10 +114,12 @@
             android:text="@string/clavir"
             android:textColor="@color/black"
             android:textSize="14sp"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@id/guideline7"
             app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed2" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
             android:visibility="gone"
             android:id="@+id/instrument_download"
             android:layout_width="0dp"
@@ -140,7 +139,6 @@
             android:id="@+id/instrument2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
             android:fontFamily="@font/montserrat_light"
             android:text="@string/part"
             android:textColor="@color/black"
@@ -149,17 +147,17 @@
             app:layout_constraintTop_toBottomOf="@id/instrument" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
             android:visibility="gone"
             android:id="@+id/instrument_download2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginStart="6dp"
             android:fontFamily="@font/montserrat_light"
             android:text="@string/download"
             android:textColor="@color/black"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/instrument"
+            app:layout_constraintStart_toEndOf="@+id/instrument2"
             app:layout_constraintTop_toBottomOf="@id/instrument" />
 
         <TextView
@@ -173,9 +171,10 @@
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/guideline7"
-            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed2" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
             android:visibility="gone"
             android:id="@+id/book_changed_download"
             android:layout_width="0dp"
@@ -187,14 +186,14 @@
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/book_not_changed_download"
-            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed" />
+            app:layout_constraintTop_toBottomOf="@id/instrument_edition_not_changed2" />
 
         <ImageButton
-            android:layout_marginTop="15dp"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/is_favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#F6F6F6"
+            android:layout_marginTop="15dp"
             android:padding="8dp"
             android:src="@drawable/ic_item_not_selected"
             app:layout_constraintBottom_toBottomOf="@id/instrument_author"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.ui.home.HomeFragment">
+    tools:context=".ui.main.home.HomeFragment">
 
  <androidx.constraintlayout.widget.Guideline
      android:id="@+id/guideline2"
@@ -33,7 +33,7 @@
      app:tabMaxWidth="0dp"
      app:tabIndicatorHeight="0dp"
      app:tabSelectedTextColor="@color/black"
-     app:tabTextColor="@color/tabtextcolor" />
+     app:tabTextColor="@color/tab_text_color" />
 
  <androidx.viewpager2.widget.ViewPager2
      android:id="@+id/viewPager"

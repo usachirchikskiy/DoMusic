@@ -14,48 +14,29 @@ private const val TAG = "InstrumentsDao"
 @Dao
 interface InstrumentsDao {
 
-//    SELECT OrderID, Quantity,
-//    CASE WHEN Quantity > 30 THEN 'The quantity is greater than 30'
-//    WHEN Quantity = 30 THEN 'The quantity is 30'
-//    ELSE 'The quantity is under 30'
-//    END AS QuantityText
-//    FROM OrderDetails
-
     @Query(
         """
         SELECT * FROM instruments 
         WHERE noteId = :noteId
         """
     )
-    suspend fun getInstrument(noteId:Int):Instrument
-
-
+    suspend fun getInstrument(noteId: Int): Instrument
 
     @Query(
         """
         SELECT * FROM instruments 
         WHERE compositorId = :compositorId 
         AND noteName LIKE '%' || :searchText || '%'
+        ORDER BY noteId DESC
+        LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getNotesByCompositor(compositorId: Int,searchText: String): List<Instrument>
-
-
-    @Query(
-        """
-        SELECT * FROM instruments 
-        WHERE compositorId = :compositorId AND 
-        (concertsAndFantasies = :concertAndFantasies 
-        OR sonatas = :ensembles) AND noteName LIKE '%' || :searchText || '%'
-        """
-    )
-    suspend fun getNotesByCompositorAndNoteGroup(
+    suspend fun getInstrumentalNotesByCompositor(
         compositorId: Int,
-        concertAndFantasies: String,
-        ensembles: String,
-        searchText: String
+        searchText: String,
+        page: Int,
+        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<Instrument>
-
 
     @Query(
         """
@@ -163,10 +144,10 @@ interface InstrumentsDao {
     suspend fun deleteAllInstruments()
 
     @Query("UPDATE instruments SET favoriteId = :favoriteId , favorite = :favorite WHERE noteId =:noteId")
-    suspend fun instrumentUpdate(favoriteId:Int?,favorite:Boolean,noteId: Int)
+    suspend fun instrumentUpdate(favoriteId: Int?, favorite: Boolean, noteId: Int)
 
     @Query("UPDATE instruments SET favoriteId = null , favorite = :favorite WHERE favoriteId =:favoriteId")
-    suspend fun instrumentUpdateToFalse(favorite:Boolean,favoriteId: Int)
+    suspend fun instrumentUpdateToFalse(favorite: Boolean, favoriteId: Int)
 
 }
 
@@ -184,13 +165,6 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
     var playsAndSolos = "-1"
     var sonatas = "-1"
     var studiesAndExercises = "-1"
-//    Log.d(
-//        TAG, "instrgroupname: " + instrumentGroupName + "\n" +
-//                "ansamble " + noteGroupType + "\n" +
-//                "instumentId " + instrumentId + "\n" +
-//                "page" + page.toString() + "\n" +
-//                "searchText " + searchText + "\n"
-//    )
     when (noteGroupType) {
         "ENSEMBLES" -> {
             ensembles = "1"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.ui.favourites.FavouriteFragment">
+    tools:context=".ui.main.favourites.FavouriteFragment">
 
     <TextView
         android:id="@+id/txt"
@@ -53,7 +53,6 @@
         app:layout_constraintTop_toBottomOf="@id/txt" />
 
     <RadioGroup
-
         android:id="@+id/group_doc_type"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
@@ -249,4 +248,15 @@
         app:layout_constraintTop_toBottomOf="@+id/group_doc_type"
         app:layout_constraintVertical_bias="0" />
 
+
+    <include
+        android:id="@+id/not_added_layout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/not_added" />
 </androidx.constraintlayout.widget.ConstraintLayout>

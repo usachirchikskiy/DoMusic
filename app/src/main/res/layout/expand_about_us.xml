@@ -85,27 +85,33 @@
             android:textSize="12sp" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/policy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="@string/politics_of_confidenciality"
+            android:text="@string/policy_link"
             android:textSize="12sp" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/rights_owner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="@string/having_rights"
+            android:text="@string/right_owners_link"
             android:textSize="12sp" />
 
         <TextView
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/public_offert"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="@string/public_offert"
+            android:text="@string/offer_link"
             android:textSize="12sp" />
 
         <LinearLayout

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.do_music.model.CompositorEntity
+import com.example.do_music.model.Compositor
 import com.example.do_music.util.Constants.Companion.PAGINATION_PAGE_SIZE
 
 //
@@ -16,20 +16,6 @@ import com.example.do_music.util.Constants.Companion.PAGINATION_PAGE_SIZE
 
 @Dao
 interface CompositorsDao {
-    @Query(
-        """
-    SELECT * FROM compositors 
-    WHERE name LIKE '%' || :searchText || '%'
-    ORDER BY name ASC
-    LIMIT (:page * :pageSize)
-    """
-    )
-    suspend fun getAllCompositors(
-        searchText: String,
-        page: Int,
-        pageSize: Int = PAGINATION_PAGE_SIZE
-    ): List<CompositorEntity>
-
 
     @Query(
         """
@@ -40,41 +26,18 @@ interface CompositorsDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getCompositorsByCountry(
+    suspend fun getCompositors(
         country_filter: String,
         searchText: String,
         page: Int,
         pageSize: Int = PAGINATION_PAGE_SIZE
-    ): List<CompositorEntity>
+    ): List<Compositor>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCompositor(compositor: CompositorEntity): Long
+    suspend fun insertCompositor(compositor: Compositor): Long
 
     @Query("DELETE FROM compositors")
     suspend fun deleteAllCompositors()
 
 }
 
-suspend fun CompositorsDao.returnOrderedCompositorQuery(
-    country_filter: String,
-    searchText: String,
-    page: Int
-): List<CompositorEntity> {
-
-    when {
-        country_filter != "" -> {
-            return getCompositorsByCountry(
-                country_filter = country_filter,
-                searchText = searchText,
-                page = page
-            )
-        }
-        else -> {
-            return getAllCompositors(
-                searchText = searchText,
-                page = page
-            )
-
-        }
-    }
-}

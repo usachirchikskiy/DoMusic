@@ -8,9 +8,6 @@
 
     <include app:graph="@navigation/fav_nav" />
 
-    <fragment
-        android:id="@+id/nav_account"
-        android:name="com.example.do_music.main.ui.account.AccountFragment"
-        android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
+    <include app:graph="@navigation/account_nav" />
+
 </navigation>

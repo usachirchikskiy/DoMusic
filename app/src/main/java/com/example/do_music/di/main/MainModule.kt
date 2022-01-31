@@ -1,43 +1,28 @@
 package com.example.do_music.di.main
 
 
+import com.example.do_music.data.account.UserAccountDao
 import com.example.do_music.data.home.compositors.CompositorsDao
-import com.example.do_music.data.home.favourites.FavouritesDao
+import com.example.do_music.data.favourites.FavouritesDao
 import com.example.do_music.data.home.instruments.InstrumentsDao
 import com.example.do_music.data.home.theory.TheoryDao
 import com.example.do_music.data.home.vocal.VocalsDao
-import com.example.do_music.interactors.*
-import com.example.do_music.network.main.BasicAuthInterceptor
+import com.example.do_music.interactors.account.GetUserAccount
+import com.example.do_music.interactors.common.EmailCode
+import com.example.do_music.interactors.common.PasswordCode
+import com.example.do_music.interactors.favourite.AddToFavourite
+import com.example.do_music.interactors.home.*
 import com.example.do_music.network.main.OpenMainApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 object MainModule {
-
-    @Singleton
-    @Provides
-    fun provideOkHttpClient(basicAuthInterceptor: BasicAuthInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(basicAuthInterceptor).build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideOpenMainApiService(
-        retrofitBuilder: Retrofit.Builder,
-        okHttpClient: OkHttpClient
-    ): OpenMainApiService {
-        return retrofitBuilder.client(okHttpClient)
-            .build()
-            .create(OpenMainApiService::class.java)
-    }
 
     @Singleton
     @Provides
@@ -111,4 +96,40 @@ object MainModule {
     ): SearchItem {
         return SearchItem(vocalsDao, instrumentsDao, theoryDao)
     }
+
+    @Singleton
+    @Provides
+    fun provideGetUserAccount(
+        openMainApiService: OpenMainApiService,
+        userAccountDao: UserAccountDao
+    ): GetUserAccount {
+        return GetUserAccount(userAccountDao, openMainApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSearchCompositorSelected(
+        openMainApiService: OpenMainApiService,
+        vocalsDao: VocalsDao,
+        instrumentsDao: InstrumentsDao
+    ): SearchCompositorSelected {
+        return SearchCompositorSelected(openMainApiService, instrumentsDao, vocalsDao)
+    }
+
+    @Singleton
+    @Provides
+    fun providePasswordCode(
+        openMainApiService: OpenMainApiService,
+    ): PasswordCode {
+        return PasswordCode(openMainApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEmailCode(
+        openMainApiService: OpenMainApiService
+    ): EmailCode {
+        return EmailCode(openMainApiService)
+    }
+
 }

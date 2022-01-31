@@ -10,8 +10,8 @@ fun setgradient(textView:TextView) {
     val width = paint.measureText(textView.text.toString())
     val textShader: Shader = LinearGradient(
         0f, 0f, width, textView.textSize, intArrayOf(
-            Color.parseColor("#9400D3"),
-            Color.parseColor("#4B0082")
+            Color.parseColor("#8E2DE2"),
+            Color.parseColor("#4A00E0")
         ), null, Shader.TileMode.REPEAT
     )
     textView.paint.setShader(textShader)

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.ui.home.ui.compositors.HomeCompositorSelectedFragment">
+    tools:context=".ui.main.home.ui.compositors.compositorSelected.HomeCompositorSelectedFragment"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -33,6 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:id="@+id/search_et"
         style="@style/SearchEditText"
+        android:saveEnabled="false"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginTop="28dp"
@@ -47,47 +49,48 @@
         app:layout_constraintStart_toEndOf="@id/guideline2"
         />
 
-
-
-    <CheckBox
-
-        android:elevation="5dp"
+    <RadioGroup
+        android:layout_marginTop="7dp"
+        android:id="@+id/radio_group"
+        android:orientation="horizontal"
         app:layout_constraintStart_toEndOf="@id/guideline2"
         app:layout_constraintTop_toBottomOf="@id/search_et"
-        android:id="@+id/sonata"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp">
+    <RadioButton
+        android:visibility="gone"
+        android:elevation="5dp"
+        android:id="@+id/instrumental_notes"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:background="@drawable/back_btn_compositors"
         android:button="@android:color/transparent"
         android:focusable="true"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
-        android:text="@string/sonata"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
         android:textSize="12sp"
         />
 
-
-    <CheckBox
+    <RadioButton
+        android:visibility="gone"
         android:elevation="5dp"
-        android:id="@+id/concerts"
+        android:id="@+id/vocal_notes"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:background="@drawable/back_btn_compositors"
         android:button="@android:color/transparent"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
-        android:text="@string/concerts"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/sonata"
-        app:layout_constraintTop_toBottomOf="@id/search_et" />
-
+        />
+    </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recv"
@@ -97,9 +100,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
         app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/sonata"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group"
         app:layout_constraintVertical_bias="0" />
 
-
+    <include
+        android:id="@+id/no_results_layout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/no_results" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.ui.home.ui.theory.TheoryFragment">
+    tools:context=".ui.main.home.ui.theory.TheoryFragment">
 
 
 
@@ -77,7 +77,7 @@
         android:button="@android:color/transparent"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
-        android:text="Литература"
+        android:text="@string/literature"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
         android:textSize="12sp"
@@ -96,5 +96,16 @@
         app:layout_constraintTop_toBottomOf="@+id/theory_salfedjo"
         app:layout_constraintVertical_bias="0" />
 
+
+    <include
+        android:id="@+id/no_results_layout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/no_results" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

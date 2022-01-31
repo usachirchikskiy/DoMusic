@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.do_music.model.Instrument
 import com.example.do_music.model.TheoryInfo
 import com.example.do_music.model.Vocal
 import com.example.do_music.util.Constants
@@ -11,6 +12,23 @@ import com.example.do_music.util.Constants
 
 @Dao
 interface VocalsDao {
+
+    @Query(
+        """
+        SELECT * FROM vocals 
+        WHERE compositorId = :compositorId 
+        AND noteName LIKE '%' || :searchText || '%'
+        ORDER BY vocalsId DESC
+        LIMIT (:page * :pageSize)
+        """
+    )
+    suspend fun getVocalNotesByCompositor(
+        compositorId: Int,
+        searchText: String,
+        page: Int,
+        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
+    ): List<Vocal>
+
 
     @Query(
         """
@@ -27,15 +45,6 @@ interface VocalsDao {
         """
     )
     suspend fun updateVocalToFalse(favoriteId:Int?,favorite: Boolean)
-//
-//    @Query(
-//        """
-//        UPDATE vocals SET
-//        isFavourite = :isFavourite
-//        WHERE vocalsId NOT IN (:vocalsIds)
-//        """
-//    )
-//    suspend fun updateVocalsFalse(vocalsIds: List<Int>, isFavourite: Boolean = false)
 
     @Query(
         """
@@ -46,7 +55,7 @@ interface VocalsDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getAllBooks(
+    suspend fun getAllVocals(
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE

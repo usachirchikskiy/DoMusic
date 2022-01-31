@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.ui.home.ui.instruments.InstrumentsFragment">
+    tools:context=".ui.main.home.ui.instruments.InstrumentsFragment">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -65,5 +65,17 @@
         app:layout_constraintStart_toEndOf="@id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/recv_checkboxes"
         app:layout_constraintVertical_bias="0" />
+
+
+    <include
+        android:id="@+id/no_results_layout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/no_results" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

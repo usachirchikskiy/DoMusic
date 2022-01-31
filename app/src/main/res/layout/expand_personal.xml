@@ -1,12 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_personal"
-    android:paddingBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="13dp"
     android:layout_marginEnd="13dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="@string/login_text"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/user_login"
+        style="@style/SearchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/back_cabinet"
+        android:ems="10"
+        android:enabled="false"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:paddingLeft="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="@string/password"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/user_password"
+            style="@style/SearchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/back_cabinet"
+            android:ems="10"
+            android:enabled="false"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:paddingLeft="10dp"
+            android:text="@string/hashtag" />
+
+        <TextView
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/change_password"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:gravity="right"
+            android:padding="5dp"
+            android:text="@string/change" />
+    </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -32,56 +92,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
-        android:text="@string/date_of_birth"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/date_of_birth"
-        style="@style/SearchEditText"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/back_cabinet"
-        android:ems="10"
-        android:enabled="false"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:paddingLeft="10dp" />
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_bold"
         android:text="@string/email"
-        android:textSize="14sp" />
+        android:textSize="14sp"/>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/email"
             style="@style/SearchEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="42dp"
             android:background="@drawable/back_cabinet"
-            android:ems="10"
+            android:enabled="false"
             android:hint="@string/email"
             android:importantForAutofill="no"
-            android:inputType="textPersonName"
             android:paddingLeft="10dp" />
 
         <TextView
-            android:id="@+id/change"
-            android:layout_width="match_parent"
+            android:background="?attr/selectableItemBackground"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:padding="5dp"
+            android:id="@+id/change_email"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:fontFamily="@font/montserrat_medium"
-            android:gravity="right"
             android:layout_marginEnd="10dp"
+            android:fontFamily="@font/montserrat_medium"
             android:text="@string/change" />
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -90,12 +136,14 @@
         android:text="@string/telephon_number"
         android:textSize="14sp" />
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp">
 
         <EditText
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/telephon_number"
             style="@style/SearchEditText"
             android:layout_width="match_parent"
@@ -104,19 +152,24 @@
             android:ems="10"
             android:hint="@string/telephon_number"
             android:importantForAutofill="no"
-            android:inputType="textPersonName"
+            android:inputType="number"
             android:paddingLeft="10dp" />
 
         <TextView
-            android:layout_marginEnd="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:padding="5dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/telephon_number"
+            android:layout_alignParentLeft="true"
             android:id="@+id/change_number"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
             android:fontFamily="@font/montserrat_medium"
-            android:gravity="right"
             android:text="@string/change" />
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:layout_width="match_parent"

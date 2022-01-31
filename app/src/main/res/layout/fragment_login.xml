@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context=".auth.ui.login.LoginFragment">
+    tools:context=".ui.auth.ui.login.LoginFragment">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -45,55 +44,85 @@
         app:layout_constraintGuide_percent="0.27" />
 
     <LinearLayout
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/guideline5"
+        android:id="@+id/logo_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/guideline5">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_login_logo" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:fontFamily="@font/montserrat_extra_bold"
-            android:text="@string/do_music"
-            android:textColor="#11253D"
-            android:textSize="30sp" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/login_et"
-        style="@style/SearchEditText"
+    <TextView
+        android:id="@+id/incorrect_credentials"
         android:layout_width="0dp"
-        android:layout_height="42dp"
-        android:background="@drawable/back_et"
-        android:hint="@string/login_hint"
-        android:paddingLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:gravity="center"
+        android:text="@string/incorrect_credentials"
+        android:textColor="@color/red"
+        android:textSize="15sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/login_layout"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
         app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
+        app:layout_constraintTop_toBottomOf="@+id/logo_layout" />
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/login_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/incorrect_credentials"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:singleLine="true"
+            android:id="@+id/login_et"
+            style="@style/SearchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/back_et"
+            android:hint="@string/login_hint"
+            android:paddingLeft="10dp"
+           />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/login_layout"
+        android:id="@+id/password_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:inputType="textPassword"
+        android:singleLine="true"
         android:id="@+id/password_et"
         style="@style/SearchEditText"
-        android:layout_width="0dp"
-        android:layout_height="42dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/back_et"
         android:hint="@string/password_hint"
         android:paddingLeft="10dp"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/login_et" />
+        />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
+        android:background="?attr/selectableItemBackground"
         android:id="@+id/confirm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -104,9 +133,10 @@
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="@id/guideline4"
         app:layout_constraintStart_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/password_et" />
+        app:layout_constraintTop_toBottomOf="@id/password_layout" />
 
     <TextView
+        android:background="?attr/selectableItemBackground"
         android:id="@+id/forgot_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -133,28 +163,15 @@
         app:layout_constraintTop_toBottomOf="@id/forgot_password" />
 
     <TextView
-        android:fontFamily="@font/ttnorms_medium"
-        android:textSize="14sp"
-        android:text="@string/rights"
-        android:layout_marginBottom="20dp"
+        android:id="@+id/rights"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/rights"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2"
-        />
-
-    <ProgressBar
-        android:id="@+id/paginationProgressBar"
-        style="?attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/guideline2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
