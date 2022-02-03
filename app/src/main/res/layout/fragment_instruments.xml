@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.main.home.ui.instruments.InstrumentsFragment">
+    tools:context=".presentation.main.home.ui.instruments.InstrumentsFragment">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -22,6 +22,7 @@
         app:layout_constraintGuide_percent="0.96" />
 
     <EditText
+        android:textSize="14sp"
         android:inputType="text"
         android:imeOptions="actionSearch"
         android:saveEnabled="false"
@@ -35,11 +36,10 @@
         android:drawableLeft="@drawable/ic_baseline_search_24"
         android:drawablePadding="8dp"
         android:drawableTint="@color/black"
-        android:ems="10"
         android:focusableInTouchMode="true"
         android:hint="@string/search_by_author_and_name"
         android:importantForAutofill="no"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
         app:layout_constraintStart_toEndOf="@id/guideline2" />
 

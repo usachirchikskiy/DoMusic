@@ -9,6 +9,7 @@
     android:layout_marginStart="13dp">
 
     <RadioGroup
+        android:id="@+id/languages_group"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

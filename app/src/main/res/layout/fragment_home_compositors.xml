@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.home.ui.compositors.HomeCompositors">
+    tools:context=".presentation.main.home.ui.compositors.HomeCompositors">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -25,6 +25,7 @@
     <EditText
         android:id="@+id/search_et"
         style="@style/SearchEditText"
+        android:maxLines="1"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginTop="20dp"
@@ -37,7 +38,7 @@
         android:imeOptions="actionSearch"
         android:importantForAutofill="no"
         android:inputType="text"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         android:saveEnabled="false"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
         app:layout_constraintStart_toEndOf="@id/guideline2"

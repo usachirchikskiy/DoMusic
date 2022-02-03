@@ -24,6 +24,8 @@
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.10585585585585586" />
         <entry key="app/src/main/res/drawable/ic_clip.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_contact_us.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_delete_btn.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_delete_state.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_favourite_disabled.xml" value="0.12342342342342343" />
         <entry key="app/src/main/res/drawable/ic_favourite_enabled.xml" value="0.12342342342342343" />
@@ -46,21 +48,22 @@
         <entry key="app/src/main/res/drawable/ic_youtube.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/outline_file_download_20.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/splash_image.xml" value="0.18796296296296297" />
+        <entry key="app/src/main/res/drawable/state_pressed_ripple.xml" value="0.1" />
         <entry key="app/src/main/res/layout-v23/expand_tech_support.xml" value="0.10416666666666667" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.14" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.11126126126126126" />
         <entry key="app/src/main/res/layout/are_u_sure_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/card_device.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/card_of_home.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/card_of_theory.xml" value="0.3037249283667622" />
+        <entry key="app/src/main/res/layout/card_of_home.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/card_of_theory.xml" value="0.33" />
         <entry key="app/src/main/res/layout/checkbox_card.xml" value="0.17" />
         <entry key="app/src/main/res/layout/expand_about_us.xml" value="0.33" />
         <entry key="app/src/main/res/layout/expand_devices.xml" value="0.1" />
         <entry key="app/src/main/res/layout/expand_language.xml" value="0.25" />
         <entry key="app/src/main/res/layout/expand_personal.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/expand_tech_support.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/expand_tech_support.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/fragment_account.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_change_email.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_change_password.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_change_success.xml" value="0.16" />
@@ -72,7 +75,7 @@
         <entry key="app/src/main/res/layout/fragment_home_compositors.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_instruments.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_item_selected.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_item_selected_instrument.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_item_selected_instrument.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_new_password.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_prepare_email.xml" value="0.25" />

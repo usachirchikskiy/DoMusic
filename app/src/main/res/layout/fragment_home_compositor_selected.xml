@@ -4,14 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.main.home.ui.compositors.compositorSelected.HomeCompositorSelectedFragment"
+    tools:context=".presentation.main.home.ui.compositors.compositorSelected.HomeCompositorSelectedFragment"
     >
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -31,7 +25,7 @@
         android:inputType="text"
         android:imeOptions="actionSearch"
         android:hint="@string/search_nameNote"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_et"
         style="@style/SearchEditText"
         android:saveEnabled="false"

@@ -16,7 +16,7 @@
         android:layout_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".ui.main.account.AccountFragment">
+        tools:context=".presentation.main.account.main.AccountFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                 app:shapeAppearanceOverlay="@style/roundedProfilePhoto" />
 
             <ImageButton
-                android:background="?attr/selectableItemBackground"
+                android:background="?android:attr/actionBarItemBackground"
                 android:id="@+id/profile_photo_btn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -369,6 +369,7 @@
                 android:fontFamily="@font/montserrat_medium"
                 android:textSize="14sp"
                 android:text="@string/rights"
+                android:maxLines="1"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:layout_width="match_parent"

@@ -1,18 +1,20 @@
 package com.example.do_music.di.main
 
 
-import com.example.do_music.data.account.UserAccountDao
-import com.example.do_music.data.home.compositors.CompositorsDao
-import com.example.do_music.data.favourites.FavouritesDao
-import com.example.do_music.data.home.instruments.InstrumentsDao
-import com.example.do_music.data.home.theory.TheoryDao
-import com.example.do_music.data.home.vocal.VocalsDao
-import com.example.do_music.interactors.account.GetUserAccount
-import com.example.do_music.interactors.common.EmailCode
-import com.example.do_music.interactors.common.PasswordCode
-import com.example.do_music.interactors.favourite.AddToFavourite
-import com.example.do_music.interactors.home.*
-import com.example.do_music.network.main.OpenMainApiService
+import com.example.do_music.business.datasources.data.account.UserAccountDao
+import com.example.do_music.business.datasources.data.home.compositors.CompositorsDao
+import com.example.do_music.business.datasources.data.favourites.FavouritesDao
+import com.example.do_music.business.datasources.data.home.instruments.InstrumentsDao
+import com.example.do_music.business.datasources.data.home.theory.TheoryDao
+import com.example.do_music.business.datasources.data.home.vocal.VocalsDao
+import com.example.do_music.business.interactors.account.GetUserAccount
+import com.example.do_music.business.interactors.common.EmailCode
+import com.example.do_music.business.interactors.common.PasswordCode
+import com.example.do_music.business.interactors.common.SearchItem
+import com.example.do_music.business.interactors.common.AddToFavourite
+import com.example.do_music.business.interactors.home.*
+import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.interactors.favourite.SearchFavourites
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

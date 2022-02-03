@@ -16,13 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Do_Music">
         <activity
-            android:name=".ui.auth.AuthActivity"
+            android:name=".presentation.auth.AuthActivity"
             android:exported="true" />
         <activity
             android:windowSoftInputMode="adjustPan"
-            android:name=".ui.MainActivity" />
+            android:name=".presentation.main.MainActivity" />
         <activity
-            android:name=".ui.SplashScreen"
+            android:name=".presentation.SplashScreen"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>

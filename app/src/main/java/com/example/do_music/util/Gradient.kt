@@ -5,7 +5,7 @@ import android.graphics.LinearGradient
 import android.graphics.Shader
 import android.widget.TextView
 
-fun setgradient(textView:TextView) {
+fun setGradient(textView:TextView) {
     val paint = textView.paint
     val width = paint.measureText(textView.text.toString())
     val textShader: Shader = LinearGradient(

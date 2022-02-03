@@ -1,7 +1,7 @@
 package com.example.do_music.di.auth
 
-import com.example.do_music.interactors.auth.CheckUserAuth
-import com.example.do_music.network.auth.OpenAuthApiService
+import com.example.do_music.business.interactors.auth.CheckUserAuth
+import com.example.do_music.business.datasources.network.auth.OpenAuthApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
