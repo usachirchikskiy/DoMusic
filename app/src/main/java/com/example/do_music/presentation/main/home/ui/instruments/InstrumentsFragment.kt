@@ -18,10 +18,13 @@ import com.example.do_music.R
 import com.example.do_music.databinding.FragmentInstrumentsBinding
 
 import com.example.do_music.presentation.main.home.adapter.*
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
 import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
+import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.hide
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 
 private const val TAG = "InstrumentsFragment"
@@ -36,8 +39,8 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lang = uiMainCommunicationListener.getLocale()
-        Log.d(TAG, "onCreate: ")
+        //TODO
+        lang = uiCommunicationListener.getLocale()
         viewModel.setFiltersInit(lang)
         viewModel.getPage()
     }
@@ -64,6 +67,9 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
     }
 
     private fun setupViews() {
+        binding.searchEt.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         binding.searchEt.addTextChangedListener(this)
         viewModel.state.value?.let {
             if(it.searchText.isNotBlank()){
@@ -103,25 +109,14 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
             }
             instrumentsFilterAdapter = InstrumentsFilterAdapter(this@InstrumentsFragment)
             adapter = instrumentsFilterAdapter
-
         }
     }
 
-
-//    private fun showProgressBar(isLoading: Boolean) {
-//        if (isLoading) {
-//            binding.paginationProgressBar.visibility = View.VISIBLE
-//        } else {
-//            binding.paginationProgressBar.visibility = View.INVISIBLE
-//        }
-//
-//    }
-
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: " + it.toString())
             uiCommunicationListener.displayProgressBar(it.isLoading)
             instrumentsFilterAdapter?.apply {
+                Log.d(TAG, "setupObservers: " + it.instrumentsGroup)
                 submitList(filterList = it.instrumentsGroup)
             }
 
@@ -136,7 +131,20 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
             }
 
             it.error?.let { error->
-                Log.d(TAG, "setupObservers: " + error)
+                when (error.localizedMessage) {
+                    Constants.NO_INTERNET -> {
+                        uiCommunicationListener.showNoInternetDialog()
+                        viewModel.setErrorNull()
+                    }
+                    Constants.AUTH_ERROR -> {
+                        viewModel.clearSessionValues()
+                        uiCommunicationListener.onAuthActivity()
+                    }
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
             }
 
         })
@@ -144,6 +152,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
         viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.getPage(update = true)
+                viewModel.isUpdated.value = false
             }
         })
 
@@ -182,9 +191,11 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.recvCheckboxes.layoutManager = null
         instrumentsAdapter = null
         instrumentsFilterAdapter = null
         _binding = null
+
     }
 }
 

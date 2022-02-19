@@ -13,21 +13,20 @@ interface FavouritesDao {
         page: Int,
         pageSize: Int = 10,
         searchText: String,
-        favoriteClass: String,
+//        favoriteClass: String,
         docType: String
     ): List<Favourite> {
-        var defaultOrFavouriteClass = ""
-        if (favoriteClass != "UNKNOWN") defaultOrFavouriteClass = favoriteClass
-        when (docType) {
+        val defaultOrFavouriteClass = ""
+//        if (favoriteClass != "UNKNOWN") defaultOrFavouriteClass = favoriteClass
+        return when (docType) {
             "NOTES" -> {
-                return getFavNotes(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavNotes(page, pageSize, searchText, defaultOrFavouriteClass)
             }
             "BOOK" -> {
-
-                return getFavBooks(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavBooks(page, pageSize, searchText, defaultOrFavouriteClass)
             }
             else ->
-                return getFavVocals(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavVocals(page, pageSize, searchText, defaultOrFavouriteClass)
         }
     }
 
@@ -86,6 +85,8 @@ interface FavouritesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavourite(favourite: List<Favourite>)
 
+    @Query("DELETE FROM favourites")
+    suspend fun deleteAllFavourites()
 
     @Query("DELETE FROM favourites WHERE favoriteId = :favouriteId")
     suspend fun deleteFavourite(favouriteId: Int)

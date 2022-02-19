@@ -16,8 +16,18 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPassword"
-        android:name="com.example.do_music.presentation.auth.ui.forgot_password.ForgotPassword"
+        android:name="com.example.do_music.presentation.auth.ui.forgot_password.primary.ForgotPassword"
         android:label="fragment_forgot_password"
-        tools:layout="@layout/fragment_forgot_password" />
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_forgotPassword_to_successFragment"
+            app:destination="@id/successFragment"
+            app:popUpTo="@+id/loginFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/successFragment"
+        android:name="com.example.do_music.presentation.auth.ui.forgot_password.secondary.SuccessFragment"
+        android:label="fragment_success"
+        tools:layout="@layout/fragment_success" />
 
 </navigation>

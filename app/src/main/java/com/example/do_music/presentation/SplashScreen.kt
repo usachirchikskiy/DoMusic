@@ -11,13 +11,16 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.do_music.databinding.ActivitySplashBinding
 import com.example.do_music.presentation.auth.AuthActivity
 import com.example.do_music.presentation.main.MainActivity
+import com.example.do_music.presentation.session.SessionManager
+import javax.inject.Inject
 
+private const val TAG = "SplashScreen"
 class SplashScreen : BaseActivity() {
-    private val TAG = "SplashScreen"
 
     private var writePermissionGranted = false
     private var readPermissionGranted = false
@@ -28,14 +31,20 @@ class SplashScreen : BaseActivity() {
 
     }
 
-    override fun hideKeyboard() {
+    override fun onAuthActivity() {
+        Handler().postDelayed({
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+        }, 2000)
+    }
+
+    override fun showNoInternetDialog() {
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
-        makeFullScreen()
         setContentView(binding.root)
 
         permissionsLauncher =
@@ -47,8 +56,7 @@ class SplashScreen : BaseActivity() {
                     ?: readPermissionGranted
                 if (writePermissionGranted && readPermissionGranted) {
                     setupObservers()
-                }
-                else{
+                } else {
                     updateOrRequestPermissions()
                 }
             }
@@ -59,12 +67,7 @@ class SplashScreen : BaseActivity() {
         sessionManager.state.observe(this, {
             if (it.onStarAuthActivity) {
                 Log.d(TAG, "setupObservers: -" + it.onStarAuthActivity)
-
-                Handler().postDelayed({
-                    startActivity(Intent(this, AuthActivity::class.java))
-                    finish()
-                }, 2000)
-
+                this.onAuthActivity()
             } else if (it.onStarMainActivity) {
 
                 Log.d(TAG, "setupObservers: +" + it.onStarAuthActivity)
@@ -108,15 +111,5 @@ class SplashScreen : BaseActivity() {
             setupObservers()
         }
     }
-
-    private fun makeFullScreen() {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-        supportActionBar?.hide()
-    }
-
 
 }

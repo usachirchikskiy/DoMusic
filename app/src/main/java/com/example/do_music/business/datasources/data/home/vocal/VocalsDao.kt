@@ -73,4 +73,7 @@ interface VocalsDao {
         vocalsId: Int
     ): Vocal
 
+    @Query("DELETE FROM vocals")
+    suspend fun deleteAllVocals()
+
 }

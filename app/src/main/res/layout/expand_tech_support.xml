@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="13dp"
     android:layout_marginEnd="13dp"
-    android:paddingBottom="10dp">
+    android:paddingBottom="20dp">
 
     <RadioGroup
         android:id="@+id/btn_group"
@@ -70,8 +70,8 @@
             android:id="@+id/clip_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:padding="6dp"
+            android:layout_marginStart="10dp"
+            android:padding="5dp"
             android:src="@drawable/ic_clip"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +82,7 @@
             android:id="@+id/send_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:padding="5dp"
             android:src="@drawable/ic_send_message"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,7 @@
             android:imeOptions="actionDone"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="7dp"
-            android:background="@color/white"
+            android:background="@drawable/back_of_message_field"
             android:ems="10"
             android:hint="@string/input_here"
             android:importantForAutofill="no"

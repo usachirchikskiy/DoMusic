@@ -13,12 +13,13 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:padding="10dp"
+        android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/compositor_image"
+            android:background="@color/shimmer"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"

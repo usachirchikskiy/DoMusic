@@ -16,10 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentFavouriteBinding
-import com.example.do_music.util.StateMessageCallback
-import com.example.do_music.util.deleteNote
 
 import com.example.do_music.presentation.main.home.adapter.*
+import com.example.do_music.util.*
 import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
@@ -43,11 +42,6 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
     private var favouriteAdapter: FavouriteAdapter? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: " + viewModel.toString())
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,12 +52,13 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated: ")
+
         val docType = viewModel.state.value?.docType
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(docType!!)
             ?.observe(viewLifecycleOwner) { shouldRefresh ->
                 shouldRefresh?.run {
-                    viewModel.getPage(update = true)
+                    Log.d(TAG, "onViewCreated: $docType")
+                    viewModel.getPage(update = false)
                     findNavController().previousBackStackEntry?.savedStateHandle?.set(
                         docType,
                         true
@@ -105,19 +100,31 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         viewModel.state.observe(viewLifecycleOwner, {
 
             uiCommunicationListener.displayProgressBar(it.isLoading)
-            Log.d(TAG, "setupObservers: " + it)
+            Log.d(TAG, "setupObservers: $it")
             favouriteAdapter?.apply {
                 submitList(favourites = it.favouriteItems)
-                if(it.favouriteItems.isEmpty() && !it.isLoading){
+                if(it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isBlank()){
                     binding.notAddedLayout.root.visibility = View.VISIBLE
                 }
                 else{
                     binding.notAddedLayout.root.visibility = View.GONE
                 }
+
+                if(it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isNotBlank()){
+                    binding.noResultsLayout.root.visibility = View.VISIBLE
+                }
+                else{
+                    binding.noResultsLayout.root.visibility = View.GONE
+                }
             }
 
-            it.error?.let {
-//                nointernet
+            it.error?.let { error->
+                when (error.localizedMessage) {
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
             }
 
         })
@@ -126,12 +133,7 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
             if (it) {
                 Log.d(TAG, "setupObservers: isUpdated")
                 viewModel.getPage(update = true)
-                val docType = viewModel.state.value?.docType
-
-                findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                    docType!!,
-                    true
-                )
+                viewModel.isUpdated.value = false
             }
         })
     }
@@ -144,7 +146,9 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 //        arrayList.add(binding.four)
 //        arrayList.add(binding.five)
 //        arrayList.add(binding.six)
-
+        binding.searchEt.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         when (docType) {
             BOOK -> {
                 binding.books.isChecked = true

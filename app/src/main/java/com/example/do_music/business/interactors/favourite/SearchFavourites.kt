@@ -2,8 +2,8 @@ package com.example.do_music.business.interactors.favourite
 
 import android.util.Log
 import com.example.do_music.business.datasources.data.favourites.FavouritesDao
-import com.example.do_music.business.model.main.Favourite
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.model.main.Favourite
 import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Resource
@@ -23,44 +23,47 @@ class SearchFavourites(
         favoriteClass: String,
         docType: String
     ) {
-        val body_request = JsonObject()
-        body_request.addProperty("favoriteId", favoriteId)
-        body_request.addProperty("favoriteClass", favoriteClass)
-        body_request.addProperty("docType", docType)
+        val bodyRequest = JsonObject()
+        bodyRequest.addProperty("favoriteId", favoriteId)
+        bodyRequest.addProperty("favoriteClass", favoriteClass)
+        bodyRequest.addProperty("docType", docType)
         try {
-            service.addFavouriteClass(body = body_request.toString())
+            service.addFavouriteClass(body = bodyRequest.toString())
         }catch (ex:Throwable){
             Log.d(TAG, "addFavClass: " + ex.message.toString())
         }
-        if(docType == BOOK){
-            favouritesDao.addFavBookClassDao(favoriteId = favoriteId, bookClass = favoriteClass)
-        }
-        else if(docType==VOCALS){
-            favouritesDao.addFavVocalsClassDao(favoriteId = favoriteId, vocalsClass = favoriteClass)
-        }
-        else{
-            favouritesDao.addFavNoteClassDao(favoriteId = favoriteId, notesClass = favoriteClass)
+        when (docType) {
+            BOOK -> {
+                favouritesDao.addFavBookClassDao(favoriteId = favoriteId, bookClass = favoriteClass)
+            }
+            VOCALS -> {
+                favouritesDao.addFavVocalsClassDao(favoriteId = favoriteId, vocalsClass = favoriteClass)
+            }
+            else -> {
+                favouritesDao.addFavNoteClassDao(favoriteId = favoriteId, notesClass = favoriteClass)
+            }
         }
     }
 
     fun execute(
         pageNumber: Int,
         docType: String,
-        favouriteClass: String,
+//        favouriteClass: String,
         searchText: String,
         updated: Boolean
     ): Flow<Resource<List<Favourite>>> = flow {
         emit(Resource.loading<List<Favourite>>())
+        Log.d(TAG, "execute: $pageNumber\n$docType")
         try {
             if (!updated) {
-                val instruments_favourite_response = service.getFavouriteItems(
+                val instrumentsFavouriteResponse = service.getFavouriteItems(
                     pageNumber = pageNumber,
                     docType = docType,
-                    favoriteClass = favouriteClass,
+//                    favoriteClass = favouriteClass,
                     searchText = searchText
                 )
-                var favourite_instruments = instruments_favourite_response.rows
-                favouritesDao.insertFavourite(favourite_instruments)
+                val favouriteInstruments = instrumentsFavouriteResponse.rows
+                favouritesDao.insertFavourite(favouriteInstruments)
             }
         } catch (throwable: Throwable) {
             Log.d(TAG, "execute: " + throwable.message)
@@ -69,8 +72,9 @@ class SearchFavourites(
             page = pageNumber + 1,
             searchText = searchText,
             docType = docType,
-            favoriteClass = favouriteClass
+//            favoriteClass = favouriteClass
         )
+        Log.d(TAG, "execute: $cachedBlogs")
         emit(Resource.success(data = cachedBlogs))
     }.catch { e ->
         emit(Resource.error(e))

@@ -12,6 +12,8 @@ import com.example.do_music.R
 import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.Instrument
 import com.example.do_music.util.Constants.Companion.BASE_URL
+//import com.example.do_music.util.dpToPx
+import com.example.do_music.util.shimmerDrawable
 
 class InstrumentsAdapter(
     private val context: Context? = null,
@@ -44,14 +46,15 @@ class InstrumentsAdapter(
             }
 
             if (instrument.favorite == true) {
-                binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
+                binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             } else {
-                binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
             }
 
-
+            binding.bookImage.layoutParams.width = binding.bookImage.layoutParams.height
             Glide.with(binding.root)
                 .load(BASE_URL+"api/doc/logo?mini=true&uniqueName=" + instrument.logoId)
+                .placeholder(shimmerDrawable)
                 .into(binding.bookImage)
 
             fragmentName?.let {
@@ -60,6 +63,13 @@ class InstrumentsAdapter(
                 binding.bookAuthor.typeface = typeface
                 binding.bookAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.toFloat())
                 binding.bookAuthor.text = instrument.noteName
+
+//                val view: View = binding.bookImage
+//                val layoutParams = view.layoutParams
+//                layoutParams.width = dpToPx(60,context)
+//                layoutParams.height = dpToPx(60,context)
+//                view.layoutParams = layoutParams
+
             }
             if(fragmentName==null){
                 binding.bookAuthor.text = instrument.compositorName
@@ -77,19 +87,13 @@ class InstrumentsAdapter(
                 binding.bookEditionChangedInstr.visibility = View.VISIBLE
                 binding.bookEditionChangedInstr.text = instrument.instrumentName
             }
-            binding.bookLike.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-
-                    if(instrument.favorite!!) {
-                        interaction?.onLikeSelected(instrument.favoriteId!!, !instrument.favorite)
-                    }
-                    else{
-                        interaction?.onLikeSelected(instrument.noteId!!,!instrument.favorite)
-                    }
-
+            binding.bookLike.setOnClickListener {
+                if (instrument.favorite!!) {
+                    interaction?.onLikeSelected(instrument.favoriteId!!, !instrument.favorite)
+                } else {
+                    interaction?.onLikeSelected(instrument.noteId!!, !instrument.favorite)
                 }
-
-            })
+            }
 
         }
     }

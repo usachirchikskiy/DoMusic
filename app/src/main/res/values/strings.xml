@@ -6,7 +6,7 @@
     <string name="search_by_author_and_name">Китобнинг номи ва муаллифи бўйича</string>
     <string name="login_hint">Логинни киритинг</string>
     <string name="password_hint">Паролни киритинг</string>
-    <string name="confirm">Тугмани босиш орқали сиз <u>с махфийлик сиёсатига розилик билдирасиз.</u></string>
+    <string name="confirm">Тугмани босиш орқали сиз <u> махфийлик сиёсатига розилик билдирасиз.</u></string>
     <string name="forgot_password">Парольни унутдингизми?</string>
     <string name="login">Кириш</string>
     <string name="download"><u>Юклаш</u></string>
@@ -40,8 +40,8 @@
     <string name="change">Ўзгартириш</string>
     <string name="telephon_number">Телефон рақами</string>
     <string name="region">Вилоят</string>
-    <string name="town">Шахард</string>
-    <string name="school">Мактаба</string>
+    <string name="town">Шахар</string>
+    <string name="school">Мактаб</string>
     <string name="language">Тил</string>
     <string name="russian" translatable="false">Русский</string>
     <string name="uzbekcha" translatable="false">Узбекча</string>
@@ -107,5 +107,16 @@
     <string name="vocal_tab">Вокаллар</string>
     <string name="instruments_tab">Асбоблар</string>
     <string name="theory_tab">Назария</string>
-
+    <string name="restore_login_dialog">Тез орада техник ёрдам бўйича мутахассис сиз билан боғланади</string>
+    <string name="thanks">Рахмат</string>
+    <string name="enter_email_new">Янги почтани киритинг</string>
+    <string name="rus" translatable="false">Рус</string>
+    <string name="ozb" translatable="false">Узб</string>
+    <string name="uz" translatable="false">Uzb</string>
+    <string name="thanks_for_feedback">Фикр-мулохаза учун рахмат</string>
+    <string name="feedback_manager">Бизнинг менежеримиз сиз билан яқин орада боғланади</string>
+    <string name="back">Кайтиш</string>
+    <string name="add_to_fav_dialog">Ушбу операцияни интернетсиз амалга ошириш мумкин эмас</string>
+    <string name="limit_exceeded">Кириш чекланган</string>
+    <string name="every_day_limit">Кунлик юклаб олиш лимити тугади</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.do_music.presentation.auth.ui.login
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,8 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentLoginBinding
 import com.example.do_music.presentation.BaseFragment
-
-import com.example.do_music.util.noInternet
 import com.example.do_music.util.Constants.Companion.ABOUT_US_POLICY
 import com.example.do_music.util.Constants.Companion.NO_INTERNET
 import com.example.do_music.util.setGradient
@@ -42,24 +42,46 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun setupViews() {
+        underLineLanguage()
         binding.loginBtn.setOnClickListener(this)
         setGradient(binding.forgotPassword)
         binding.forgotPassword.setOnClickListener(this)
         binding.confirm.setOnClickListener(this)
+        binding.rus.setOnClickListener(this)
+        binding.uzb.setOnClickListener(this)
+        binding.ozb.setOnClickListener(this)
     }
+
+    private fun underLineLanguage() {
+        when(uiCommunicationListener.getLocale()){
+            "ru" -> {
+                binding.rus.setTextColor(Color.BLACK)
+                binding.rus.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            }
+            "en" -> {
+                binding.ozb.setTextColor(Color.BLACK)
+                binding.ozb.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            }
+            else -> {
+                binding.uzb.setTextColor(Color.BLACK)
+                binding.uzb.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            }
+        }
+    }
+
 
     private fun subscribeObservers() {
         loginViewModel.state.observe(viewLifecycleOwner, Observer {
             uiCommunicationListener.displayProgressBar(it.isLoading)
+
             it.error?.let { error ->
                 Log.d(TAG, "Error" + error.localizedMessage)
                 if (error.localizedMessage.contains(NO_INTERNET)) {
-                    noInternet(context)
+                    uiCommunicationListener.showNoInternetDialog()
                 }
                 else {
                     showError()
                 }
-
             }
 
         })
@@ -92,18 +114,29 @@ class LoginFragment : BaseFragment(), View.OnClickListener {
             }
 
             binding.confirm->{
-                Log.d(TAG, "onClick: ")
                 val fileUrl = ABOUT_US_POLICY
                 val uri = Uri.parse(fileUrl)
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.setDataAndType(uri, "text/html")
                 startActivity(intent)
             }
+
+            binding.rus->{
+                uiCommunicationListener.setLocale("ru")
+            }
+
+            binding.uzb->{
+                uiCommunicationListener.setLocale("uz")
+            }
+
+            binding.ozb->{
+                uiCommunicationListener.setLocale("en")
+            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

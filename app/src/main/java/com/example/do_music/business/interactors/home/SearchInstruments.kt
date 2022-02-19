@@ -19,7 +19,7 @@ class SearchInstruments(
     private val service: OpenMainApiService,
     private val instrumentsDao: InstrumentsDao
 ) {
-    suspend fun serviceAndDb(notes_response: List<Instrument>) = withContext(Dispatchers.IO) {
+    private suspend fun serviceAndDb(notes_response: List<Instrument>) = withContext(Dispatchers.IO) {
         for (note in notes_response) {
             try {
                 instrumentsDao.insertInstrument(note)
@@ -51,13 +51,13 @@ class SearchInstruments(
         page: Int,
         update: Boolean
     ): Flow<Resource<List<Instrument>>> = flow {
-        emit(Resource.loading<List<Instrument>>())
+        emit(Resource.loading())
 
-        lateinit var instruments_response: List<Instrument>
+        lateinit var instrumentsResponse: List<Instrument>
         if (!update) {
             try {
                 if (instrumentId != -1) {
-                    instruments_response = service.getInstruments(
+                    instrumentsResponse = service.getInstruments(
                         pageNumber = page,
                         instrumentType = instrumentGroupName,
                         noteGroupType = noteGroupType,
@@ -65,28 +65,28 @@ class SearchInstruments(
                         searchText = searchText
                     ).rows
                 } else {
-                    instruments_response = service.getInstruments(
+                    instrumentsResponse = service.getInstruments(
                         pageNumber = page,
                         instrumentType = instrumentGroupName,
                         noteGroupType = noteGroupType,
                         searchText = searchText
                     ).rows
                 }
-                serviceAndDb(instruments_response)
+                serviceAndDb(instrumentsResponse)
 
             } catch (throwable: Throwable) {
-                Log.d(TAG, throwable.message.toString())
+                emit(Resource.error<List<Instrument>>(throwable))
             }
         }
 
-        val cashed_instruments = instrumentsDao.returnOrderedInstrumentsQuery(
+        val cashedInstruments = instrumentsDao.returnOrderedInstrumentsQuery(
             instrumentId = instrumentId,
             instrumentGroupName = instrumentGroupName,
             searchText = searchText,
             page = page + 1,
             noteGroupType = noteGroupType
         )
-        emit(Resource.success(data = cashed_instruments))
+        emit(Resource.success(data = cashedInstruments))
 
     }.catch { e ->
         emit(Resource.error(e))

@@ -34,7 +34,7 @@
         android:layout_marginTop="28dp"
         android:background="@drawable/back_search_ed"
         android:drawableLeft="@drawable/ic_baseline_search_24"
-        android:drawablePadding="8dp"
+        android:drawablePadding="10dp"
         android:drawableTint="@color/black"
         android:ems="10"
         android:importantForAutofill="no"
@@ -44,6 +44,7 @@
         />
 
     <RadioGroup
+        android:layout_marginStart="1dp"
         android:layout_marginTop="7dp"
         android:id="@+id/radio_group"
         android:orientation="horizontal"
@@ -103,9 +104,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/radio_group"
         layout="@layout/no_results" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

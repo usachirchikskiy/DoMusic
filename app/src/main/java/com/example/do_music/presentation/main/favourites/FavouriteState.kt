@@ -1,6 +1,7 @@
 package com.example.do_music.presentation.main.favourites
 
 import com.example.do_music.business.model.main.Favourite
+import com.example.do_music.util.Constants.Companion.BOOK
 
 data class FavouriteState(
     val isLoading: Boolean = false,
@@ -8,6 +9,6 @@ data class FavouriteState(
     val searchText: String = "",
     val page:Int = 0,
     val error: Throwable?=null,
-    val docType:String = "BOOK",
-    val favClass:String = "UNKNOWN",
+    val docType:String = BOOK,
+//    val favClass:String = "UNKNOWN",
 )
