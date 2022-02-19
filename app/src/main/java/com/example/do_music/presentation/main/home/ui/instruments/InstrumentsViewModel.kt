@@ -1,5 +1,6 @@
 package com.example.do_music.presentation.main.home.ui.instruments
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchInstruments
 import com.example.do_music.business.datasources.network.main.home.InstrumentByGroup
 import com.example.do_music.presentation.main.home.adapter.InstrumentHelper
+import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants.Companion.FILTERS_DEFAULT
 import com.example.do_music.util.Constants.Companion.FILTERS_DEFAULT_ENSEMBLE
 import com.example.do_music.util.Constants.Companion.FILTERS_RU
@@ -26,7 +28,8 @@ private const val TAG = "InstrumentsViewModel"
 @HiltViewModel
 class InstrumentsViewModel @Inject constructor(
     private val searchInstruments: SearchInstruments,
-    private val update: AddToFavourite
+    private val update: AddToFavourite,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<InstrumentState> = MutableLiveData(InstrumentState())
     private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> =
@@ -62,12 +65,125 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
+    private fun setFilters(listGroup: List<InstrumentHelper>) {
+        Log.d(TAG, "setFilters: " + listGroup.toString())
+        state.value?.let { state ->
+            this.state.value = state.copy(instrumentsGroup = listGroup)
+        }
+    }
+
+    fun setFiltersInit(lang: String) {
+        when (lang) {
+            "ru" -> {
+                setFilters(FILTERS_RU)
+            }
+            "en" -> {
+                setFilters(FILTERS_DEFAULT)
+            }
+            "uz" -> {
+                setFilters(FILTERS_UZ)
+            }
+        }
+    }
+
+    private fun clearList() {
+        state.value?.let { state ->
+            this.state.value = state.copy(instruments = listOf())
+        }
+    }
+
+    private fun setInstrumentId(id: Int) {
+        state.value?.let { state ->
+            this.state.value = state.copy(instrumentId = id)
+        }
+    }
+
+    private fun instrumentGroupName(instrumentGroupName: String) {
+        state.value?.let { state ->
+            this.state.value = state.copy(instrumentGroupName = instrumentGroupName)
+        }
+    }
+
+    private fun noteGroupType(noteGroupType: String) {
+        state.value?.let { state ->
+            this.state.value = state.copy(noteGroupType = noteGroupType)
+
+        }
+    }
+
+    private fun pageToZero() {
+        state.value?.let { state ->
+            this.state.value = state.copy(page = 0)
+        }
+    }
+
+    private fun incrementPage() {
+        state.value?.let { state ->
+            this.state.value = state.copy(page = state.page + 1)
+        }
+    }
+
+    fun setSearchText(search: String) {
+        state.value?.let { state ->
+            this.state.value = state.copy(searchText = search)
+        }
+    }
+
+    fun setLoadingToFalse() {
+        state.value?.let { state ->
+            this.state.value = state.copy(isLoading = false)
+        }
+    }
+
+    fun getInstrumentHelper(position: Int): InstrumentHelper? {
+        return state.value?.let {
+            this.state.value!!.instrumentsGroup[position]
+        }
+    }
+
+    fun clearSessionValues(){
+        sessionManager.clearValuesOfDataStore()
+    }
+
+    fun setErrorNull(){
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+    }
+
+    fun isLiked(favId: Int, isFav: Boolean) {
+        state.value?.let { state ->
+            var noteId = -1
+            var favouriteId = -1
+            if (isFav) {
+                noteId = favId
+            } else {
+                favouriteId = favId
+            }
+            update.execute(
+                noteId = noteId,
+                favouriteId = favouriteId,
+                isFavourite = isFav,
+                property = NOTE_ID
+            ).onEach {
+
+                it.data?.let {
+                    isUpdated.value = true
+                }
+
+                it.error?.let { error ->
+                    this.state.value = state.copy(error = error)
+                }
+
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun filterSelected(instrumentHelper: InstrumentHelper, lang: String) {
         state.value?.let { state ->
             val listGroup = arrayListOf<InstrumentHelper>()
             if (instrumentHelper.GroupName != "" && !instrumentHelper.isGroupName) {
                 listGroup.add(instrumentHelper.copy(isGroupName = true))
-                //TODO
                 listGroup.addAll(getFiltersEnsembles(lang))
                 instrumentGroupName(instrumentHelper.GroupName)
                 searchInstruments.getGroupOfInstruments(instrumentHelper.GroupName).onEach {
@@ -134,87 +250,6 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    private fun setFilters(listGroup: List<InstrumentHelper>) {
-        state.value?.let { state ->
-            this.state.value = state.copy(instrumentsGroup = listGroup)
-        }
-    }
-
-    fun setFiltersInit(lang: String) {
-        when (lang) {
-            "ru" -> {
-                setFilters(FILTERS_RU)
-            }
-            "en" -> {
-                setFilters(FILTERS_DEFAULT)
-            }
-            "uz" -> {
-                setFilters(FILTERS_UZ)
-            }
-        }
-    }
-
-    private fun clearList() {
-        state.value?.let { state ->
-            this.state.value = state.copy(instruments = listOf())
-        }
-    }
-
-    private fun setInstrumentId(id: Int) {
-        state.value?.let { state ->
-            this.state.value = state.copy(instrumentId = id)
-        }
-    }
-
-    private fun instrumentGroupName(instrumentGroupName: String) {
-        state.value?.let { state ->
-            this.state.value = state.copy(instrumentGroupName = instrumentGroupName)
-        }
-    }
-
-    private fun noteGroupType(noteGroupType: String) {
-        state.value?.let { state ->
-            this.state.value = state.copy(noteGroupType = noteGroupType)
-
-        }
-    }
-
-
-    fun getInstrumentHelper(position: Int): InstrumentHelper? {
-        return state.value?.let {
-            this.state.value!!.instrumentsGroup[position]
-        }
-    }
-
-    fun isLiked(favId: Int, isFav: Boolean) {
-        state.value?.let { state ->
-            var noteId = -1
-            var favouriteId = -1
-            if (isFav) {
-                noteId = favId
-            } else {
-                favouriteId = favId
-            }
-            update.execute(
-                noteId = noteId,
-                favouriteId = favouriteId,
-                isFavourite = isFav,
-                property = NOTE_ID
-            ).onEach {
-
-                it.data?.let {
-                    isUpdated.value = true
-                }
-
-                it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
-                }
-
-
-            }.launchIn(viewModelScope)
-        }
-    }
-
     fun getPage(next: Boolean = false, update: Boolean = false) {
         getInstrumentsJob?.cancel()
         if (next) {
@@ -246,29 +281,4 @@ class InstrumentsViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
-
-    private fun pageToZero() {
-        state.value?.let { state ->
-            this.state.value = state.copy(page = 0)
-        }
-    }
-
-    private fun incrementPage() {
-        state.value?.let { state ->
-            this.state.value = state.copy(page = state.page + 1)
-        }
-    }
-
-    fun setSearchText(search: String) {
-        state.value?.let { state ->
-            this.state.value = state.copy(searchText = search)
-        }
-    }
-
-    fun setLoadingToFalse() {
-        state.value?.let { state ->
-            this.state.value = state.copy(isLoading = false)
-        }
-    }
-
 }

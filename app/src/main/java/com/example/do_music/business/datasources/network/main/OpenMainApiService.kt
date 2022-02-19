@@ -6,11 +6,18 @@ import com.example.do_music.business.datasources.network.main.account.UserChange
 import com.example.do_music.business.datasources.network.main.account.UserPhotoResponse
 import com.example.do_music.business.datasources.network.main.favourite.GetFavouritesResponse
 import com.example.do_music.business.datasources.network.main.home.*
+import com.example.do_music.business.model.main.Instrument
+import com.example.do_music.business.model.main.TheoryInfo
+import com.example.do_music.business.model.main.Vocal
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface OpenMainApiService {
+    @Headers("Accept: */*")
+    @GET("api/doc/download")
+    suspend fun downloadFile(@Query("uniqueName") uniqueName: String): Response<ResponseBody>
 
     @Multipart
     @POST("api/doc/avatar")
@@ -18,11 +25,16 @@ interface OpenMainApiService {
         @Part image: MultipartBody.Part?
     ): UserPhotoResponse
 
+    @POST("api/user/feedback")
+    suspend fun uploadCommentToServer(
+        @Query("comment") comment: String
+    ): Response<String>
+
     @Multipart
     @POST("api/user/feedback")
-    suspend fun uploadFilesToServer(
+    suspend fun uploadFilesAndCommentToServer(
         @Query("comment") comment: String,
-        @Part files: List<MultipartBody.Part?>
+        @Part file: List<MultipartBody.Part>
     ): Response<String>
 
     @POST("api/user/phone/{phone}")
@@ -50,14 +62,14 @@ interface OpenMainApiService {
     @GET("/api/user")
     suspend fun getUserAccount(): UserAccount
 
-//    @GET("api/books/{bookId}")
-//    suspend fun getBookById(@Path("bookId") bookId: Int): TheoryInfo
-//
-//    @GET("api/notes/{notesId}")
-//    suspend fun getInstrumentById(@Path("notesId") notesId: Int): Instrument
-//
-//    @GET("/api/vocals/{vocalsId}")
-//    suspend fun getVocalById(@Path("vocalsId") vocalsId: Int): Vocal
+    @GET("api/books/{bookId}")
+    suspend fun getBookById(@Path("bookId") bookId: Int): TheoryInfo
+
+    @GET("api/notes/{notesId}")
+    suspend fun getInstrumentById(@Path("notesId") notesId: Int): Instrument
+
+    @GET("/api/vocals/{vocalsId}")
+    suspend fun getVocalById(@Path("vocalsId") vocalsId: Int): Vocal
 
     @Headers("Content-Type: application/json")
     @POST("api/favorites/class")

@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
-import com.example.do_music.R
-import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.TheoryInfo
+import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.util.Constants.Companion.BASE_URL
+import com.example.do_music.util.shimmerDrawable
+
 
 class TheoryAdapter(
     private val interaction: Interaction_Instrument? = null
@@ -33,18 +34,19 @@ class TheoryAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(book: TheoryInfo) {
+
             binding.root.setOnClickListener {
                 interaction?.onItemSelected(book.bookId)
             }
             if (book.favorite) {
-                binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
+                binding.bookLike.setImageResource(com.example.do_music.R.drawable.ic_favourite_enabled_in_card)
             } else {
-                binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                binding.bookLike.setImageResource(com.example.do_music.R.drawable.ic_favourite_disabled_in_card)
             }
-
 
             Glide.with(binding.root)
                 .load(BASE_URL + "api/doc/logo?mini=true&uniqueName=" + book.logoId)
+                .placeholder(shimmerDrawable)
                 .into(binding.bookImage)
 
             binding.bookAuthor.text = book.authorName
@@ -57,24 +59,13 @@ class TheoryAdapter(
                 }
             }
 
-            binding.bookLike.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-
-//                    if (book.favourite == false) {
-//                        binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
-//                    } else {
-//                        binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-//                    }
-                    if(book.favorite) {
-                        interaction?.onLikeSelected(book.favoriteId!!, !book.favorite)
-                    }
-                    else{
-                        interaction?.onLikeSelected(book.bookId, !book.favorite)
-                    }
+            binding.bookLike.setOnClickListener {
+                if (book.favorite) {
+                    interaction?.onLikeSelected(book.favoriteId!!, !book.favorite)
+                } else {
+                    interaction?.onLikeSelected(book.bookId, !book.favorite)
                 }
-
-            })
-
+            }
         }
     }
 

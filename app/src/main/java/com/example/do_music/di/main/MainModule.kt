@@ -8,12 +8,9 @@ import com.example.do_music.business.datasources.data.home.instruments.Instrumen
 import com.example.do_music.business.datasources.data.home.theory.TheoryDao
 import com.example.do_music.business.datasources.data.home.vocal.VocalsDao
 import com.example.do_music.business.interactors.account.GetUserAccount
-import com.example.do_music.business.interactors.common.EmailCode
-import com.example.do_music.business.interactors.common.PasswordCode
-import com.example.do_music.business.interactors.common.SearchItem
-import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.*
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.interactors.common.*
 import com.example.do_music.business.interactors.favourite.SearchFavourites
 import dagger.Module
 import dagger.Provides
@@ -92,11 +89,12 @@ object MainModule {
     @Singleton
     @Provides
     fun provideSearchItem(
+        openMainApiService: OpenMainApiService,
         vocalsDao: VocalsDao,
         instrumentsDao: InstrumentsDao,
         theoryDao: TheoryDao
     ): SearchItem {
-        return SearchItem(vocalsDao, instrumentsDao, theoryDao)
+        return SearchItem(openMainApiService,vocalsDao, instrumentsDao, theoryDao)
     }
 
     @Singleton
@@ -132,6 +130,14 @@ object MainModule {
         openMainApiService: OpenMainApiService
     ): EmailCode {
         return EmailCode(openMainApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDownloadFile(
+        openMainApiService: OpenMainApiService
+    ): DownloadFile {
+        return DownloadFile(openMainApiService)
     }
 
 }

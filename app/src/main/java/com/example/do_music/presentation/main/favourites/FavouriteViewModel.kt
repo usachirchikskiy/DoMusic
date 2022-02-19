@@ -33,7 +33,6 @@ constructor(
     private var getFavouriteJob: Job? = null
 
     init {
-        Log.d(TAG, "INIT: ")
         getPage()
     }
 
@@ -54,6 +53,7 @@ constructor(
     }
 
     fun getPage(next: Boolean = false, update: Boolean = false) {
+        Log.d(TAG, "getPage: "+state.value!!.docType)
         getFavouriteJob?.cancel()
         if (next) {
             incrementPage()
@@ -68,7 +68,7 @@ constructor(
                 pageNumber = state.page,
                 docType = state.docType,
                 searchText = state.searchText,
-                favouriteClass = state.favClass,
+//                favouriteClass = state.favClass,
                 updated = update
             ).onEach {
 
@@ -77,8 +77,7 @@ constructor(
                 }
 
                 it.data?.let { list ->
-                    Log.d(TAG, "getPage: ")
-//                            + state.docType+"\n" + state.favClass+"\n" + it)
+                    Log.d(TAG, "getPage: ${it.data}\n" + list)
                     this.state.value = state.copy(
                         favouriteItems = list,
                         isLoading = false
@@ -124,18 +123,17 @@ constructor(
     }
 
     fun isLiked(favId: Int, isFav: Boolean) {
-        state.value?.let {
+        state.value?.let { state->
             var property = "-1"
             var noteId = -1
             var bookId = -1
-            var favouriteId = -1
             var vocalsId = -1
-            if (it.docType == NOTES) {
+            if (state.docType == NOTES) {
                 property = NOTE_ID
                 if (isFav) {
                     noteId = favId
                 }
-            } else if (it.docType == BOOK) {
+            } else if (state.docType == BOOK) {
                 property = BOOK_ID
                 if (isFav) {
                     bookId = favId
@@ -146,9 +144,7 @@ constructor(
                     vocalsId = favId
                 }
             }
-            if (!isFav) {
-                favouriteId = favId
-            }
+
             update.execute(
                 bookId = bookId,
                 vocalsId = vocalsId,
@@ -158,10 +154,19 @@ constructor(
                 property = property
             ).onEach {
                 it.data?.let {
-                    update.deleteFromFavourite(favouriteId)
                     isUpdated.value = true
                 }
+
+                it.error?.let{ error->
+                    this.state.value = state.copy(error = error)
+                }
             }.launchIn(viewModelScope)
+        }
+    }
+
+    fun setErrorNull() {
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
         }
     }
 }

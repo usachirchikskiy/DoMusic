@@ -17,18 +17,22 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp">
+            android:paddingVertical="10dp">
 
             <com.google.android.material.imageview.ShapeableImageView
+                android:elevation="1dp"
+                android:background="@color/shimmer"
+                android:layout_marginVertical="1dp"
                 android:id="@+id/book_image"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginStart="10dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedRectangleImageView" />
+                app:shapeAppearanceOverlay="@style/roundedRectangleImageView"
+                />
 
             <TextView
                 android:id="@+id/book_author"
@@ -45,6 +49,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:layout_marginTop="5dp"
                 android:id="@+id/book_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -58,6 +63,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/book_author" />
 
             <TextView
+                android:layout_marginTop="5dp"
                 android:id="@+id/book_edition_not_changed_instr"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,9 +87,10 @@
                 android:textSize="10sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@id/book_edition_not_changed_instr"
-                app:layout_constraintTop_toBottomOf="@id/book_edition_not_changed" />
+                app:layout_constraintTop_toTopOf="@id/book_edition_not_changed_instr" />
 
             <TextView
+                android:layout_marginTop="5dp"
                 android:id="@+id/book_edition_not_changed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -107,7 +114,7 @@
                 android:textSize="10sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@id/book_edition_not_changed"
-                app:layout_constraintTop_toBottomOf="@id/book_name" />
+                app:layout_constraintTop_toTopOf="@id/book_edition_not_changed" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline4"
@@ -118,11 +125,12 @@
                 app:layout_constraintGuide_percent="0.8" />
 
             <ImageButton
+                android:layout_marginEnd="10dp"
                 android:id="@+id/book_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTintMode="add"
-                android:src="@drawable/ic_baseline_favorite_border_24"
+                android:src="@drawable/ic_favourite_disabled_in_card"
                 android:background="?android:attr/actionBarItemBackground"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

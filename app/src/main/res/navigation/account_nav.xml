@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/account_nav"
+    app:startDestination="@id/accountFragment">
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.do_music.presentation.main.account.primary.AccountFragment"
+        android:label="AccountFragment" >
+        <action
+            android:id="@+id/action_accountFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_changeEmailFragment"
+            app:destination="@id/changeEmailFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_changeSuccessFragment"
+            app:destination="@id/changeSuccessFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_feedbackSuccessFragment"
+            app:destination="@id/feedbackSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/changeEmailFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.changeEmail.checkCodeEmail.ChangeEmailFragment"
+        android:label="fragment_change_email"
+        tools:layout="@layout/fragment_change_email" >
+        <action
+            android:id="@+id/action_changeEmailFragment_to_prepareEmailFragment"
+            app:destination="@id/prepareEmailFragment"
+            app:popUpTo="@+id/accountFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.changePassword.checkCode.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" >
+        <action
+            android:id="@+id/action_changePasswordFragment_to_newPasswordFragment"
+            app:destination="@id/newPasswordFragment"
+            app:popUpTo="@+id/accountFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/changeSuccessFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.changeSuccess.ChangeSuccessFragment"
+        android:label="fragment_change_success"
+        tools:layout="@layout/fragment_change_success"
+       />
+    <fragment
+        android:id="@+id/newPasswordFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.changePassword.newPassword.NewPasswordFragment"
+        android:label="fragment_new_password"
+        tools:layout="@layout/fragment_new_password" >
+        <action
+            android:id="@+id/action_newPasswordFragment_to_changeSuccessFragment"
+            app:destination="@id/changeSuccessFragment"
+        />
+    </fragment>
+    <fragment
+        android:id="@+id/prepareEmailFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.changeEmail.prepareEmail.PrepareEmailFragment"
+        android:label="fragment_prepare_email"
+        tools:layout="@layout/fragment_prepare_email"
+        >
+        <action
+            android:id="@+id/action_prepareEmailFragment_to_changeSuccessFragment"
+            app:destination="@id/changeSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/feedbackSuccessFragment"
+        android:name="com.example.do_music.presentation.main.account.secondary.feedbackSuccess.FeedbackSuccessFragment"
+        android:label="fragment_feedback_success"
+        tools:layout="@layout/fragment_feedback_success" />
+</navigation>

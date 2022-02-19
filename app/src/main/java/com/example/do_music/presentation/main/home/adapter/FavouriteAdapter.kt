@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.do_music.R
 import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.Favourite
+import com.example.do_music.util.shimmerDrawable
 
 class FavouriteAdapter(
     private val interaction: Interaction_Favourite? = null
@@ -84,22 +85,16 @@ class FavouriteAdapter(
 //            if(position!=-1){
 //                changeState(isfavClass = true,position = position-1)
 //            }
-
-
-
             binding.root.setOnClickListener {
                 interaction?.onItemSelected(adapterPosition)
             }
 //            binding.cardOfClasses.visibility = View.VISIBLE
-
+            binding.bookImage.layoutParams.width = binding.bookImage.layoutParams.height
             Glide.with(binding.root)
                 .load("https://domusic.uz/api/doc/logo?mini=true&uniqueName=" + favourite.logoId)
+                .placeholder(shimmerDrawable)
                 .into(binding.bookImage)
-
-            binding.bookLike.setImageResource(R.drawable.ic_delete_btn)
-
-
-
+            binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             binding.bookAuthor.text = favourite.compositorName
             binding.bookName.text = favourite.noteName
 
@@ -110,6 +105,7 @@ class FavouriteAdapter(
                     binding.bookEditionChanged.text = favourite.opusEdition
                 }
             }
+
             favourite.instrumentName?.let {
                 binding.bookEditionNotChangedInstr.visibility = View.VISIBLE
                 binding.bookEditionChangedInstr.visibility = View.VISIBLE
@@ -123,14 +119,12 @@ class FavouriteAdapter(
 //            binding.five.setOnCheckedChangeListener(this)
 //            binding.six.setOnCheckedChangeListener(this)
 
-            binding.bookLike.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-                    interaction?.onDeleteSelected(
-                        favourite.favoriteId!!, false,
-                        favourite.compositorName!!
-                    )
-                }
-            })
+            binding.bookLike.setOnClickListener {
+                interaction?.onDeleteSelected(
+                    favourite.favoriteId!!, false,
+                    favourite.compositorName!!
+                )
+            }
 
         }
 
@@ -186,7 +180,7 @@ class FavouriteAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is FavouriteViewHolder -> {
-                holder.bind(differ.currentList.get(position))
+                holder.bind(differ.currentList[position])
             }
         }
     }

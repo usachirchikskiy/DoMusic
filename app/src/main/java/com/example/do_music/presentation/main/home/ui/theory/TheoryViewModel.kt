@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchTheory
+import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,7 +20,8 @@ private const val TAG = "TheoryViewModel"
 @HiltViewModel
 class TheoryViewModel @Inject constructor(
     private val searchBooks: SearchTheory,
-    private val update: AddToFavourite
+    private val update: AddToFavourite,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<TheoryState> = MutableLiveData(TheoryState())
     val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -58,6 +60,15 @@ class TheoryViewModel @Inject constructor(
         }
     }
 
+    fun clearSessionValues(){
+        sessionManager.clearValuesOfDataStore()
+    }
+
+    fun setErrorNull(){
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+    }
 
     fun isLiked(favId: Int, isFav: Boolean) {
         state.value?.let { state ->
@@ -121,6 +132,4 @@ class TheoryViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
-
-
 }

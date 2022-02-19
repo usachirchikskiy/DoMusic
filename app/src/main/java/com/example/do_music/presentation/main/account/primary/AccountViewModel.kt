@@ -1,6 +1,8 @@
-package com.example.do_music.presentation.main.account.main
+package com.example.do_music.presentation.main.account.primary
 
+import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +17,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
-import android.webkit.MimeTypeMap
 
 
 private const val TAG = "AccountViewModel"
@@ -30,9 +31,9 @@ constructor(
 ) : ViewModel() {
     val state: MutableLiveData<UserAccountState> = MutableLiveData(UserAccountState())
     val update: MutableLiveData<Int> = MutableLiveData(0)
+    val thankForFeedBackState: MutableLiveData<Boolean> = MutableLiveData(false)
 
     init {
-        Log.d(TAG, ": INIT")
         getUser()
     }
 
@@ -65,8 +66,6 @@ constructor(
         state.value?.let { state ->
             getUserAccount.execute().onEach {
 
-                Log.d(TAG, "getPage: " + it)
-
                 it.data?.let { userAccount ->
                     this.state.value = state.copy(userAccount = userAccount)
                 }
@@ -82,7 +81,7 @@ constructor(
 
     private fun setEmptyList() {
         state.value?.let { state ->
-            this.state.value = state.copy(filesPath = arrayListOf<String>())
+            this.state.value = state.copy(filesPath = arrayListOf())
             update.value = 0
         }
 
@@ -118,12 +117,13 @@ constructor(
             ).onEach { dataState ->
 
                 dataState.data?.let { response ->
-                    Log.d(TAG, "uploadFiles: " + response)
+                    Log.d(TAG, "uploadFiles: $response")
                     setEmptyList()
+                    setFeedbackOnComplete()
                 }
 
                 dataState.error?.let { error ->
-                    Log.d(TAG, "uploadFiles: " + error)
+                    Log.d(TAG, "uploadFiles: $error")
                 }
             }.launchIn(viewModelScope)
         }
@@ -136,6 +136,15 @@ constructor(
         }
 
     }
+
+    private fun setFeedbackOnComplete() {
+        thankForFeedBackState.value = true
+    }
+
+    fun setFeedbackOnRestore() {
+        thankForFeedBackState.value = false
+    }
+
     private fun getExtension(fileName: String): String {
         val arrayOfFilename = fileName.toCharArray()
         for (i in arrayOfFilename.size - 1 downTo 1) {
@@ -159,7 +168,7 @@ constructor(
         state.value?.let {
             val imageFile = File(selectedImagePath)
             val contentDisposition = getMimeType(imageFile)
-            Log.d(TAG, "uploadPhoto: " + contentDisposition)
+            Log.d(TAG, "uploadPhoto: $contentDisposition")
             val requestBody =
                 RequestBody.create(
                     MediaType.parse(contentDisposition),
@@ -176,13 +185,20 @@ constructor(
             ).onEach { dataState ->
 
                 dataState.data?.let { response ->
-                    Log.d(TAG, "uploadPhoto: " + response)
+                    Log.d(TAG, "uploadPhoto: $response")
+//                    getUser()
                 }
 
                 dataState.error?.let { error ->
-                    Log.d(TAG, "uploadPhoto: " + error)
+                    Log.d(TAG, "uploadPhoto: $error")
                 }
             }.launchIn(viewModelScope)
+        }
+    }
+
+    fun setUri(uri: Uri) {
+        state.value?.let { state ->
+            this.state.value = state.copy(uri = uri)
         }
     }
 }

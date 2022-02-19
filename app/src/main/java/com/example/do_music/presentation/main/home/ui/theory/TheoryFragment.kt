@@ -14,16 +14,18 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentTheoryBinding
-
+import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.presentation.main.home.adapter.TheoryAdapter
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
+import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.hide
 
 
 private const val TAG = "TheoryFragment"
@@ -34,8 +36,6 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
     private var _binding: FragmentTheoryBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TheoryViewModel by viewModels()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +60,6 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
                 )
             }
         }
-        Log.d(TAG, "onViewCreated: " + viewModel.toString())
         setupObservers()
         setupRecyclerView()
         setupViews()
@@ -68,11 +67,14 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
     }
 
     private fun setupViews() {
+        binding.searchEt.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         binding.searchEt.addTextChangedListener(this)
         binding.theorySalfedjo.setOnClickListener(this)
         binding.literature.setOnClickListener(this)
         viewModel.state.value?.let {
-            if(it.searchText.isNotBlank()){
+            if (it.searchText.isNotBlank()) {
                 binding.searchEt.setText(it.searchText)
             }
         }
@@ -109,17 +111,29 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 //            showProgressBar(it.isLoading)
 
             theoryAdapter?.apply {
-                if(!it.isLoading && it.books.isEmpty() && it.searchText.isNotBlank()){
+                if (!it.isLoading && it.books.isEmpty() && it.searchText.isNotBlank()) {
                     binding.noResultsLayout.root.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     binding.noResultsLayout.root.visibility = View.GONE
                 }
                 submitList(books = it.books)
             }
 
-            it.error?.let {
-
+            it.error?.let { error ->
+                when (error.localizedMessage) {
+                    Constants.NO_INTERNET -> {
+                        uiCommunicationListener.showNoInternetDialog()
+                        viewModel.setErrorNull()
+                    }
+                    Constants.AUTH_ERROR -> {
+                        viewModel.clearSessionValues()
+                        uiCommunicationListener.onAuthActivity()
+                    }
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
             }
 
         })
@@ -128,6 +142,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
         {
             if (it) {
                 viewModel.getPage(update = true)
+                viewModel.isUpdated.value = false
             }
         })
     }
@@ -148,14 +163,14 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     }
 
-    fun filtersearch(
+    private fun filterSearch(
         enable: CheckBox,
         disable: CheckBox,
         filter: String
     ) {
-        if (enable.isChecked == true) {
-            enable.setChecked(true)
-            disable.setChecked(false)
+        if (enable.isChecked) {
+            enable.isChecked = true
+            disable.isChecked = false
             setBookType(filter)
         } else {
             setBookType("")
@@ -170,9 +185,9 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     override fun onClick(p0: View?) {
         if (p0 == binding.theorySalfedjo) {
-            filtersearch(binding.theorySalfedjo, binding.literature, "SOLFEGGIO_AND_THEORY")
+            filterSearch(binding.theorySalfedjo, binding.literature, "SOLFEGGIO_AND_THEORY")
         } else if (p0 == binding.literature) {
-            filtersearch(binding.literature, binding.theorySalfedjo, "MUSICAL_LITERATURE")
+            filterSearch(binding.literature, binding.theorySalfedjo, "MUSICAL_LITERATURE")
         }
     }
 

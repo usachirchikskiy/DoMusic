@@ -13,7 +13,7 @@ data class Compositor(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val fileId: String,
-    val name: String,
+    var name: String,
     val country: String
 )
 

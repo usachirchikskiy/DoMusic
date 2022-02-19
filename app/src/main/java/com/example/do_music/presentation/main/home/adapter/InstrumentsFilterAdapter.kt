@@ -1,7 +1,6 @@
 package com.example.do_music.presentation.main.home.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.example.do_music.databinding.CheckboxCardBinding
@@ -93,19 +92,9 @@ class InstrumentFilterViewHolder(
         val key = instrumentHelper.name
         binding.instrumentCheckbox.text = key
 
-        if (instrumentHelper.isAnsamble || instrumentHelper.isInstumentId || instrumentHelper.isGroupName) {
-            binding.instrumentCheckbox.setChecked(true)
-        } else {
-            binding.instrumentCheckbox.setChecked(false)
-        }
+        binding.instrumentCheckbox.isChecked = instrumentHelper.isAnsamble || instrumentHelper.isInstumentId || instrumentHelper.isGroupName
 
-        binding.instrumentCheckbox.setOnClickListener(
-            object : View.OnClickListener {
-                override fun onClick(p0: View?) {
-                    interaction?.onCheckBoxSelected(position = adapterPosition)
-                }
-            }
-        )
+        binding.instrumentCheckbox.setOnClickListener { interaction?.onCheckBoxSelected(position = adapterPosition) }
 
     }
 }

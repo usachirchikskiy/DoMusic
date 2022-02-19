@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.Log
 import com.example.do_music.business.datasources.data.home.theory.TheoryDao
 import com.example.do_music.business.datasources.data.home.theory.returnOrderedBooksQuery
-import com.example.do_music.business.model.main.TheoryInfo
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.model.main.TheoryInfo
 import com.example.do_music.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
 
 class SearchTheory(
@@ -29,31 +29,26 @@ class SearchTheory(
         if (!update) {
             try {
                 // catch network exception
-                var books_response = service.getBooks(
+                var booksResponse = service.getBooks(
                     pageNumber = page,
                     searchText = searchText,
                     bookType = bookType
                 ).rows
-                for (book in books_response) {
-                    try {
-                        theoryDao.insertBook(book)
-                    } catch (e: Exception) {
-                        Log.d(TAG + " Error", e.message.toString())
-                        e.printStackTrace()
-                    }
+                for (book in booksResponse) {
+                    theoryDao.insertBook(book)
                 }
 
             } catch (throwable: Throwable) {
-                Log.d("Error", throwable.message.toString())
+                emit(Resource.error<List<TheoryInfo>>(throwable))
             }
         }
-        var cashed_books = theoryDao.returnOrderedBooksQuery(
+        var cashedBooks = theoryDao.returnOrderedBooksQuery(
             page = page + 1,
             bookType = bookType,
             searchText = searchText
         )
 
-        emit(Resource.success(data = cashed_books))
+        emit(Resource.success(data = cashedBooks))
     }.catch { e ->
         emit(Resource.error(e))
     }

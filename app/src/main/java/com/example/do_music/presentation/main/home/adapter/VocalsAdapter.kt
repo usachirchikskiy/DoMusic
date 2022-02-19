@@ -13,6 +13,7 @@ import com.example.do_music.R
 import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.Vocal
 import com.example.do_music.util.Constants.Companion.BASE_URL
+import com.example.do_music.util.shimmerDrawable
 
 class VocalsAdapter (
     private val context: Context?=null,
@@ -45,14 +46,14 @@ class VocalsAdapter (
             }
 
             if (vocal.favorite==true) {
-                binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
+                binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             } else {
-                binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
             }
-
 
             Glide.with(binding.root)
                 .load(BASE_URL + "api/doc/logo?mini=true&uniqueName=" + vocal.logoId)
+                .placeholder(shimmerDrawable)
                 .into(binding.bookImage)
 
 
@@ -81,9 +82,9 @@ class VocalsAdapter (
                 override fun onClick(p0: View?) {
 
 //                    if (vocal.favorite==false) {
-//                        binding.bookLike.setImageResource(R.drawable.ic_selected_in_card)
+//                        binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
 //                    } else {
-//                        binding.bookLike.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+//                        binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
 //                    }
 
                     if(vocal.favorite!!) {

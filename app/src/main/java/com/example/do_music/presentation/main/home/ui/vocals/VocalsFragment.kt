@@ -19,10 +19,13 @@ import com.example.do_music.databinding.FragmentVocalsBinding
 
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.presentation.main.home.adapter.VocalsAdapter
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
 import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
+import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.hide
 
 private const val TAG = "VocalsFragment"
 
@@ -58,8 +61,10 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
     }
 
     private fun setupViews() {
+        binding.searchEt.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         binding.searchEt.addTextChangedListener(this)
-
         viewModel.state.value?.let {
             if(it.searchText.isNotBlank()){
                 binding.searchEt.setText(it.searchText)
@@ -72,7 +77,6 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
             Log.d(TAG, "setupObservers: " + it)
 
             uiCommunicationListener.displayProgressBar(it.isLoading)
-//            showProgressBar(it.isLoading)
             vocalsAdapter?.apply {
                 if(!it.isLoading && it.instruments.isEmpty() && it.searchText.isNotBlank()){
                     binding.noResultsLayout.root.visibility = View.VISIBLE
@@ -83,8 +87,21 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
                 submitList(it.instruments)
             }
 
-            it.error?.let {
-                //Todo
+            it.error?.let { error->
+                when (error.localizedMessage) {
+                    Constants.NO_INTERNET -> {
+                        uiCommunicationListener.showNoInternetDialog()
+                        viewModel.setErrorNull()
+                    }
+                    Constants.AUTH_ERROR -> {
+                        viewModel.clearSessionValues()
+                        uiCommunicationListener.onAuthActivity()
+                    }
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
             }
 
         })
@@ -92,6 +109,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
         viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.getPage(update = true)
+                viewModel.isUpdated.value = false
             }
         })
 

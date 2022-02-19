@@ -21,12 +21,14 @@ import com.example.do_music.databinding.FragmentHomeCompositorsBinding
 
 import com.example.do_music.presentation.main.home.adapter.CompositorsAdapter
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
-import com.example.do_music.util.noInternet
+import com.example.do_music.util.Constants.Companion.AUTH_ERROR
 import com.example.do_music.util.Constants.Companion.COMPOSITOR_ID
 import com.example.do_music.util.Constants.Companion.FILTER_FOREIGN
 import com.example.do_music.util.Constants.Companion.FILTER_RUSSIAN
 import com.example.do_music.util.Constants.Companion.FILTER_UZB
 import com.example.do_music.util.Constants.Companion.NAME_OF_COMPOSITOR
+import com.example.do_music.util.Constants.Companion.NO_INTERNET
+import com.example.do_music.util.hide
 
 private const val TAG = "HomeCompositors"
 
@@ -35,7 +37,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
     private var homeAdapter: CompositorsAdapter?=null
     private var _binding: FragmentHomeCompositorsBinding?=null
     private val binding get() = _binding!!
-
     private val viewModel: HomeCompositorViewModel by viewModels()
 
 
@@ -61,6 +62,10 @@ class HomeCompositors : BaseFragment(), TextWatcher,
     }
 
     private fun setupViews() {
+        binding.searchEt.hide {
+            Log.d(TAG, "setupViews: ")
+            uiCommunicationListener.hideKeyboard()
+        }
         binding.searchEt.addTextChangedListener(this)
         binding.uzbekBtn.setOnClickListener(this)
         binding.foreignBtn.setOnClickListener(this)
@@ -114,9 +119,13 @@ class HomeCompositors : BaseFragment(), TextWatcher,
                 submitList(compositorList = it.compositors)
             }
             it.error?.let { error->
-                if(error.localizedMessage.contains("failed to connect to XXXX")){
-                 noInternet(context)
-                    Log.d(TAG, "setupObservers: " + error.localizedMessage)
+                if(error.localizedMessage == NO_INTERNET) {
+                    uiCommunicationListener.showNoInternetDialog()
+                    viewModel.setErrorNull()
+                }
+                else if(error.localizedMessage == AUTH_ERROR) {
+                    viewModel.clearSessionValues()
+                    uiCommunicationListener.onAuthActivity()
                 }
             }
         })

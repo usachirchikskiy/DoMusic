@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchVocals
+import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,7 +18,8 @@ private const val TAG = "VocalsViewModel"
 @HiltViewModel
 class VocalsViewModel @Inject constructor(
     private val searchVocals: SearchVocals,
-    private val update: AddToFavourite
+    private val update: AddToFavourite,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<VocalsState> = MutableLiveData(VocalsState())
     val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -27,56 +29,20 @@ class VocalsViewModel @Inject constructor(
         getPage()
     }
 
-
-    fun getPage(next: Boolean = false, update: Boolean = false) {
-        getVocalsJob?.cancel()
-        if (next) {
-            incrementPagevocalsnotes()
-        } else {
-            if (!update) {
-                pageToZerovocalsnotes()
-                clearListvocalsnotes()
-            }
-        }
-        state.value?.let { state ->
-            getVocalsJob = searchVocals.execute(
-                searchText = state.searchText,
-                page = state.pageNumber,
-                update = update
-            ).onEach {
-
-                if (!update) {
-                    this.state.value = state.copy(isLoading = it.isLoading)
-                }
-
-                it.error?.let { error ->
-                    this.state.value = state.copy(error = it.error)
-                }
-
-                it.data?.let { instruments ->
-                    this.state.value = state.copy(instruments = instruments)
-                }
-
-
-            }.launchIn(viewModelScope)
-        }
-    }
-
-
-    private fun incrementPagevocalsnotes() {
+    private fun incrementPageVocalsNotes() {
         state.value?.let { state ->
             this.state.value =
                 state.copy(pageNumber = state.pageNumber + 1)
         }
     }
 
-    private fun clearListvocalsnotes() {
+    private fun clearListVocalsNotes() {
         state.value?.let { state ->
             this.state.value = state.copy(instruments = listOf())
         }
     }
 
-    private fun pageToZerovocalsnotes() {
+    private fun pageToZeroVocalsNotes() {
         state.value?.let { state ->
             this.state.value = state.copy(pageNumber = 0)
         }
@@ -91,6 +57,16 @@ class VocalsViewModel @Inject constructor(
     fun setLoadingToFalse() {
         state.value?.let { state ->
             this.state.value = state.copy(isLoading = false)
+        }
+    }
+
+    fun clearSessionValues(){
+        sessionManager.clearValuesOfDataStore()
+    }
+
+    fun setErrorNull(){
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
         }
     }
 
@@ -117,6 +93,40 @@ class VocalsViewModel @Inject constructor(
                 it.error?.let { error ->
                     this.state.value = state.copy(error = error)
                 }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun getPage(next: Boolean = false, update: Boolean = false) {
+        getVocalsJob?.cancel()
+        if (next) {
+            incrementPageVocalsNotes()
+        } else {
+            if (!update) {
+                pageToZeroVocalsNotes()
+                clearListVocalsNotes()
+            }
+        }
+        state.value?.let { state ->
+            getVocalsJob = searchVocals.execute(
+                searchText = state.searchText,
+                page = state.pageNumber,
+                update = update
+            ).onEach {
+
+                if (!update) {
+                    this.state.value = state.copy(isLoading = it.isLoading)
+                }
+
+                it.error?.let { error ->
+                    this.state.value = state.copy(error = error)
+                }
+
+                it.data?.let { instruments ->
+                    this.state.value = state.copy(instruments = instruments)
+                }
+
+
             }.launchIn(viewModelScope)
         }
     }

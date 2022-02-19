@@ -1,5 +1,7 @@
 package com.example.do_music.presentation.common.itemSelected
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,7 +36,7 @@ class ItemSelectedViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = it.error)
+                    this.state.value = state.copy(error = error)
                 }
 
             }.launchIn(viewModelScope)
@@ -49,12 +51,16 @@ class ItemSelectedViewModel @Inject constructor(
             var vocalsId = -1
 
             if (isFav) {
-                if (property == BOOK_ID) {
-                    bookId = favId
-                } else if (property == NOTE_ID) {
-                    noteId = favId
-                } else {
-                    vocalsId = favId
+                when (property) {
+                    BOOK_ID -> {
+                        bookId = favId
+                    }
+                    NOTE_ID -> {
+                        noteId = favId
+                    }
+                    else -> {
+                        vocalsId = favId
+                    }
                 }
             }
             if (!isFav) {
@@ -81,5 +87,9 @@ class ItemSelectedViewModel @Inject constructor(
         }
     }
 
-
+    fun setErrorNull() {
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+    }
 }

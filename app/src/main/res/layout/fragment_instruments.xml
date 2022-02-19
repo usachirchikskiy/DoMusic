@@ -1,32 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.main.home.ui.instruments.InstrumentsFragment">
 
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.04" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.96" />
-
     <EditText
-        android:textSize="14sp"
-        android:inputType="text"
-        android:imeOptions="actionSearch"
-        android:saveEnabled="false"
-        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_et"
         style="@style/SearchEditText"
         android:layout_width="0dp"
@@ -34,48 +14,52 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/back_search_ed"
         android:drawableLeft="@drawable/ic_baseline_search_24"
-        android:drawablePadding="8dp"
+        android:drawablePadding="10dp"
         android:drawableTint="@color/black"
-        android:focusableInTouchMode="true"
+        android:ems="10"
         android:hint="@string/search_by_author_and_name"
+        android:imeOptions="actionSearch"
         android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="1"
         android:paddingStart="10dp"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2" />
+        android:saveEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-<androidx.recyclerview.widget.RecyclerView
-    android:layout_marginTop="10dp"
-    app:layout_constraintEnd_toEndOf="@id/guideline3"
-    android:id="@+id/recv_checkboxes"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintStart_toEndOf="@id/guideline2"
-    app:layout_constraintTop_toBottomOf="@id/search_et"
-    />
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/card_of_theory"
+        android:id="@+id/recv_checkboxes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_et"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="17dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recv_checkboxes"
-        app:layout_constraintVertical_bias="0" />
+        tools:listitem="@layout/card_of_theory" />
 
 
     <include
         android:id="@+id/no_results_layout"
+        layout="@layout/no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/no_results" />
+        app:layout_constraintTop_toBottomOf="@id/recv_checkboxes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

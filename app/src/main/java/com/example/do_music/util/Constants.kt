@@ -2,7 +2,6 @@ package com.example.do_music.util
 import com.example.do_music.presentation.main.home.adapter.InstrumentHelper
 
 class Constants {
-
     companion object {
         const val SUCCESS_CODE = 200
         const val PAGINATION_PAGE_SIZE = 10
@@ -23,7 +22,6 @@ class Constants {
         const val PASSWORD = "password"
         const val LOGIN = "login"
         const val SUCCESS = "Success"
-        const val SHOULD_REFRESH = "should_refresh"
         const val VOCAL_GROUP = "vocal"
         const val INSTRUMENTAL_GROUP = "instrumental"
         const val NOTE_ID = "noteId"
@@ -32,9 +30,19 @@ class Constants {
         const val ITEM_ID = "itemId"
         const val COMPOSITOR_ID = "compositorId"
         const val NAME_OF_COMPOSITOR = "nameOfCompositor"
+        const val FIO = "fio"
+        const val PHONE = "phone"
+        const val EMAIL = "email"
         const val FRAGMENT = "fragment"
-        const val AUTH_ERROR = "HTTP 401"
-        const val NO_INTERNET = "failed to connect to XXXX"
+        const val DOWNLOAD_LIMIT = "429"
+        const val AUTH_ERROR = "HTTP 401 "
+        const val INCORRECT_CODE = "HTTP 400 "
+        const val INCORRECT_EMAIL = "HTTP 304 "
+        const val NO_INTERNET = "Unable to resolve host \"domusic.uz\": No address associated with hostname" //Unable to resolve host "domusic.uz"
+        const val ERROR_ADD_TO_FAVOURITES = "Favourite add Error"
+        const val SELECTED_LANGUAGE = "Locale.Helper.Selected.Language"
+        const val CHANNEL_ID = "Progress Notification"
+        const val PROGRESS_MAX = 100
 
         val FILTERS_RU = arrayListOf(
             InstrumentHelper(GroupName = "WOODWIND", name = "Деревянные духовые"),
@@ -51,7 +59,6 @@ class Constants {
             InstrumentHelper(Ansamble = "SONATAS", name = "Сонаты"),
             InstrumentHelper(Ansamble = "STUDIES_AND_EXERCISES", name = "Этюды и упражнения")
         )
-
         val FILTERS_UZ = arrayListOf(
             InstrumentHelper(GroupName = "WOODWIND", name = "Yog`och damli"),
             InstrumentHelper(GroupName = "BRASS", name = "Mis damli"),
@@ -83,7 +90,5 @@ class Constants {
             InstrumentHelper(Ansamble = "SONATAS", name = "Сонаталар"),
             InstrumentHelper(Ansamble = "STUDIES_AND_EXERCISES", name = "Этюд ва машқлар")
         )
-
-
     }
 }

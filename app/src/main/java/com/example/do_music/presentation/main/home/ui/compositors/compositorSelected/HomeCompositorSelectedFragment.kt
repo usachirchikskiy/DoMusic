@@ -11,26 +11,27 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentHomeCompositorSelectedBinding
-
+import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.presentation.main.home.adapter.InstrumentsAdapter
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.presentation.main.home.adapter.VocalsAdapter
 import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.COMPOSITOR_ID
+import com.example.do_music.util.Constants.Companion.ERROR_ADD_TO_FAVOURITES
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.INSTRUMENTAL_GROUP
 import com.example.do_music.util.Constants.Companion.ITEM_ID
-import com.example.do_music.util.Constants.Companion.NAME_OF_COMPOSITOR
+import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
+import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import com.example.do_music.util.Constants.Companion.VOCAL_GROUP
+import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.hide
 
 
 private const val TAG = "CompositorSelected"
@@ -64,16 +65,28 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(Constants.SHOULD_REFRESH)
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(VOCALS)
             ?.observe(viewLifecycleOwner) { shouldRefresh ->
                 shouldRefresh?.run {
                     viewModel.getNotesByCompositorSelected(update = true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        Constants.SHOULD_REFRESH,
+                        VOCALS,
                         null
                     )
                 }
             }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(NOTES)
+            ?.observe(viewLifecycleOwner) { shouldRefresh ->
+                shouldRefresh?.run {
+                    viewModel.getNotesByCompositorSelected(update = true)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        NOTES,
+                        null
+                    )
+                }
+            }
+
         setupViews()
         setupObservers()
         setupRecyclerView()
@@ -126,19 +139,35 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
                     submitList(vocal = it.vocalCompositions)
                 }
             }
-            if(!it.isLoading && it.vocalCompositions.isEmpty() && it.instrumentalCompositions.isEmpty() && it.searchText.isNotBlank()){
+            if (!it.isLoading && it.vocalCompositions.isEmpty() && it.instrumentalCompositions.isEmpty() && it.searchText.isNotBlank()) {
                 binding.noResultsLayout.root.visibility = View.VISIBLE
             }
 
-            it.error?.let {
-//                TODO
+            it.error?.let { error ->
+
+                when (error.localizedMessage) {
+                    Constants.NO_INTERNET -> {
+                        uiCommunicationListener.showNoInternetDialog()
+                        viewModel.setErrorNull()
+                    }
+                    Constants.AUTH_ERROR -> {
+                        viewModel.clearSessionValues()
+                        uiCommunicationListener.onAuthActivity()
+                    }
+                    ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
             }
 
         })
 
         viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "setupObservers: UPDATE $it")
             if (it) {
                 viewModel.getNotesByCompositorSelected(update = true)
+                viewModel.isUpdated.value = false
             }
         })
     }
@@ -182,6 +211,9 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
 
     private fun setupViews() {
+        binding.searchEt.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         binding.searchEt.addTextChangedListener(this)
         binding.vocalNotes.setOnClickListener(this)
         binding.instrumentalNotes.setOnClickListener(this)

@@ -27,10 +27,9 @@ class BasicAuthInterceptor (
 
         Log.d(
             TAG,
-            "\nRequest " + request.url() + "\n" + request.body() + "\nintercept: " + sessionManager.state.value?.login + "\n" + sessionManager.state.value?.password
+            "\nRequest " + request.url() + "\n" + request.body() + "\ncredentials: " + sessionManager.state.value?.login + "\n" + sessionManager.state.value?.password
         )
 
         return chain.proceed(request)
-//        return originalResponse
     }
 }

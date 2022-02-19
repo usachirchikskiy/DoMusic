@@ -1,0 +1,23 @@
+package com.example.do_music.business.datasources.data.account
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.do_music.business.model.main.UserAccount
+
+@Dao
+interface UserAccountDao {
+
+    @Query("""UPDATE user_account SET phone = :phone WHERE id = :id""")
+    suspend fun changeUserPhone(phone: String,id:Int)
+
+    @Query("""SElECT *FROM user_account LIMIT 1""")
+    suspend fun getUserAccount(): UserAccount
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUserAccount(userAccount: UserAccount): Long
+
+    @Query("DELETE FROM user_account")
+    suspend fun deleteUserAccount()
+}

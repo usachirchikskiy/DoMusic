@@ -39,5 +39,14 @@ class AuthActivity : BaseActivity() {
         }
     }
 
+    override fun onAuthActivity() {
+        startActivity(Intent(this, AuthActivity::class.java))
+        finish()
+    }
+
+    override fun showNoInternetDialog() {
+
+    }
+
 
 }

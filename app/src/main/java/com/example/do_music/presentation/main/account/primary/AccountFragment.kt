@@ -1,4 +1,4 @@
-package com.example.do_music.presentation.main.account.main
+package com.example.do_music.presentation.main.account.primary
 
 import android.content.Context
 import android.content.Intent
@@ -14,28 +14,22 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.*
-import com.example.do_music.util.Constants
-import com.example.do_music.util.StateMessageCallback
-import com.example.do_music.util.logoutDialog
-
+import com.example.do_music.presentation.BaseFragment
+import com.example.do_music.util.*
 import com.example.do_music.util.Constants.Companion.ABOUT_US_OFFERT
 import com.example.do_music.util.Constants.Companion.ABOUT_US_POLICY
 import com.example.do_music.util.Constants.Companion.ABOUT_US_RIGHTS_OWNER
-import com.example.do_music.util.Constants.Companion.AUTH_ERROR
 import com.example.do_music.util.Constants.Companion.GLIDE_LOGO
-import com.example.do_music.util.setGradient
 
 
 private const val TAG = "AccountFragment"
 
-class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+class AccountFragment : BaseFragment(), View.OnClickListener {
 
     private var radioGroup: RadioGroup? = null
     private var _binding: FragmentAccountBinding? = null
@@ -49,7 +43,6 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
     private val cropActivityResultContract = object : ActivityResultContract<Any?, Uri?>() {
         override fun createIntent(context: Context, input: Any?): Intent {
             return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
@@ -60,7 +53,6 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
     private val filesUploadActivityResultContract = object : ActivityResultContract<Any?, Uri?>() {
         override fun createIntent(context: Context, input: Any?): Intent {
             return Intent(Intent.ACTION_PICK).setType("*/*")
-
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
@@ -76,15 +68,14 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         fileUploadActivityResultLauncher =
             registerForActivityResult(filesUploadActivityResultContract) { uri ->
                 uri?.let {
-
                     uiMainCommunicationListener.uploadPhotoToServer(uri,
                         stateMessageCallback = object : StateMessageCallback {
                             override fun yes() {
 
                             }
 
-                            override fun uploadPhoto(selectedFilePath: String) {
-                                viewModel.addToUploadFiles(selectedFilePath)
+                            override fun uploadPhoto(selectedImagePath: String) {
+                                viewModel.addToUploadFiles(selectedImagePath)
                             }
                         }
                     )
@@ -94,10 +85,6 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         cropActivityResultLauncher =
             registerForActivityResult(cropActivityResultContract) { uri ->
                 uri?.let {
-                    Glide.with(binding.root)
-                        .load(uri)
-                        .into(binding.profilePhoto)
-
                     uiMainCommunicationListener.uploadPhotoToServer(uri,
                         stateMessageCallback = object : StateMessageCallback {
                             override fun yes() {
@@ -105,6 +92,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
                             }
 
                             override fun uploadPhoto(selectedImagePath: String) {
+                                viewModel.setUri(uri)
                                 viewModel.uploadPhoto(selectedImagePath)
                             }
                         }
@@ -124,25 +112,32 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        uiMainCommunicationListener.showBottomNavigation(true)
         setupViews()
         setupObservers()
         chooseRadioBtnLanguage()
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(viewLifecycleOwner, {
-            it.userAccount?.let { userAccount ->
-                Log.d(TAG, "setupObservers: " + userAccount)
-                userAccount.avatarId?.let { avatar ->
-                    if (avatar.isNotBlank()) {
-                        Glide.with(binding.root)
-                            .load(GLIDE_LOGO + avatar)
-                            .into(binding.profilePhoto)
-                    } else {
-                        binding.profilePhoto.setImageResource(R.drawable.avatar_empty)
+        viewModel.state.observe(viewLifecycleOwner, { state ->
+            state.userAccount?.let { userAccount ->
+                Log.d(TAG, "setupObservers: $userAccount")
+                if (state.uri == null) {
+                    when {
+                        !userAccount.avatarId.isNullOrBlank() -> {
+                            Glide.with(binding.root)
+                                .load(GLIDE_LOGO + userAccount.avatarId)
+                                .placeholder(shimmerDrawable)
+                                .into(binding.profilePhoto)
+                        }
+                        else -> {
+                            binding.profilePhoto.setImageResource(R.drawable.avatar_empty)
+                        }
                     }
                 }
+                else{
+                    binding.profilePhoto.setImageURI(state.uri)
+                }
+
                 content?.userLogin?.setText(userAccount.username)
                 content?.fio?.setText(userAccount.fio)
                 content?.telephonNumber?.setText(userAccount.phone)
@@ -168,16 +163,13 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
                 }
 
             }
-            if (it.completed) {
-                uiMainCommunicationListener.onAuthActivity()
+
+            if (state.completed) {
+                uiCommunicationListener.onAuthActivity()
             }
 
-            it.error?.let { error ->
-                //TODO
-                if (error.localizedMessage.toString().contains(AUTH_ERROR)) {
-                    Log.d(TAG, "setupObservers: ERROR")
+            state.error?.let {
 
-                }
             }
 
         })
@@ -190,25 +182,38 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
             } else {
                 binding.contentTechSupport.sizeOfFileUpload.visibility = View.INVISIBLE
             }
-        }
-        )
+        })
+
+        viewModel.thankForFeedBackState.observe(viewLifecycleOwner, {
+            if (it) {
+                findNavController().navigate(R.id.action_accountFragment_to_feedbackSuccessFragment)
+                viewModel.setFeedbackOnRestore()
+            }
+        })
+
     }
 
-    private fun chooseRadioBtnLanguage(){
-        val language = uiMainCommunicationListener.getLocale()
-        Log.d(TAG, "chooseRadioBtnLanguage: " + language)
-        if(language == "ru"){
-            languages?.russian?.isChecked = true
-        }else if(language == "en"){
-            languages?.uzbekcha?.isChecked = true
+    private fun chooseRadioBtnLanguage() {
+
+        when (uiCommunicationListener.getLocale()) {
+            "ru" -> {
+                languages?.russian?.isChecked = true
+            }
+            "en" -> {
+                languages?.uzbekcha?.isChecked = true
+            }
+            else -> {
+                languages?.ozbekcha?.isChecked = true
+            }
         }
-        else{
-            languages?.ozbekcha?.isChecked = true
-        }
+
     }
 
     private fun setupViews() {
         content = binding.contentPersonal
+        content?.telephonNumber?.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         content?.changePassword?.setOnClickListener(this)
         content?.changeEmail?.setOnClickListener(this)
         content?.changeNumber?.setOnClickListener(this)
@@ -219,9 +224,14 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         feedBack = binding.contentTechSupport
         feedBack?.clipBtn?.setOnClickListener(this)
         feedBack?.sendMessage?.setOnClickListener(this)
+        feedBack?.sendMessageField?.hide {
+            uiCommunicationListener.hideKeyboard()
+        }
         radioGroup = feedBack?.btnGroup!!
         languages = binding.contentLanguage
-        languages?.languagesGroup?.setOnCheckedChangeListener(this)
+        languages?.uzbekcha?.setOnClickListener(this)
+        languages?.russian?.setOnClickListener(this)
+        languages?.ozbekcha?.setOnClickListener(this)
         setGradient(binding.logoutTxt)
         setGradient(aboutUs?.publicOffert!!)
         setGradient(aboutUs?.policy!!)
@@ -238,36 +248,53 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         binding.logoutTxt.setOnClickListener(this)
     }
 
+    private fun changeLocale(language: String) {
+        if (uiCommunicationListener.getLocale() != language) {
+            uiCommunicationListener.setLocale(language)
+        }
+    }
 
     override fun onClick(v: View?) {
         Log.d(TAG, "onClick: " + v.toString())
         when (v) {
+            languages?.ozbekcha -> {
+                changeLocale("uz")
+            }
+            languages?.uzbekcha -> {
+                changeLocale("en")
+            }
+            languages?.russian -> {
+                changeLocale("ru")
+            }
+
             content?.changePassword -> {
                 if (viewModel.state.value?.userAccount?.email.isNullOrEmpty()) {
-                    //TODO
                     content?.email?.hint = getString(R.string.input_email)
                     content?.email?.setHintTextColor(Color.RED)
                 } else {
-                    viewModel.preparePassword()
-                    findNavController().navigate(R.id.action_accountFragment_to_changePasswordFragment)
+                    //TODO Complete
+                    if (isOnline(context) == true) {
+                        viewModel.preparePassword()
+                        findNavController().navigate(R.id.action_accountFragment_to_changePasswordFragment)
+                    } else {
+                        uiCommunicationListener.showNoInternetDialog()
+                    }
+
                 }
             }
 
             content?.changeEmail -> {
-
-                if (content?.email?.text.isNullOrBlank()) {
-                    content?.email?.hint = getString(R.string.input_email)
-                    content?.email?.setHintTextColor(Color.RED)
-                } else {
+                if (isOnline(context) == true) {
                     findNavController().navigate(R.id.action_accountFragment_to_changeEmailFragment)
+                } else {
+                    uiCommunicationListener.showNoInternetDialog()
                 }
             }
 
             content?.changeNumber -> {
-                Log.d(TAG, "onClick: ChangeNumber" + content?.changeNumber?.text.toString())
-                if (content?.telephonNumber?.text.toString().isNotBlank())
+                if (content?.telephonNumber?.text.toString().isNotBlank()) {
                     viewModel.changeNumber(content?.telephonNumber?.text.toString())
-                else {
+                } else {
                     content?.telephonNumber?.hint = getString(R.string.input_phone)
                     content?.telephonNumber?.setHintTextColor(Color.RED)
                 }
@@ -277,24 +304,18 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
             }
 
             binding.logoutTxt -> {
-                Log.d(TAG, "onClick: Logout")
-                val bundle = bundleOf(Constants.SUCCESS to getString(R.string.change_password_success))
-                findNavController().navigate(
-                    R.id.action_accountFragment_to_changeSuccessFragment,
-                    bundle
+                logoutDialog(
+                    context,
+                    stateMessageCallback = object : StateMessageCallback {
+                        override fun yes() {
+                            viewModel.logout()
+                        }
+
+                        override fun uploadPhoto(selectedImagePath: String) {
+
+                        }
+                    }
                 )
-//                logoutDialog(
-//                    context,
-//                    stateMessageCallback = object : StateMessageCallback {
-//                        override fun yes() {
-//                            viewModel.logout()
-//                        }
-//
-//                        override fun uploadPhoto(selectedImagePath: String) {
-//
-//                        }
-//                    }
-//                )
             }
 
             feedBack?.clipBtn -> {
@@ -302,11 +323,13 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
             }
 
             feedBack?.sendMessage -> {
-                if (!feedBack?.sendMessageField?.text.toString().isNullOrBlank()) {
+                if (feedBack?.sendMessageField?.text.toString().isNotBlank()) {
                     val selectedRadioButton: Int = radioGroup!!.checkedRadioButtonId
-                    val radioButton = feedBack?.root?.findViewById<RadioButton>(selectedRadioButton)
-                    viewModel.setData(radioButton?.text.toString() + feedBack?.sendMessageField?.text.toString())
+                    val radioButton =
+                        feedBack?.root?.findViewById<RadioButton>(selectedRadioButton)
+                    viewModel.setData(radioButton?.text.toString() + " " + feedBack?.sendMessageField?.text.toString())
                     viewModel.uploadButtonClicked()
+                    feedBack?.sendMessageField?.setText("")
                 } else {
                     feedBack?.sendMessageField?.hint = getString(R.string.input_here)
                     feedBack?.sendMessageField?.setHintTextColor(Color.RED)
@@ -337,24 +360,6 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         }
     }
 
-    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
-        val radioButton = group?.findViewById<RadioButton>(checkedId)!!
-        var language = "en"
-        when (radioButton) {
-            languages?.ozbekcha -> {
-                language = "uz"
-            }
-            languages?.uzbekcha -> {
-                language = "en"
-            }
-            languages?.russian -> {
-                language = "ru"
-            }
-        }
-
-        uiMainCommunicationListener.setLocale(language)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -364,6 +369,5 @@ class AccountFragment : BaseFragment(), View.OnClickListener, RadioGroup.OnCheck
         languages = null
         radioGroup = null
     }
-
 
 }

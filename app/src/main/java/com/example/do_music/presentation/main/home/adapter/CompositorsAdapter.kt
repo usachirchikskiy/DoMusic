@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.example.do_music.databinding.CardOfHomeBinding
 import com.example.do_music.business.model.main.Compositor
 import com.example.do_music.util.Constants.Companion.BASE_URL
+import com.example.do_music.util.shimmerDrawable
 
 class CompositorsAdapter(
     private val interaction: Interaction_Instrument
@@ -42,6 +43,7 @@ class CompositorViewHolder (
                 }
                  Glide.with(binding.root)
                     .load(BASE_URL + "api/doc/logo?mini=true&uniqueName="+compositor.fileId)
+                     .placeholder(shimmerDrawable)
                     .into(binding.compositorImage)
 
                 binding.compositorName.text = compositor.name

@@ -22,14 +22,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.04" />
+        app:layout_constraintGuide_percent="0.06" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.96" />
+        app:layout_constraintGuide_percent="0.94" />
 
     <EditText
         android:inputType="text"
@@ -42,7 +42,7 @@
         android:layout_height="42dp"
         android:background="@drawable/back_search_ed"
         android:drawableLeft="@drawable/ic_baseline_search_24"
-        android:drawablePadding="8dp"
+        android:drawablePadding="10dp"
         android:drawableTint="@color/black"
         android:ems="10"
         android:hint="@string/search_by_author_and_name"
@@ -53,12 +53,12 @@
         app:layout_constraintTop_toBottomOf="@id/txt" />
 
     <RadioGroup
+        android:layout_marginStart="1dp"
         android:id="@+id/group_doc_type"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="34dp"
         android:layout_marginTop="7dp"
         android:orientation="horizontal"
-
         app:layout_constraintStart_toEndOf="@id/guideline2"
         app:layout_constraintTop_toBottomOf="@id/search_et">
 
@@ -66,7 +66,7 @@
             android:layout_marginTop="3dp"
             android:id="@+id/books"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="28dp"
             android:background="@drawable/back_btn_compositors"
             android:button="@android:color/transparent"
             android:elevation="5dp"
@@ -80,10 +80,11 @@
             app:layout_constraintTop_toBottomOf="@id/search_et" />
 
         <RadioButton
+            android:layout_marginBottom="1dp"
             android:layout_marginTop="3dp"
             android:id="@+id/notes"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/back_btn_compositors"
             android:button="@android:color/transparent"
@@ -99,11 +100,12 @@
             app:layout_constraintTop_toBottomOf="@id/search_et" />
 
         <RadioButton
+            android:layout_marginBottom="1dp"
             android:layout_marginRight="1dp"
             android:layout_marginTop="3dp"
             android:id="@+id/vocal"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/back_btn_compositors"
             android:button="@android:color/transparent"
@@ -118,125 +120,6 @@
             app:layout_constraintTop_toBottomOf="@id/search_et" />
     </RadioGroup>
 
-<!--    <TextView-->
-<!--        android:id="@+id/classes"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="25dp"-->
-<!--        android:fontFamily="@font/montserrat_medium"-->
-<!--        android:text="@string/classes"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:textSize="12dp"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/guideline2"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/group_doc_type" />-->
-
-<!--    <RadioGroup-->
-<!--        android:gravity="center"-->
-<!--        android:id="@+id/group_of_classes"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:orientation="horizontal"-->
-<!--        app:layout_constraintStart_toEndOf="@id/classes"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/group_doc_type">-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/one"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="10dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="10dp"-->
-<!--            android:text="1"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/classes"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/two"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="9dp"-->
-<!--            android:text="2"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/one"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/three"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="9dp"-->
-<!--            android:text="3"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/two"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/four"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="9dp"-->
-<!--            android:text="4"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/three"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/five"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="9dp"-->
-<!--            android:text="5"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/four"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-
-<!--        <CheckBox-->
-<!--            android:id="@+id/six"-->
-<!--            android:layout_width="25dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/back_btn_compositors"-->
-<!--            android:button="@android:color/transparent"-->
-<!--            android:elevation="5dp"-->
-<!--            android:fontFamily="@font/montserrat_medium"-->
-<!--            android:paddingHorizontal="1.5dp"-->
-<!--            android:text="6-7"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@drawable/back_btn_compositors"-->
-<!--            app:layout_constraintStart_toEndOf="@id/five"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
-<!--    </RadioGroup>-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="20dp"
         android:id="@+id/recv"
@@ -248,15 +131,144 @@
         app:layout_constraintTop_toBottomOf="@+id/group_doc_type"
         app:layout_constraintVertical_bias="0" />
 
-
     <include
         android:id="@+id/not_added_layout"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_doc_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         layout="@layout/not_added" />
+
+    <include
+        android:id="@+id/no_results_layout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_doc_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/no_results" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/classes"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="25dp"-->
+    <!--        android:fontFamily="@font/montserrat_medium"-->
+    <!--        android:text="@string/classes"-->
+    <!--        android:textColor="@color/black"-->
+    <!--        android:textSize="12dp"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/guideline2"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/group_doc_type" />-->
+
+    <!--    <RadioGroup-->
+    <!--        android:gravity="center"-->
+    <!--        android:id="@+id/group_of_classes"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="30dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/classes"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/group_doc_type">-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/one"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="28dp"-->
+    <!--            android:layout_marginLeft="10dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="10dp"-->
+    <!--            android:text="1"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/classes"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/two"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="25dp"-->
+    <!--            android:layout_marginLeft="5dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="9dp"-->
+    <!--            android:text="2"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/one"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/three"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="25dp"-->
+    <!--            android:layout_marginLeft="5dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="9dp"-->
+    <!--            android:text="3"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/two"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/four"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="25dp"-->
+    <!--            android:layout_marginLeft="5dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="9dp"-->
+    <!--            android:text="4"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/three"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/five"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="25dp"-->
+    <!--            android:layout_marginLeft="5dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="9dp"-->
+    <!--            android:text="5"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/four"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/six"-->
+    <!--            android:layout_width="25dp"-->
+    <!--            android:layout_height="25dp"-->
+    <!--            android:layout_marginLeft="5dp"-->
+    <!--            android:background="@drawable/back_btn_compositors"-->
+    <!--            android:button="@android:color/transparent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:fontFamily="@font/montserrat_medium"-->
+    <!--            android:paddingHorizontal="1.5dp"-->
+    <!--            android:text="6-7"-->
+    <!--            android:textAllCaps="false"-->
+    <!--            android:textColor="@drawable/back_btn_compositors"-->
+    <!--            app:layout_constraintStart_toEndOf="@id/five"-->
+    <!--            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />-->
+    <!--    </RadioGroup>-->

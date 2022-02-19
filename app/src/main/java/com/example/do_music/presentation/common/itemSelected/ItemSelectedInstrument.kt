@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentItemSelectedInstrumentBinding
-
+import com.example.do_music.presentation.BaseFragment
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
@@ -24,14 +22,16 @@ import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
 import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
+import com.example.do_music.util.addToFavErrorDialog
 import com.example.do_music.util.setGradient
+import com.example.do_music.util.shimmerDrawable
 
 
 private const val TAG = "ItemSelectedInstrument"
 
 class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
     private val viewModel: ItemSelectedViewModel by viewModels()
-    private var _binding: FragmentItemSelectedInstrumentBinding?=null
+    private var _binding: FragmentItemSelectedInstrumentBinding? = null
     private val binding get() = _binding!!
     private var itemId: Int = 0
     private var fragment: String = ""
@@ -66,18 +66,35 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                 }
             }
 
+//            it.body?.let {
+//                Log.d(TAG, "setupObservers: Done")
+//                viewModel.saveFile(context)
+//            }
+            it.error?.let { error ->
+                when (error.localizedMessage) {
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        addToFavErrorDialog(context)
+                        viewModel.setErrorNull()
+                    }
+                }
+            }
+
         })
 
         viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.getItem(itemId, fragment)
                 var key = ""
-                if (fragment == NOTE_ID) {
-                    key = NOTES
-                } else if (fragment == BOOK_ID) {
-                    key = BOOK
-                } else {
-                    key = VOCALS
+                key = when (fragment) {
+                    NOTE_ID -> {
+                        NOTES
+                    }
+                    BOOK_ID -> {
+                        BOOK
+                    }
+                    else -> {
+                        VOCALS
+                    }
                 }
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(
                     key,
@@ -112,13 +129,15 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                 }
             }
             it.instrumentName?.let { instrumentName ->
-                binding.instrumentEditionNotChanged2.visibility = View.VISIBLE
-                binding.instrumentEditionChanged2.text = it.instrumentName
+                if (instrumentName != "") {
+                    binding.instrumentEditionNotChanged2.visibility = View.VISIBLE
+                    binding.instrumentEditionChanged2.text = it.instrumentName
+                }
             }
             if (!viewModel.state.value?.instrument?.favorite!!) {
-                binding.isFavourite.setImageResource(R.drawable.ic_item_not_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_disabled_in_card)
             } else {
-                binding.isFavourite.setImageResource(R.drawable.ic_favourite_item_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             }
         }
 
@@ -138,9 +157,9 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                 }
             }
             if (!viewModel.state.value?.book?.favorite!!) {
-                binding.isFavourite.setImageResource(R.drawable.ic_item_not_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_disabled_in_card)
             } else {
-                binding.isFavourite.setImageResource(R.drawable.ic_favourite_item_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             }
         }
 
@@ -160,66 +179,71 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                 }
             }
             if (!viewModel.state.value?.vocal?.favorite!!) {
-                binding.isFavourite.setImageResource(R.drawable.ic_item_not_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_disabled_in_card)
             } else {
-                binding.isFavourite.setImageResource(R.drawable.ic_favourite_item_selected)
+                binding.isFavourite.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             }
         }
         Glide.with(binding.root)
             .load(GLIDE_LOGO + logo)
+            .placeholder(shimmerDrawable)
             .into(binding.firstPageImg)
     }
 
     override fun onClick(v: View?) {
-        var itemId: Int = 0
-        var isFav: Boolean = false
+        var itemId = 0
+        var isFav = false
         if (v == binding.isFavourite) {
-            if (fragment == NOTE_ID) {
-                viewModel.state.value?.instrument?.let { instrument ->
-                    instrument.favorite?.let {
-                        isFav = !it
-                        if (it) {
-                            itemId = instrument.favoriteId!!
-                        } else {
-                            itemId = instrument.noteId!!
+            when (fragment) {
+                NOTE_ID -> {
+                    viewModel.state.value?.instrument?.let { instrument ->
+                        instrument.favorite?.let {
+                            isFav = !it
+                            itemId = if (it) {
+                                instrument.favoriteId!!
+                            } else {
+                                instrument.noteId!!
+                            }
                         }
                     }
-                }
 
-            } else if (fragment == VOCALS_ID) {
-                viewModel.state.value?.vocal?.let { vocal ->
-                    vocal.favorite?.let {
-                        isFav = !it
-                        if (it) {
-                            itemId = vocal.favoriteId!!
-                        } else {
-                            itemId = vocal.vocalsId
+                }
+                VOCALS_ID -> {
+                    viewModel.state.value?.vocal?.let { vocal ->
+                        vocal.favorite?.let {
+                            isFav = !it
+                            itemId = if (it) {
+                                vocal.favoriteId!!
+                            } else {
+                                vocal.vocalsId
+                            }
                         }
                     }
                 }
-            } else if (fragment == BOOK_ID) {
-                viewModel.state.value?.book?.let { book ->
-                    book.favorite.let {
-                        isFav = !it
-                        if (it) {
-                            itemId = book.favoriteId!!
-                        } else {
-                            itemId = book.bookId
+                BOOK_ID -> {
+                    viewModel.state.value?.book?.let { book ->
+                        book.favorite.let {
+                            isFav = !it
+                            itemId = if (it) {
+                                book.favoriteId!!
+                            } else {
+                                book.bookId
+                            }
                         }
                     }
                 }
             }
-
             viewModel.isLiked(itemId, isFav, fragment)
-
-
         } else {
             if (v == binding.instrumentDownload) {
                 if (fragment == NOTE_ID) {
-                    uiMainCommunicationListener.downloadFile(
-                        viewModel.state.value?.instrument?.clavierFileName!!,
-                        viewModel.state.value?.instrument?.clavierId!!
-                    )
+                    viewModel.state.value!!.instrument?.let { instrument ->
+                        Log.d(TAG, "onClick: ${instrument.clavierFileName}")
+                        uiMainCommunicationListener.downloadFile(
+                            viewModel.state.value?.instrument?.clavierId!!,
+                            viewModel.state.value?.instrument?.clavierFileName!!,
+                        )
+                    }
                 } else if (fragment == VOCALS_ID) {
                     uiMainCommunicationListener.downloadFile(
                         viewModel.state.value?.vocal?.clavierFileName!!,
@@ -228,14 +252,10 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                 }
             } else if (v == binding.instrumentDownload2) {
                 uiMainCommunicationListener.downloadFile(
-                    viewModel.state.value?.instrument?.clavierFileName!!,
-                    viewModel.state.value?.instrument?.clavierId!!
+                    viewModel.state.value?.instrument?.partId!!,
+                    viewModel.state.value?.instrument?.partFileName!!
                 )
             } else {
-                Log.d(
-                    TAG, "onClick: " + viewModel.state.value?.book?.bookFileName!! + "\n" +
-                            viewModel.state.value?.book?.bookFileId!!
-                )
                 uiMainCommunicationListener.downloadFile(
                     viewModel.state.value?.book?.bookFileName!!,
                     viewModel.state.value?.book?.bookFileId!!

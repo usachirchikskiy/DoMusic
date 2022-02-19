@@ -13,4 +13,5 @@
     <color name="grey">#A7A7A7</color>
     <color name="red">#ED0D0D</color>
     <color name="green">#1D9C00</color>
+    <color name="shimmer">#F6F6F6</color>
 </resources>
