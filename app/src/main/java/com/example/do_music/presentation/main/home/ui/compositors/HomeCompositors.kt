@@ -92,6 +92,7 @@ class HomeCompositors : BaseFragment(), TextWatcher,
                     if (
                         lastPosition == homeAdapter!!.itemCount.minus(1)
                         && viewModel.state.value?.isLoading == false
+                        && viewModel.isLastPage.value == false
                     ) {
                         viewModel.getPage(true)
                     }
@@ -131,10 +132,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
         })
     }
 
-    private fun showError(it: Throwable) {
-
-    }
-
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
     }
@@ -142,7 +139,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
         Log.d(TAG, "onTextChanged: " + searchText)
-//        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getPage()
     }
@@ -150,41 +146,39 @@ class HomeCompositors : BaseFragment(), TextWatcher,
     override fun afterTextChanged(p0: Editable?) {
     }
 
-    private fun filtersearch(
+    private fun filterSearch(
         enable: CheckBox,
         disable_first: CheckBox,
         disable_second: CheckBox,
         filter: String
     ) {
-        if (enable.isChecked == true) {
-            enable.setChecked(true)
-            disable_first.setChecked(false)
-            disable_second.setChecked(false)
+        if (enable.isChecked) {
+            enable.isChecked = true
+            disable_first.isChecked = false
+            disable_second.isChecked = false
             setCountryFilter(filter)
         } else {
             setCountryFilter("")
         }
-//        else {
-//            enable.setChecked(true)
-//            disable_first.setChecked(false)
-//            disable_second.setChecked(false)
-//            setCountryFilter(filter)
-//        }
 
     }
 
-    fun setCountryFilter(filter: String) {
+    private fun setCountryFilter(filter: String) {
         viewModel.setCountryFilter(filter)
         viewModel.getPage(false)
     }
 
     override fun onClick(p0: View?) {
-        if (p0 == binding.uzbekBtn) {
-            filtersearch(binding.uzbekBtn, binding.foreignBtn, binding.russianBtn, FILTER_UZB)
-        } else if (p0 == binding.foreignBtn) {
-            filtersearch(binding.foreignBtn, binding.uzbekBtn, binding.russianBtn, FILTER_FOREIGN)
-        } else {
-            filtersearch(binding.russianBtn, binding.foreignBtn, binding.uzbekBtn, FILTER_RUSSIAN)
+        when (p0) {
+            binding.uzbekBtn -> {
+                filterSearch(binding.uzbekBtn, binding.foreignBtn, binding.russianBtn, FILTER_UZB)
+            }
+            binding.foreignBtn -> {
+                filterSearch(binding.foreignBtn, binding.uzbekBtn, binding.russianBtn, FILTER_FOREIGN)
+            }
+            else -> {
+                filterSearch(binding.russianBtn, binding.foreignBtn, binding.uzbekBtn, FILTER_RUSSIAN)
+            }
         }
     }
 

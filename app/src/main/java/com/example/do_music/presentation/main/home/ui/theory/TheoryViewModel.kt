@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchTheory
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -24,7 +25,8 @@ class TheoryViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<TheoryState> = MutableLiveData(TheoryState())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
     private var getTheoryJob: Job? = null
 
     init {
@@ -38,9 +40,9 @@ class TheoryViewModel @Inject constructor(
         }
     }
 
-    fun setLoadingToFalse() {
-        this.state.value = state.value?.copy(isLoading = false)
-    }
+//    fun setLoadingToFalse() {
+//        this.state.value = state.value?.copy(isLoading = false)
+//    }
 
     fun setSearchText(searchText: String) {
         this.state.value = state.value?.copy(searchText = searchText)
@@ -60,34 +62,27 @@ class TheoryViewModel @Inject constructor(
         }
     }
 
-    fun clearSessionValues(){
+    fun clearSessionValues() {
         sessionManager.clearValuesOfDataStore()
     }
 
-    fun setErrorNull(){
+    fun setErrorNull() {
         state.value?.let { state ->
             this.state.value = state.copy(error = null)
         }
     }
 
-    fun isLiked(favId: Int, isFav: Boolean) {
+    fun isLiked(bookId: Int, isFav: Boolean) {
         state.value?.let { state ->
-            var bookId = -1
-            var favouriteId = -1
-            if (isFav) {
-                bookId = favId
-            } else {
-                favouriteId = favId
-            }
+
             update.execute(
-                bookId = bookId,
-                favouriteId = favouriteId,
+                id = bookId,
                 isFavourite = isFav,
                 property = BOOK_ID
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
                 }
 
                 it.error?.let { error ->
@@ -106,6 +101,7 @@ class TheoryViewModel @Inject constructor(
             if (!update) {
                 pageToZero()
                 clearList()
+                isLastPage.value = false
             }
         }
         state.value?.let { state ->
@@ -126,7 +122,11 @@ class TheoryViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    if (error.message == Constants.LAST_PAGE) {
+                        isLastPage.value = true
+                    } else {
+                        this.state.value = state.copy(error = error)
+                    }
                 }
 
             }.launchIn(viewModelScope)

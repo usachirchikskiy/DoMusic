@@ -1,24 +1,37 @@
 package com.example.do_music.business.datasources.data.home.theory
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.example.do_music.business.model.main.TheoryInfo
 import com.example.do_music.util.Constants
 
 @Dao
 interface TheoryDao {
+    @Query(
+        """
+    SELECT favoriteId FROM theory_and_literature 
+    WHERE bookId =:bookId
+    """
+    )
+    suspend fun getFavouriteId(bookId: Int):Int
 
-    @Query("""
+    @Query(
+        """
         UPDATE theory_and_literature SET favoriteId = :favoriteId, favorite = :favorite
         WHERE bookId = :bookId
-        """)
-    suspend fun updateBook(favoriteId:Int?,favorite: Boolean,bookId: Int)
+        """
+    )
+    suspend fun updateBook(favoriteId: Int?, favorite: Boolean, bookId: Int)
 
-    @Query("""
+    @Query(
+        """
         UPDATE theory_and_literature SET favoriteId = null, favorite = :favorite
         WHERE favoriteId = :favoriteId
-        """)
-    suspend fun updateBookToFalse(favoriteId:Int?,favorite: Boolean)
-
+        """
+    )
+    suspend fun updateBookToFalse(favoriteId: Int?, favorite: Boolean)
 
     @Query(
         """
@@ -27,7 +40,7 @@ interface TheoryDao {
     """
     )
     suspend fun getBook(
-        bookId:Int
+        bookId: Int
     ): TheoryInfo
 
     @Query(
@@ -45,7 +58,6 @@ interface TheoryDao {
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<TheoryInfo>
 
-
     @Query(
         """
     SELECT * FROM theory_and_literature 
@@ -62,7 +74,6 @@ interface TheoryDao {
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<TheoryInfo>
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBook(book: TheoryInfo): Long

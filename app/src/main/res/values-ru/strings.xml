@@ -37,7 +37,7 @@
     <string name="date_of_birth">Дата рождения</string>
     <string name="email">Почта</string>
     <string name="change">Изменить</string>
-    <string name="telephon_number">Номер телефона</string>
+    <string name="telephone_number">Номер телефона</string>
     <string name="input_phone">Введите номер телефона</string>
     <string name="region">Регион</string>
     <string name="town">Город</string>
@@ -110,4 +110,7 @@
     <string name="add_to_fav_dialog">Эта операция невозможна без интернета</string>
     <string name="limit_exceeded">Доступ ограничен</string>
     <string name="every_day_limit">Ежедневный лимит скачиваний закончился</string>
+    <string name="save">Сохранить</string>
+    <string name="account_exist" translatable="false">Введённая вами почта используется другим пользователем, пожалуйста, выберите другую почту.</string>
+    <string name="password_exist">"Пожалуйста, для безопасности вашего аккаунта  придумайте другой пароль "</string>
 </resources>

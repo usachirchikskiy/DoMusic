@@ -9,6 +9,7 @@ import com.example.do_music.business.datasources.data.favourites.FavouritesDao
 import com.example.do_music.business.datasources.data.home.instruments.InstrumentsDao
 import com.example.do_music.business.datasources.data.home.theory.TheoryDao
 import com.example.do_music.business.datasources.data.home.vocal.VocalsDao
+import com.example.do_music.business.model.main.TeacherAccount
 import com.example.do_music.business.model.main.*
 import com.example.do_music.util.Converters
 
@@ -20,7 +21,7 @@ import com.example.do_music.util.Converters
         Instrument::class,
         Favourite::class,
         Vocal::class,
-        UserAccount::class],
+        TeacherAccount::class],
     version = 1
 )
 abstract class DoMusicDatabase : RoomDatabase() {

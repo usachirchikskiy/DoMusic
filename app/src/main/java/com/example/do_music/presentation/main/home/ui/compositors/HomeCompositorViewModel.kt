@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.home.SearchCompositors
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -22,6 +23,7 @@ class HomeCompositorViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: MutableLiveData<HomeCompositorsState> = MutableLiveData(HomeCompositorsState())
+    val isLastPage:MutableLiveData<Boolean> = MutableLiveData(false)
     private var getCompositorJob: Job? = null
 
     init {
@@ -34,9 +36,9 @@ class HomeCompositorViewModel @Inject constructor(
         }
     }
 
-    fun setLoadingToFalse() {
-        this.state.value = state.value?.copy(isLoading = false)
-    }
+//    fun setLoadingToFalse() {
+//        this.state.value = state.value?.copy(isLoading = false)
+//    }
 
     fun setSearchText(searchText: String) {
         this.state.value = state.value?.copy(searchText = searchText)
@@ -73,6 +75,7 @@ class HomeCompositorViewModel @Inject constructor(
         } else {
             pageToZero()
             clearList()
+            isLastPage.value = false
         }
 
         state.value?.let { state ->
@@ -92,7 +95,12 @@ class HomeCompositorViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    if(error.message == Constants.LAST_PAGE){
+                        isLastPage.value = true
+                    }
+                    else {
+                        this.state.value = state.copy(error = error)
+                    }
                 }
 
             }.launchIn(viewModelScope)

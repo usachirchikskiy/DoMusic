@@ -16,6 +16,6 @@ data class TheoryInfo(
     val bookType: String,
     val logoId: String,
     val opusEdition: String,
-    val favorite:Boolean,
+    var favorite:Boolean,
     val favoriteId:Int?=null
 )

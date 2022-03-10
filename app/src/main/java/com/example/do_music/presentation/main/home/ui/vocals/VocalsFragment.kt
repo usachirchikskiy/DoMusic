@@ -24,7 +24,7 @@ import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
 import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
-import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.hide
 
 private const val TAG = "VocalsFragment"
@@ -45,19 +45,17 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(VOCALS)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
-                shouldRefresh?.run {
-                    viewModel.getPage(update = true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        VOCALS,
-                        null
-                    )
-                }
-            }
+        updateVocals()
         setupViews()
         setupObservers()
         setupRecyclerView()
+    }
+
+    private fun updateVocals(){
+        if(uiMainUpdate.getVocalsUpdate()){
+            viewModel.getPage(update = true)
+            uiMainUpdate.setVocalsUpdate(false)
+        }
     }
 
     private fun setupViews() {
@@ -98,7 +96,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
                         uiCommunicationListener.onAuthActivity()
                     }
                     Constants.ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
+                        operationErrorDialog(context)
                         viewModel.setErrorNull()
                     }
                 }
@@ -106,24 +104,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.getPage(update = true)
-                viewModel.isUpdated.value = false
-            }
-        })
-
-
     }
-
-//    private fun showProgressBar(isLoading: Boolean) {
-//        if (isLoading) {
-//            binding.paginationProgressBar.visibility = View.VISIBLE
-//        } else {
-//            binding.paginationProgressBar.visibility = View.INVISIBLE
-//        }
-//
-//    }
 
     private fun setupRecyclerView() {
         binding.recv.apply {
@@ -139,6 +120,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
                     if (
                         lastPosition == vocalsAdapter?.itemCount?.minus(1)
                         && viewModel.state.value?.isLoading == false
+                        && viewModel.isLastPage.value == false
                     ) {
                         viewModel.getPage(true)
 //                        setPadding(0, 0, 0, 0)
@@ -157,8 +139,6 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
-        Log.d(TAG, "onTextChanged: ")
-        viewModel.setLoadingToFalse()
         viewModel.setSearchTextVocalsNotes(searchText)
         viewModel.getPage()
     }
@@ -176,6 +156,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
         viewModel.isLikedVocalsNotes(itemId, isFav)
+        uiMainUpdate.setFavouriteUpdate(true)
     }
 
     override fun onDestroyView() {

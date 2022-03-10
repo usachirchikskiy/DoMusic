@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.example.do_music.R
-import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.Favourite
+import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.util.shimmerDrawable
 
 class FavouriteAdapter(
@@ -24,71 +24,16 @@ class FavouriteAdapter(
         }
     }
 
-
     class FavouriteViewHolder(
         private val interaction: Interaction_Favourite?,
         private val binding: CardOfTheoryBinding
     ) :
-        RecyclerView.ViewHolder(binding.root)
-//        CompoundButton.OnCheckedChangeListener
-    {
-
-
-//        private fun changeState(
-//            checkBox: CompoundButton? = null,
-//            isfavClass: Boolean = false,
-//            position: Int = -1
-//        ) {
-//            var arrayList = arrayListOf<CheckBox>()
-//            arrayList.add(binding.one)
-//            arrayList.add(binding.two)
-//            arrayList.add(binding.three)
-//            arrayList.add(binding.four)
-//            arrayList.add(binding.five)
-//            arrayList.add(binding.six)
-//
-//            if (isfavClass) {
-//                arrayList[position].isChecked = true
-//            } else {
-//                for (i in arrayList) {
-//                    if (checkBox != i) {
-//                        i.isChecked = false
-//                    }
-//                }
-//            }
-//        }
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(favourite: Favourite) {
-//            var position = -1
-//            favourite.bookId?.let {
-//                if(favourite.bookClass!="UNKNOWN"){
-//                    val arrayOfResults = favourite.bookClass?.split("CLASS_")
-//                    position = arrayOfResults!![1].toInt()
-//                }
-//            }
-//            favourite.noteId?.let {
-//                if(favourite.notesClass!="UNKNOWN"){
-//                    val arrayOfResults = favourite.notesClass?.split("CLASS_")
-//                    position = arrayOfResults!![1].toInt()
-//                }
-//            }
-//            favourite.vocalsId?.let {
-//                if(favourite.vocalsClass!="UNKNOWN"){
-//                    val arrayOfResults = favourite.vocalsClass?.split("CLASS_")
-//                    position = arrayOfResults!![1].toInt()
-//                }
-//            }
-//            if(position==67){
-//                position = 6
-//            }
-//
-//            if(position!=-1){
-//                changeState(isfavClass = true,position = position-1)
-//            }
             binding.root.setOnClickListener {
                 interaction?.onItemSelected(adapterPosition)
             }
-//            binding.cardOfClasses.visibility = View.VISIBLE
             binding.bookImage.layoutParams.width = binding.bookImage.layoutParams.height
             Glide.with(binding.root)
                 .load("https://domusic.uz/api/doc/logo?mini=true&uniqueName=" + favourite.logoId)
@@ -112,34 +57,27 @@ class FavouriteAdapter(
                 binding.bookEditionChangedInstr.text = favourite.instrumentName
             }
 
-//            binding.one.setOnCheckedChangeListener(this)
-//            binding.two.setOnCheckedChangeListener(this)
-//            binding.three.setOnCheckedChangeListener(this)
-//            binding.four.setOnCheckedChangeListener(this)
-//            binding.five.setOnCheckedChangeListener(this)
-//            binding.six.setOnCheckedChangeListener(this)
-
             binding.bookLike.setOnClickListener {
+                var id: Int = -1
+                favourite.noteId?.let { noteId ->
+                    id = noteId
+                }
+
+                favourite.bookId?.let { bookId ->
+                    id = bookId
+                }
+
+                favourite.vocalsId?.let { vocalsId ->
+                    id = vocalsId
+                }
                 interaction?.onDeleteSelected(
-                    favourite.favoriteId!!, false,
+                    id, false,
                     favourite.compositorName!!
                 )
             }
 
         }
 
-//        override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-//            var favClass = "UNKNOWN"
-//            if (buttonView!!.isChecked) {
-//                changeState(buttonView)
-//                favClass = buttonView.text.toString()
-//                if(favClass.length>1){
-//                    favClass = favClass.replace("-","")
-//                }
-//                favClass = "CLASS_" + favClass
-//            }
-//            interaction!!.onClassSelected(favClass, adapterPosition)
-//        }
     }
 
 

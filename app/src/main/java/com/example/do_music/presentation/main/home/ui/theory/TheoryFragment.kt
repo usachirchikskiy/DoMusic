@@ -24,7 +24,7 @@ import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
-import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.hide
 
 
@@ -48,22 +48,18 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
-            BOOK
-        )?.observe(viewLifecycleOwner) { shouldRefresh ->
-            shouldRefresh?.run {
-
-                viewModel.getPage(update = true)
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    BOOK,
-                    null
-                )
-            }
-        }
+        updateTheory()
         setupObservers()
         setupRecyclerView()
         setupViews()
 
+    }
+
+    private fun updateTheory(){
+        if(uiMainUpdate.getTheoryUpdate()){
+            viewModel.getPage(update = true)
+            uiMainUpdate.setTheoryUpdate(false)
+        }
     }
 
     private fun setupViews() {
@@ -93,6 +89,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
                     if (
                         lastPosition == theoryAdapter?.itemCount?.minus(1)
                         && viewModel.state.value?.isLoading == false
+                        && viewModel.isLastPage.value == false
                     ) {
                         viewModel.getPage(true)
                     }
@@ -108,7 +105,6 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
         viewModel.state.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "setupObservers: " + it)
             uiCommunicationListener.displayProgressBar(it.isLoading)
-//            showProgressBar(it.isLoading)
 
             theoryAdapter?.apply {
                 if (!it.isLoading && it.books.isEmpty() && it.searchText.isNotBlank()) {
@@ -130,7 +126,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
                         uiCommunicationListener.onAuthActivity()
                     }
                     Constants.ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
+                        operationErrorDialog(context)
                         viewModel.setErrorNull()
                     }
                 }
@@ -138,13 +134,13 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer
-        {
-            if (it) {
-                viewModel.getPage(update = true)
-                viewModel.isUpdated.value = false
-            }
-        })
+//        viewModel.isUpdated.observe(viewLifecycleOwner, Observer
+//        {
+//            if (it) {
+//                viewModel.getPage(update = true)
+//                viewModel.isUpdated.value = false
+//            }
+//        })
     }
 
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -153,7 +149,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
         Log.d(TAG, "onTextChanged: ")
-        viewModel.setLoadingToFalse()
+//        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getPage()
 
@@ -178,9 +174,9 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     }
 
-    fun setBookType(filter: String) {
+    private fun setBookType(filter: String) {
         viewModel.setBookType(filter)
-        viewModel.getPage(false)
+        viewModel.getPage()
     }
 
     override fun onClick(p0: View?) {
@@ -192,7 +188,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
     }
 
     override fun onItemSelected(itemId: Int, nameOfCompositor: String) {
-        viewModel.state.value?.let { state ->
+        viewModel.state.value?.let {
             val bundle = bundleOf(ITEM_ID to itemId, FRAGMENT to BOOK_ID)
             findNavController().navigate(R.id.action_homeFragment_to_itemSelectedInstrument, bundle)
         }
@@ -200,6 +196,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
         viewModel.isLiked(itemId, isFav)
+        uiMainUpdate.setFavouriteUpdate(true)
     }
 
     override fun onDestroyView() {

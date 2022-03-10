@@ -8,6 +8,7 @@ import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.favourite.SearchFavourites
 import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
+import com.example.do_music.util.Constants.Companion.LAST_PAGE
 import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
@@ -29,22 +30,14 @@ constructor(
 ) : ViewModel() {
 
     val state: MutableLiveData<FavouriteState> = MutableLiveData(FavouriteState())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    var isLastPage = false
+
     private var getFavouriteJob: Job? = null
 
     init {
         getPage()
     }
-
-//    fun addFavClass(favouriteId:Int,favoriteClass:String){
-//        viewModelScope.launch {
-//            searchFavourites.addFavClass(
-//                favoriteId = favouriteId,
-//                favoriteClass = favoriteClass,
-//                docType = state.value!!.docType
-//            )
-//        }
-//    }
 
     fun setDocType(docType: String) {
         state.value?.let { state ->
@@ -53,7 +46,7 @@ constructor(
     }
 
     fun getPage(next: Boolean = false, update: Boolean = false) {
-        Log.d(TAG, "getPage: "+state.value!!.docType)
+        Log.d(TAG, "getPage: " + state.value!!.docType)
         getFavouriteJob?.cancel()
         if (next) {
             incrementPage()
@@ -68,7 +61,6 @@ constructor(
                 pageNumber = state.page,
                 docType = state.docType,
                 searchText = state.searchText,
-//                favouriteClass = state.favClass,
                 updated = update
             ).onEach {
 
@@ -77,7 +69,7 @@ constructor(
                 }
 
                 it.data?.let { list ->
-                    Log.d(TAG, "getPage: ${it.data}\n" + list)
+
                     this.state.value = state.copy(
                         favouriteItems = list,
                         isLoading = false
@@ -86,7 +78,11 @@ constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    if (error.message == LAST_PAGE) {
+                        isLastPage = true
+                    } else {
+                        this.state.value = state.copy(error = error)
+                    }
                 }
             }.launchIn(viewModelScope)
         }
@@ -122,42 +118,32 @@ constructor(
         }
     }
 
-    fun isLiked(favId: Int, isFav: Boolean) {
-        state.value?.let { state->
-            var property = "-1"
-            var noteId = -1
-            var bookId = -1
-            var vocalsId = -1
-            if (state.docType == NOTES) {
-                property = NOTE_ID
-                if (isFav) {
-                    noteId = favId
+    fun isLiked(itemId: Int, isFavourite: Boolean) {
+
+        state.value?.let { state ->
+            val property = when (state.docType) {
+                NOTES -> {
+                    NOTE_ID
                 }
-            } else if (state.docType == BOOK) {
-                property = BOOK_ID
-                if (isFav) {
-                    bookId = favId
+                BOOK -> {
+                    BOOK_ID
                 }
-            } else {
-                property = VOCALS_ID
-                if (isFav) {
-                    vocalsId = favId
+                else -> {
+                    VOCALS_ID
                 }
             }
+            Log.d(TAG, "isLiked: $itemId, $isFavourite,$property")
 
             update.execute(
-                bookId = bookId,
-                vocalsId = vocalsId,
-                noteId = noteId,
-                favouriteId = favId,
-                isFavourite = isFav,
+                id = itemId,
+                isFavourite = isFavourite,
                 property = property
             ).onEach {
                 it.data?.let {
-                    isUpdated.value = true
+                    getPage(update=true)
                 }
 
-                it.error?.let{ error->
+                it.error?.let { error ->
                     this.state.value = state.copy(error = error)
                 }
             }.launchIn(viewModelScope)

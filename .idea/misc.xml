@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/drawable/back_search_ed.xml" value="0.1810810810810811" />
         <entry key="app/src/main/res/drawable/back_textview.xml" value="0.14074074074074075" />
         <entry key="app/src/main/res/drawable/circle_back_btn.xml" value="0.1810810810810811" />
+        <entry key="app/src/main/res/drawable/edit_text.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/drawable/favourite_item.xml" value="0.17866666666666667" />
         <entry key="app/src/main/res/drawable/gradient_violette.xml" value="0.11036036036036036" />
         <entry key="app/src/main/res/drawable/home_item.xml" value="0.17866666666666667" />
@@ -55,6 +56,7 @@
         <entry key="app/src/main/res/drawable/splash_image.xml" value="0.18796296296296297" />
         <entry key="app/src/main/res/drawable/state_pressed_ripple.xml" value="0.1" />
         <entry key="app/src/main/res/layout-v23/expand_tech_support.xml" value="0.10416666666666667" />
+        <entry key="app/src/main/res/layout/account_exists.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.11126126126126126" />
@@ -91,9 +93,10 @@
         <entry key="app/src/main/res/layout/fragment_vocals.xml" value="0.25" />
         <entry key="app/src/main/res/layout/limit_exceeded.xml" value="0.22" />
         <entry key="app/src/main/res/layout/logout_dialog.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/no_internet_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/no_internet_dialog.xml" value="0.33" />
         <entry key="app/src/main/res/layout/no_results.xml" value="0.22" />
         <entry key="app/src/main/res/layout/not_added.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/password_exists.xml" value="0.1" />
         <entry key="app/src/main/res/layout/radiobtn_card.xml" value="0.75" />
         <entry key="app/src/main/res/layout/restore_login_dialog.xml" value="0.22" />
         <entry key="app/src/main/res/menu/main_bottom_navigation_menu.xml" value="0.1" />

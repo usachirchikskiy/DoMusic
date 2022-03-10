@@ -1,11 +1,11 @@
 package com.example.do_music.business.interactors.home
 
-import android.util.Log
 import com.example.do_music.business.datasources.data.home.instruments.InstrumentsDao
 import com.example.do_music.business.datasources.data.home.instruments.returnOrderedInstrumentsQuery
-import com.example.do_music.business.model.main.Instrument
-import com.example.do_music.business.datasources.network.main.home.InstrumentByGroup
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.datasources.network.main.home.InstrumentByGroup
+import com.example.do_music.business.model.main.Instrument
+import com.example.do_music.util.Constants.Companion.LAST_PAGE
 import com.example.do_music.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,16 +19,17 @@ class SearchInstruments(
     private val service: OpenMainApiService,
     private val instrumentsDao: InstrumentsDao
 ) {
-    private suspend fun serviceAndDb(notes_response: List<Instrument>) = withContext(Dispatchers.IO) {
-        for (note in notes_response) {
-            try {
-                instrumentsDao.insertInstrument(note)
-            } catch (e: Exception) {
-                Log.d(TAG, e.message.toString())
-                e.printStackTrace()
+    private suspend fun serviceAndDb(notes_response: List<Instrument>) =
+        withContext(Dispatchers.IO) {
+            if (notes_response.isNotEmpty()) {
+                for (note in notes_response) {
+                    instrumentsDao.insertInstrument(note)
+                }
+            }
+            else{
+                throw Exception(LAST_PAGE)
             }
         }
-    }
 
     fun getGroupOfInstruments(instrumentGroupName: String): Flow<Resource<List<InstrumentByGroup>>> =
         flow {

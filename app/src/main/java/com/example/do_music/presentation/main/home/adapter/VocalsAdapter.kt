@@ -10,13 +10,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.example.do_music.R
-import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.business.model.main.Vocal
+import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.util.Constants.Companion.BASE_URL
 import com.example.do_music.util.shimmerDrawable
 
-class VocalsAdapter (
-    private val context: Context?=null,
+class VocalsAdapter(
+    private val context: Context? = null,
     private val fragmentName: String? = null,
     private val interaction: Interaction_Instrument? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -27,13 +27,13 @@ class VocalsAdapter (
         }
 
         override fun areContentsTheSame(oldItem: Vocal, newItem: Vocal): Boolean {
-            return newItem==oldItem
+            return newItem == oldItem
         }
     }
 
 
     class InstrumentViewHolder(
-        private val context: Context?=null,
+        private val context: Context? = null,
         private val fragmentName: String? = null,
         private val interaction: Interaction_Instrument?,
         private val binding: CardOfTheoryBinding
@@ -45,7 +45,7 @@ class VocalsAdapter (
                 interaction?.onItemSelected(vocal.vocalsId)
             }
 
-            if (vocal.favorite==true) {
+            if (vocal.favorite == true) {
                 binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
             } else {
                 binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
@@ -65,37 +65,29 @@ class VocalsAdapter (
                 binding.bookAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.toFloat())
                 binding.bookAuthor.text = vocal.noteName
             }
-            if(fragmentName==null){
+            if (fragmentName == null) {
                 binding.bookAuthor.text = vocal.compositorName
                 binding.bookName.text = vocal.noteName
             }
 
-            vocal.opusEdition.let{
-                if (it!="") {
+            vocal.opusEdition.let {
+                if (it != "") {
                     binding.bookEditionNotChanged.visibility = View.VISIBLE
                     binding.bookEditionChanged.visibility = View.VISIBLE
                     binding.bookEditionChanged.text = vocal.opusEdition
                 }
             }
 
-            binding.bookLike.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(p0: View?) {
+            binding.bookLike.setOnClickListener {
+                if (vocal.favorite) {
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
+                } else {
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
 
-//                    if (vocal.favorite==false) {
-//                        binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
-//                    } else {
-//                        binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
-//                    }
-
-                    if(vocal.favorite!!) {
-                        interaction?.onLikeSelected(vocal.favoriteId!!, !vocal.favorite)
-                    }
-                    else{
-                        interaction?.onLikeSelected(vocal.vocalsId,!vocal.favorite)
-                    }
                 }
-
-            })
+                vocal.favorite = !vocal.favorite
+                interaction?.onLikeSelected(vocal.vocalsId, vocal.favorite)
+            }
 
         }
     }

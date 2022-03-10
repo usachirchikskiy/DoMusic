@@ -15,7 +15,7 @@ data class Favourite(
     val compositorId: Int?=null,
     val compositorName: String?=null,
     @PrimaryKey(autoGenerate = false)
-    val favoriteId: Int?=null,
+    val favoriteId: Int,
     val fileClavierId: String?=null,
     val filePartId: String?=null,
     val instrumentId: Int?=null,

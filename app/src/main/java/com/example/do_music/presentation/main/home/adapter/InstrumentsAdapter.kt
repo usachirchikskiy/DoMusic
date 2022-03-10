@@ -1,6 +1,7 @@
 package com.example.do_music.presentation.main.home.adapter
 
 import android.content.Context
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -63,13 +64,6 @@ class InstrumentsAdapter(
                 binding.bookAuthor.typeface = typeface
                 binding.bookAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.toFloat())
                 binding.bookAuthor.text = instrument.noteName
-
-//                val view: View = binding.bookImage
-//                val layoutParams = view.layoutParams
-//                layoutParams.width = dpToPx(60,context)
-//                layoutParams.height = dpToPx(60,context)
-//                view.layoutParams = layoutParams
-
             }
             if(fragmentName==null){
                 binding.bookAuthor.text = instrument.compositorName
@@ -88,11 +82,14 @@ class InstrumentsAdapter(
                 binding.bookEditionChangedInstr.text = instrument.instrumentName
             }
             binding.bookLike.setOnClickListener {
-                if (instrument.favorite!!) {
-                    interaction?.onLikeSelected(instrument.favoriteId!!, !instrument.favorite)
+                if (instrument.favorite) {
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
                 } else {
-                    interaction?.onLikeSelected(instrument.noteId!!, !instrument.favorite)
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
                 }
+                instrument.favorite = !instrument.favorite
+                interaction?.onLikeSelected(instrument.noteId, instrument.favorite)
+
             }
 
         }

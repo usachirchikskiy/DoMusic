@@ -36,7 +36,7 @@
     <string name="date_of_birth">Tug`ilgan sana</string>
     <string name="email">Pochta</string>
     <string name="change">O\'zgartirish</string>
-    <string name="telephon_number">Telefon raqam</string>
+    <string name="telephone_number">Telefon raqam</string>
     <string name="region">Viloyat</string>
     <string name="town">Shahar</string>
     <string name="school">Maktab</string>
@@ -111,4 +111,7 @@
     <string name="add_to_fav_dialog">Ushbu operatsiyani internetsiz amalga oshirish mumkin emas</string>
     <string name="limit_exceeded">Kirish cheklangan</string>
     <string name="every_day_limit">Kunlik yuklab olish limiti tugadi</string>
+    <string name="save">Saqlash</string>
+    <string name="account_exist">Siz kiritgan elektron pochta manzili boshqa foydalanuvchi tomonidan foydalanilmoqda, boshqa pochta manzilini tanlang</string>
+    <string name="password_exist">Iltimos, akkauntingiz xavfsizligi uchun boshqa parol o\'ylab toping</string>
 </resources>

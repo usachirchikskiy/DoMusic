@@ -7,22 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentItemSelectedInstrumentBinding
 import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.util.Constants
-import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.GLIDE_LOGO
 import com.example.do_music.util.Constants.Companion.ITEM_ID
-import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
-import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
-import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.setGradient
 import com.example.do_music.util.shimmerDrawable
 
@@ -33,8 +29,12 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
     private val viewModel: ItemSelectedViewModel by viewModels()
     private var _binding: FragmentItemSelectedInstrumentBinding? = null
     private val binding get() = _binding!!
+
+    // Change
     private var itemId: Int = 0
     private var fragment: String = ""
+
+    //
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,9 +52,13 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.isFavourite.setOnClickListener(this)
+        setupListener()
         setupObservers()
 
+    }
+
+    private fun setupListener() {
+        binding.isFavourite.setOnClickListener(this)
     }
 
     private fun setupObservers() {
@@ -65,41 +69,15 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                     setupViews(it)
                 }
             }
-
-//            it.body?.let {
-//                Log.d(TAG, "setupObservers: Done")
-//                viewModel.saveFile(context)
-//            }
-            it.error?.let { error ->
-                when (error.localizedMessage) {
-                    Constants.ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
-                        viewModel.setErrorNull()
-                    }
-                }
-            }
-
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.getItem(itemId, fragment)
-                var key = ""
-                key = when (fragment) {
-                    NOTE_ID -> {
-                        NOTES
-                    }
-                    BOOK_ID -> {
-                        BOOK
-                    }
-                    else -> {
-                        VOCALS
+        viewModel.errorState.observe(viewLifecycleOwner, Observer { error ->
+            error?.let {
+                when (error.localizedMessage) {
+                    Constants.ERROR_ADD_TO_FAVOURITES -> {
+                        operationErrorDialog(context)
                     }
                 }
-                findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                    key,
-                    true
-                )
             }
         })
     }
@@ -197,71 +175,96 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
             when (fragment) {
                 NOTE_ID -> {
                     viewModel.state.value?.instrument?.let { instrument ->
-                        instrument.favorite?.let {
-                            isFav = !it
-                            itemId = if (it) {
-                                instrument.favoriteId!!
-                            } else {
-                                instrument.noteId!!
-                            }
-                        }
+                        instrument.favorite = !instrument.favorite
+                        itemId = instrument.noteId!!
+                        isFav = instrument.favorite
                     }
-
                 }
                 VOCALS_ID -> {
                     viewModel.state.value?.vocal?.let { vocal ->
-                        vocal.favorite?.let {
-                            isFav = !it
-                            itemId = if (it) {
-                                vocal.favoriteId!!
-                            } else {
-                                vocal.vocalsId
-                            }
-                        }
+                        vocal.favorite = !vocal.favorite
+                        itemId = vocal.vocalsId
+                        isFav = vocal.favorite
                     }
                 }
                 BOOK_ID -> {
                     viewModel.state.value?.book?.let { book ->
-                        book.favorite.let {
-                            isFav = !it
-                            itemId = if (it) {
-                                book.favoriteId!!
-                            } else {
-                                book.bookId
-                            }
-                        }
+                        book.favorite = !book.favorite
+                        itemId = book.bookId
+                        isFav = book.favorite
                     }
                 }
             }
+            changeIcon(isFav)
             viewModel.isLiked(itemId, isFav, fragment)
+            Log.d(TAG, "onClick: $itemId,$isFav,$fragment")
+            updateOtherFragments()
         } else {
             if (v == binding.instrumentDownload) {
                 if (fragment == NOTE_ID) {
-                    viewModel.state.value!!.instrument?.let { instrument ->
-                        Log.d(TAG, "onClick: ${instrument.clavierFileName}")
-                        uiMainCommunicationListener.downloadFile(
-                            viewModel.state.value?.instrument?.clavierId!!,
-                            viewModel.state.value?.instrument?.clavierFileName!!,
-                        )
-                    }
+                    downloadInstrumentClavier()
                 } else if (fragment == VOCALS_ID) {
-                    uiMainCommunicationListener.downloadFile(
-                        viewModel.state.value?.vocal?.clavierFileName!!,
-                        viewModel.state.value?.vocal?.clavierId!!
-                    )
+                    downloadVocal()
                 }
             } else if (v == binding.instrumentDownload2) {
-                uiMainCommunicationListener.downloadFile(
-                    viewModel.state.value?.instrument?.partId!!,
-                    viewModel.state.value?.instrument?.partFileName!!
-                )
+                downloadInstrumentPart()
+
             } else {
-                uiMainCommunicationListener.downloadFile(
-                    viewModel.state.value?.book?.bookFileName!!,
-                    viewModel.state.value?.book?.bookFileId!!
-                )
+                downloadBook()
             }
         }
+    }
+
+    private fun changeIcon(isFav: Boolean) {
+        if (isFav) {
+            binding.isFavourite.setImageResource(R.drawable.ic_favourite_enabled_in_card)
+        } else {
+            binding.isFavourite.setImageResource(R.drawable.ic_favourite_disabled_in_card)
+        }
+    }
+
+    private fun updateOtherFragments() {
+        when (fragment) {
+            BOOK_ID -> {
+                uiMainUpdate.setTheoryUpdate(true)
+            }
+            VOCALS_ID -> {
+                uiMainUpdate.setVocalsUpdate(true)
+            }
+            NOTE_ID -> {
+                uiMainUpdate.setInstrumentsUpdate(true)
+            }
+        }
+        uiMainUpdate.setFavouriteUpdate(true)
+    }
+
+
+    private fun downloadBook() {
+        uiMainCommunicationListener.downloadFile(
+            viewModel.state.value?.book?.bookFileId!!,
+            viewModel.state.value?.book?.bookFileName!!
+        )
+    }
+
+    private fun downloadInstrumentPart() {
+        uiMainCommunicationListener.downloadFile(
+            viewModel.state.value?.instrument?.partId!!,
+            viewModel.state.value?.instrument?.partFileName!!
+        )
+    }
+
+    private fun downloadVocal() {
+        uiMainCommunicationListener.downloadFile(
+            viewModel.state.value?.vocal?.clavierId!!,
+            viewModel.state.value?.vocal?.clavierFileName!!
+        )
+    }
+
+    private fun downloadInstrumentClavier() {
+        uiMainCommunicationListener.downloadFile(
+            viewModel.state.value?.instrument?.clavierId!!,
+            viewModel.state.value?.instrument?.clavierFileName!!,
+        )
     }
 
     override fun onDestroyView() {

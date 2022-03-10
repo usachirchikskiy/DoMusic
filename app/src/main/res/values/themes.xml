@@ -23,7 +23,7 @@
 
     <style name="SearchEditText">
         <item name="fontFamily">@font/montserrat_medium</item>
-        <item name="android:textColor">#A7A7A7</item>
+        <item name="android:textColor">@drawable/edit_text</item>
         <item name="android:textSize">14sp</item></style>
 
     <style name="roundedImageView" parent="">

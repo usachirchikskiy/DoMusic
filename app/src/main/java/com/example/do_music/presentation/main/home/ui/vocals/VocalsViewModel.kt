@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchVocals
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.Constants.Companion.LAST_PAGE
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,7 +23,8 @@ class VocalsViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<VocalsState> = MutableLiveData(VocalsState())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
     private var getVocalsJob: Job? = null
 
     init {
@@ -54,17 +56,17 @@ class VocalsViewModel @Inject constructor(
         }
     }
 
-    fun setLoadingToFalse() {
-        state.value?.let { state ->
-            this.state.value = state.copy(isLoading = false)
-        }
-    }
+//    fun setLoadingToFalse() {
+//        state.value?.let { state ->
+//            this.state.value = state.copy(isLoading = false)
+//        }
+//    }
 
-    fun clearSessionValues(){
+    fun clearSessionValues() {
         sessionManager.clearValuesOfDataStore()
     }
 
-    fun setErrorNull(){
+    fun setErrorNull() {
         state.value?.let { state ->
             this.state.value = state.copy(error = null)
         }
@@ -72,22 +74,14 @@ class VocalsViewModel @Inject constructor(
 
     fun isLikedVocalsNotes(favId: Int, isFav: Boolean) {
         state.value?.let { state ->
-            var vocalsId = -1
-            var favouriteId = -1
-            if (isFav) {
-                vocalsId = favId
-            } else {
-                favouriteId = favId
-            }
             update.execute(
-                vocalsId = vocalsId,
-                favouriteId = favouriteId,
+                id = favId,
                 isFavourite = isFav,
                 property = VOCALS_ID
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
                 }
 
                 it.error?.let { error ->
@@ -105,6 +99,7 @@ class VocalsViewModel @Inject constructor(
             if (!update) {
                 pageToZeroVocalsNotes()
                 clearListVocalsNotes()
+                isLastPage.value = false
             }
         }
         state.value?.let { state ->
@@ -119,11 +114,18 @@ class VocalsViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    if (error.message == LAST_PAGE) {
+                        isLastPage.value = true
+                    } else {
+                        this.state.value = state.copy(error = error)
+                    }
                 }
 
                 it.data?.let { instruments ->
-                    this.state.value = state.copy(instruments = instruments)
+                    this.state.value = state.copy(
+                        instruments = instruments,
+                        isLoading = false
+                    )
                 }
 
 

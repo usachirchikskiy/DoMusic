@@ -9,6 +9,7 @@ import com.example.do_music.business.interactors.home.SearchInstruments
 import com.example.do_music.business.datasources.network.main.home.InstrumentByGroup
 import com.example.do_music.presentation.main.home.adapter.InstrumentHelper
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.FILTERS_DEFAULT
 import com.example.do_music.util.Constants.Companion.FILTERS_DEFAULT_ENSEMBLE
 import com.example.do_music.util.Constants.Companion.FILTERS_RU
@@ -32,9 +33,9 @@ class InstrumentsViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<InstrumentState> = MutableLiveData(InstrumentState())
-    private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> =
-        MutableLiveData(listOf())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> = MutableLiveData(listOf())
     private var getInstrumentsJob: Job? = null
 
     private fun getFilters(lang: String): ArrayList<InstrumentHelper> {
@@ -129,7 +130,7 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    fun setLoadingToFalse() {
+    private fun setLoadingToFalse() {
         state.value?.let { state ->
             this.state.value = state.copy(isLoading = false)
         }
@@ -153,22 +154,15 @@ class InstrumentsViewModel @Inject constructor(
 
     fun isLiked(favId: Int, isFav: Boolean) {
         state.value?.let { state ->
-            var noteId = -1
-            var favouriteId = -1
-            if (isFav) {
-                noteId = favId
-            } else {
-                favouriteId = favId
-            }
             update.execute(
-                noteId = noteId,
-                favouriteId = favouriteId,
+                id = favId,
                 isFavourite = isFav,
                 property = NOTE_ID
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
+//                    getPage(true)
                 }
 
                 it.error?.let { error ->
@@ -244,7 +238,6 @@ class InstrumentsViewModel @Inject constructor(
                 setInstrumentId(-1)
                 listGroup.addAll(getFilters(lang))
             }
-            setLoadingToFalse()
             setFilters(listGroup)
             getPage()
         }
@@ -258,6 +251,7 @@ class InstrumentsViewModel @Inject constructor(
             if (!update) {
                 pageToZero()
                 clearList()
+                isLastPage.value = false
             }
         }
         state.value?.let { state ->
@@ -272,10 +266,17 @@ class InstrumentsViewModel @Inject constructor(
                 if (!update) this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
-                    this.state.value = state.copy(instruments = list)
+                    this.state.value = state.copy(
+                        instruments = list,
+                        isLoading = false
+                    )
                 }
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    if (error.message == Constants.LAST_PAGE) {
+                        isLastPage.value = true
+                    } else {
+                        this.state.value = state.copy(error = error)
+                    }
                 }
 
             }.launchIn(viewModelScope)

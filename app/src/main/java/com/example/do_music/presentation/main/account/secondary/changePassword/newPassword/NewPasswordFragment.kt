@@ -12,8 +12,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentNewPasswordBinding
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.CODE
 import com.example.do_music.util.Constants.Companion.SUCCESS
+import com.example.do_music.util.accountExistsDialog
+import com.example.do_music.util.passwordExistsDialog
 
 
 class NewPasswordFragment : BaseFragment(), View.OnClickListener {
@@ -58,8 +61,15 @@ class NewPasswordFragment : BaseFragment(), View.OnClickListener {
                 )
             }
 
-            it.error?.let {
-                // TODO
+            it.error?.let { error ->
+                if(error.localizedMessage == Constants.INCORRECT_CODE){
+                    binding.incorrectCredentials.visibility = View.VISIBLE
+                }
+                else if(error.localizedMessage == "HTTP 406 "){
+                    passwordExistsDialog(context)
+                }
+
+                newPasswordViewModel.setErrorNull()
             }
         })
     }

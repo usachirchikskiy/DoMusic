@@ -2,6 +2,7 @@ package com.example.do_music.presentation.main.account.secondary.changeEmail.che
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentChangeEmailBinding
 import com.example.do_music.util.Constants.Companion.INCORRECT_EMAIL
+import com.example.do_music.util.accountExistsDialog
 
 
 class ChangeEmailFragment : BaseFragment(), View.OnClickListener {
@@ -49,8 +51,12 @@ class ChangeEmailFragment : BaseFragment(), View.OnClickListener {
 
             it.error?.let { error->
                 // TODO
+//                Log.d(TAG, "setupObservers: ")
                 if(error.localizedMessage == INCORRECT_EMAIL){
                     binding.sameEmail.visibility = View.VISIBLE
+                }
+                else if(error.localizedMessage == "HTTP 409 "){
+                    accountExistsDialog(context)
                 }
                 changeEmailViewModel.setErrorNull()
             }

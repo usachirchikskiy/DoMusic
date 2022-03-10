@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchCompositorSelected
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.INSTRUMENTAL_GROUP
 import com.example.do_music.util.Constants.Companion.NOTE_ID
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
@@ -31,7 +32,8 @@ class HomeCompositorSelectedViewModel
     private var getSelectedCompositorJob: Job? = null
     val compositorSelectedState: MutableLiveData<CompositorSelectedState> =
         MutableLiveData(CompositorSelectedState())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun setCompositorId(compositorId: Int) {
         compositorSelectedState.value?.let { state ->
@@ -69,6 +71,7 @@ class HomeCompositorSelectedViewModel
             if (!update) {
                 pageToZeroCompositorsNotes()
                 clearListCompositorsNotes()
+                isLastPage.value = false
             }
         }
         compositorSelectedState.value?.let { state ->
@@ -93,7 +96,11 @@ class HomeCompositorSelectedViewModel
                             }
 
                             it.error?.let { error ->
-                                this.compositorSelectedState.value = state.copy(error = error)
+                                if (error.message == Constants.LAST_PAGE) {
+                                    isLastPage.value = true
+                                } else {
+                                    this.compositorSelectedState.value = state.copy(error = error)
+                                }
                             }
 
                         }.launchIn(viewModelScope)
@@ -117,13 +124,14 @@ class HomeCompositorSelectedViewModel
                         }
 
                         it.error?.let { error ->
-                            this.compositorSelectedState.value = state.copy(error = error)
+                            if (error.message == Constants.LAST_PAGE) {
+                                isLastPage.value = true
+                            } else {
+                                this.compositorSelectedState.value = state.copy(error = error)
+                            }
                         }
 
                     }.launchIn(viewModelScope)
-                }
-                else -> {
-
                 }
             }
         }
@@ -131,22 +139,14 @@ class HomeCompositorSelectedViewModel
 
     private fun instrumentalCompositionLiked(favId: Int, isFav: Boolean) {
         compositorSelectedState.value?.let { state ->
-            var noteId = -1
-            var favouriteId = -1
-            if (isFav) {
-                noteId = favId
-            } else {
-                favouriteId = favId
-            }
             update.execute(
-                noteId = noteId,
-                favouriteId = favouriteId,
+                id = favId,
                 isFavourite = isFav,
                 property = NOTE_ID
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
                 }
 
                 it.error?.let { error ->
@@ -160,22 +160,14 @@ class HomeCompositorSelectedViewModel
 
     private fun vocalCompositionLiked(favId: Int, isFav: Boolean) {
         compositorSelectedState.value?.let { state ->
-            var vocalsId = -1
-            var favouriteId = -1
-            if (isFav) {
-                vocalsId = favId
-            } else {
-                favouriteId = favId
-            }
             update.execute(
-                vocalsId = vocalsId,
-                favouriteId = favouriteId,
+                id = favId,
                 isFavourite = isFav,
                 property = VOCALS_ID
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
                 }
 
                 it.error?.let { error ->
@@ -199,11 +191,11 @@ class HomeCompositorSelectedViewModel
         }
     }
 
-    fun setLoadingToFalse() {
-        compositorSelectedState.value?.let { state ->
-            this.compositorSelectedState.value = state.copy(isLoading = false)
-        }
-    }
+//    fun setLoadingToFalse() {
+//        compositorSelectedState.value?.let { state ->
+//            this.compositorSelectedState.value = state.copy(isLoading = false)
+//        }
+//    }
 
     private fun clearListCompositorsNotes() {
         compositorSelectedState.value?.let { state ->

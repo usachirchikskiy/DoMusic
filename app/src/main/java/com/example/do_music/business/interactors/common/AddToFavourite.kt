@@ -33,72 +33,61 @@ class AddToFavourite(
     }
 
     fun execute(
-        noteId: Int = -1,
-        bookId: Int = -1,
-        vocalsId: Int = -1,
-        favouriteId: Int = -1,
+        id: Int = -1,
         isFavourite: Boolean,
-        property: String = "-1"
+        property: String = ""
     ): Flow<Resource<String>> = flow {
-        emit(Resource.loading<String>())
+        emit(Resource.loading())
         val bodyRequest = JsonObject()
         try {
-            var addToFavouriteId: Int? = null
-            var id: Int = -1
-            var favorite = true
-            when {
-                bookId != -1 -> {
-                    id = bookId
-                }
-                noteId != -1 -> {
-                    id = noteId
-                }
-                vocalsId != -1 -> {
-                    id = vocalsId
-                }
-            }
+            var removeFavouriteId: Int = -1
+            val addToFavouriteId: Int
             try {
-                when {
-                    isFavourite -> {
-                        bodyRequest.addProperty(property, id)
-                        addToFavouriteId = service.addtoFavourite(bodyRequest.toString()).id
+                when (property) {
+                    NOTE_ID -> {
+                        if (isFavourite) {
+                            bodyRequest.addProperty(property, id)
+                            addToFavouriteId = service.addtoFavourite(bodyRequest.toString()).id
+                            instrumentsDao.instrumentUpdate(addToFavouriteId, isFavourite, id)
+                        } else {
+                            removeFavouriteId = instrumentsDao.getFavouriteId(id)
+                            service.removeFromFavourites(removeFavouriteId)
+                            instrumentsDao.updateInstrumentToFalse(removeFavouriteId, isFavourite)
+                        }
                     }
-                    else -> {
-                        service.removeFromFavourites(favouriteId)
-                        deleteFromFavourite(favouriteId)
-                        favorite = false
+                    BOOK_ID -> {
+                        if (isFavourite) {
+                            bodyRequest.addProperty(property, id)
+                            addToFavouriteId = service.addtoFavourite(bodyRequest.toString()).id
+                            theoryDao.updateBook(addToFavouriteId, isFavourite, id)
+                        } else {
+                            removeFavouriteId = theoryDao.getFavouriteId(id)
+                            service.removeFromFavourites(removeFavouriteId)
+                            theoryDao.updateBookToFalse(removeFavouriteId, isFavourite)
+                        }
+
                     }
+                    VOCALS_ID -> {
+                        if (isFavourite) {
+                            bodyRequest.addProperty(property, id)
+                            addToFavouriteId = service.addtoFavourite(bodyRequest.toString()).id
+                            vocalsDao.updateVocal(addToFavouriteId, isFavourite, id)
+                        } else {
+                            removeFavouriteId = vocalsDao.getFavouriteId(id)
+                            service.removeFromFavourites(removeFavouriteId)
+                            vocalsDao.updateVocalToFalse(removeFavouriteId, isFavourite)
+                        }
+                    }
+                }
+                if (!isFavourite){
+                    favouritesDao.deleteFavourite(removeFavouriteId)
                 }
             } catch (e: Throwable) {
+                Log.d(TAG, "execute: $e")
                 throw Exception(Constants.ERROR_ADD_TO_FAVOURITES)
-            }
-
-            when (property) {
-                NOTE_ID -> {
-                    if (noteId != -1) {
-                        instrumentsDao.instrumentUpdate(addToFavouriteId, favorite, noteId)
-                    } else {
-                        instrumentsDao.instrumentUpdateToFalse(favorite, favouriteId)
-                    }
-                }
-                VOCALS_ID -> {
-                    if (vocalsId != -1) {
-                        vocalsDao.updateVocal(addToFavouriteId, favorite, vocalsId)
-                    } else {
-                        vocalsDao.updateVocalToFalse(favouriteId, favorite)
-                    }
-                }
-                BOOK_ID -> {
-                    if (bookId != -1) {
-                        theoryDao.updateBook(addToFavouriteId, favorite, bookId)
-                    } else {
-                        theoryDao.updateBookToFalse(favouriteId, favorite)
-                    }
-                }
             }
             emit(Resource.success("Updated"))
         } catch (throwable: Throwable) {
-            Log.d(TAG, "Error " + throwable.message.toString())
             emit(
                 Resource.error<String>(throwable)
             )

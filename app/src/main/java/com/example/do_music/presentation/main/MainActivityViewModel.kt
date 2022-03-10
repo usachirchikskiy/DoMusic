@@ -6,11 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.do_music.business.interactors.common.DownloadFile
+import com.example.do_music.util.Constants.Companion.DOWNLOAD_LIMIT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -22,19 +22,23 @@ constructor(
     private val downloadFile: DownloadFile
 ) : ViewModel() {
     val state: MutableLiveData<MainActivityState> = MutableLiveData(MainActivityState())
-    val beginDownload: MutableLiveData<Boolean> = MutableLiveData(false)
+    val notificationState: MutableLiveData<NotificationState> = MutableLiveData(NotificationState())
+    val downloadProgressState: MutableLiveData<Int> = MutableLiveData(-1)
+    val updateState:UpdateState = UpdateState()
+    var noInternet = false
+
     fun downloadFile(
         uniqueName: String,
         fileName: String,
         context: Context
     ) {
-        beginDownload.value = true
-
-//        viewModelScope.launch {
-//            testFile()
-//        }
         state.value?.let { state ->
             downloadFile.downloadFile(uniqueName).onEach {
+                if (it.isLoading) {
+                    Log.d(TAG, "downloadFile: Begin")
+                    beginNotification()
+                }
+
                 it.data?.let { responseBody ->
                     this.state.value =
                         state.copy(responseBody = responseBody, nameOfFile = fileName)
@@ -42,8 +46,8 @@ constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value =
-                        state.copy(error = error, nameOfFile = fileName)
+                    Log.d(TAG, "downloadFile: $error")
+                    this.state.value = state.copy(error = error)
                 }
 
             }.launchIn(viewModelScope)
@@ -51,38 +55,63 @@ constructor(
 
     }
 
-//    private suspend fun testFile(){
-//
-//        state.value?.let { state->
-//            for(i in 1..100) {
-//                delay(300)
-//                this.state.value = state.copy(progress = i)
-//            }
-//        }
-//    }
-
     private fun saveFile(context: Context) {
-        state.value?.let { state ->
+        downloadProgressState.value?.let { downloadProgressState ->
+            Log.d(TAG, "saveFile: ${state.value?.nameOfFile!!}")
             downloadFile.saveFile(
-                responseBody = state.responseBody!!,
+                responseBody = state.value?.responseBody!!,
                 context = context,
-                fileName = state.nameOfFile
+                fileName = state.value?.nameOfFile!!
             ).onEach { progress ->
-                if(progress%25==0) {
+                if (progress % 20 == 0 && progress > 0) {
+                    this.downloadProgressState.value = progress
                     Log.d(TAG, "saveFile: $progress")
-                    if (progress == 100){
-                        delay(200)
-                    }
-                    delay(200)
+                    delay(20)
+                } else if (progress == -100) {
+                    onCompleteNotification()
                 }
-                this.state.value = state.copy(progress = progress)
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun beginNotification() {
+        notificationState.value?.let { notificationState ->
+            this.notificationState.value = notificationState.copy(begin = true, onComplete = false)
+        }
+    }
+
+    private fun onCompleteNotification() {
+        notificationState.value?.let { notificationState ->
+            this.notificationState.value = notificationState.copy(onComplete = true, begin = false)
+        }
+    }
+
+    fun updateVocals(vocals:Boolean){
+        updateState.vocals = vocals
+    }
+
+    fun updateInstruments(instruments:Boolean){
+        updateState.instruments = instruments
+    }
+
+    fun updateTheory(theory:Boolean){
+        updateState.theory = theory
+    }
+
+    fun updateFavourite(favourite:Boolean){
+        updateState.favourite = favourite
     }
 
     fun clearValues() {
         state.value?.let { state ->
-            this.state.value = state.copy(progress = 0, responseBody = null, nameOfFile = "",error = null)
+            this.state.value =
+                state.copy(responseBody = null, nameOfFile = "", error = null)
         }
+        notificationState.value?.let { notificationState ->
+            this.notificationState.value =
+                notificationState.copy(onComplete = false, begin = false)
+        }
+        downloadProgressState.value = -1
     }
+
 }

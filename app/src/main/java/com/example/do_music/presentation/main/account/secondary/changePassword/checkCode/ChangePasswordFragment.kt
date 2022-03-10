@@ -58,6 +58,7 @@ class ChangePasswordFragment : BaseFragment(), View.OnClickListener {
                 if(error.localizedMessage == INCORRECT_CODE){
                     binding.incorrectCredentials.visibility = View.VISIBLE
                 }
+
                 changePasswordViewModel.setErrorNull()
             }
         })

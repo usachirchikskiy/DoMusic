@@ -13,10 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentFavouriteBinding
-
+import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.presentation.main.home.adapter.*
 import com.example.do_music.util.*
 import com.example.do_music.util.Constants.Companion.BOOK
@@ -31,11 +30,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "FavouriteFragment"
 
-
 @AndroidEntryPoint
 class FavouriteFragment : BaseFragment(), TextWatcher,
-    Interaction_Favourite, View.OnClickListener
-{
+    Interaction_Favourite, View.OnClickListener {
     private var _binding: FragmentFavouriteBinding? = null
     private val binding get() = _binding!!
     private val viewModel: FavouriteViewModel by viewModels()
@@ -54,21 +51,17 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         super.onViewCreated(view, savedInstanceState)
 
         val docType = viewModel.state.value?.docType
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(docType!!)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
-                shouldRefresh?.run {
-                    Log.d(TAG, "onViewCreated: $docType")
-                    viewModel.getPage(update = false)
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                        docType,
-                        true
-                    )
-                }
-            }
-
         setupViews(docType!!)
+        updateFavourite()
         setupObservers()
         setupRecyclerView()
+    }
+
+    private fun updateFavourite() {
+        if(uiMainUpdate.getFavouriteUpdate()){
+            viewModel.getPage()
+            uiMainUpdate.setFavouriteUpdate(false)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -82,8 +75,8 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
                     if (
-                        lastPosition == favouriteAdapter?.itemCount?.minus(1)
-                        && viewModel.state.value?.isLoading == false
+                        (lastPosition == favouriteAdapter?.itemCount?.minus(1)
+                                && viewModel.state.value?.isLoading == false) && !viewModel.isLastPage
                     ) {
                         viewModel.getPage(true)
 //                        setPadding(0, 0, 0, 0)
@@ -103,25 +96,23 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
             Log.d(TAG, "setupObservers: $it")
             favouriteAdapter?.apply {
                 submitList(favourites = it.favouriteItems)
-                if(it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isBlank()){
+                if (it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isBlank()) {
                     binding.notAddedLayout.root.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     binding.notAddedLayout.root.visibility = View.GONE
                 }
 
-                if(it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isNotBlank()){
+                if (it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isNotBlank()) {
                     binding.noResultsLayout.root.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     binding.noResultsLayout.root.visibility = View.GONE
                 }
             }
 
-            it.error?.let { error->
+            it.error?.let { error ->
                 when (error.localizedMessage) {
                     Constants.ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
+                        operationErrorDialog(context)
                         viewModel.setErrorNull()
                     }
                 }
@@ -129,23 +120,10 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, {
-            if (it) {
-                Log.d(TAG, "setupObservers: isUpdated")
-                viewModel.getPage(update = true)
-                viewModel.isUpdated.value = false
-            }
-        })
     }
 
 
     private fun setupViews(docType: String) {
-//        arrayList.add(binding.one)
-//        arrayList.add(binding.two)
-//        arrayList.add(binding.three)
-//        arrayList.add(binding.four)
-//        arrayList.add(binding.five)
-//        arrayList.add(binding.six)
         binding.searchEt.hide {
             uiCommunicationListener.hideKeyboard()
         }
@@ -164,13 +142,6 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         binding.vocal.setOnClickListener(this)
         binding.notes.setOnClickListener(this)
         binding.searchEt.addTextChangedListener(this)
-//        binding.groupDocType.setOnCheckedChangeListener(this)
-//        binding.one.setOnCheckedChangeListener(this)
-//        binding.two.setOnCheckedChangeListener(this)
-//        binding.three.setOnCheckedChangeListener(this)
-//        binding.four.setOnCheckedChangeListener(this)
-//        binding.five.setOnCheckedChangeListener(this)
-//        binding.six.setOnCheckedChangeListener(this)
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -187,14 +158,6 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
     override fun afterTextChanged(s: Editable?) {
 
     }
-
-//    private fun changeState(checkBox: CompoundButton) {
-//        for (i in arrayList) {
-//            if (checkBox != i) {
-//                i.isChecked = false
-//            }
-//        }
-//    }
 
     override fun onItemSelected(position: Int) {
         viewModel.state.value?.let { state ->
@@ -221,42 +184,30 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         }
     }
 
-//    override fun onClassSelected(classText: String, position: Int) {
-//        val favItem = viewModel.state.value!!.favouriteItems[position]
-//        val favouriteId = favItem.favoriteId
-//        favouriteId?.let { viewModel.addFavClass(it, classText) }
-//        Log.d(TAG, "onClassSelected: " + classText)
-//    }
-
-    override fun onDeleteSelected(itemId: Int, isFav: Boolean, compositorName: String) {
+    override fun onDeleteSelected(itemId: Int, isFavourite: Boolean, compositorName: String) {
         deleteNote(context,
             compositorName = compositorName,
             stateMessageCallback = object : StateMessageCallback {
                 override fun yes() {
-                    viewModel.isLiked(favId = itemId, isFav = isFav)
-                }
-
-                override fun uploadPhoto(selectedImagePath: String) {
-
+                    viewModel.isLiked(itemId = itemId, isFavourite = isFavourite)
+                    setUpdate()
                 }
             })
     }
 
-    //    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-//        var favClass = "UNKNOWN"
-//        if (buttonView!!.isChecked) {
-//            changeState(buttonView)
-//            val btn_txt = buttonView.text.toString()
-//            if(btn_txt.length>1){
-//                favClass = "CLASS_" + btn_txt.replace("-","")
-//            }
-//            else{
-//                favClass = "CLASS_" + btn_txt
-//            }
-//        }
-//        viewModel.setFavClass(favClass)
-//        viewModel.getPage()
-//    }
+    private fun setUpdate(){
+        when(viewModel.state.value?.docType){
+                NOTES -> {
+                    uiMainUpdate.setInstrumentsUpdate(true)
+                }
+                BOOK -> {
+                    uiMainUpdate.setTheoryUpdate(true)
+                }
+                else -> {
+                    uiMainUpdate.setVocalsUpdate(true)
+                }
+        }
+    }
     override fun onClick(v: View?) {
         when (v) {
             binding.notes -> {
@@ -278,6 +229,11 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         _binding = null
 
     }
+
+//    override fun onRefresh() {
+//        viewModel.getPage()
+//        binding.refreshLayout.isRefreshing = false
+//    }
 
 
 }

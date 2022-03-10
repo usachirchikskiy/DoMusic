@@ -25,13 +25,11 @@ import com.example.do_music.util.Constants.Companion.ERROR_ADD_TO_FAVOURITES
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.INSTRUMENTAL_GROUP
 import com.example.do_music.util.Constants.Companion.ITEM_ID
-import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
-import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import com.example.do_music.util.Constants.Companion.VOCAL_GROUP
-import com.example.do_music.util.addToFavErrorDialog
 import com.example.do_music.util.hide
+import com.example.do_music.util.operationErrorDialog
 
 
 private const val TAG = "CompositorSelected"
@@ -65,32 +63,23 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(VOCALS)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
-                shouldRefresh?.run {
-                    viewModel.getNotesByCompositorSelected(update = true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        VOCALS,
-                        null
-                    )
-                }
-            }
-
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(NOTES)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
-                shouldRefresh?.run {
-                    viewModel.getNotesByCompositorSelected(update = true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        NOTES,
-                        null
-                    )
-                }
-            }
-
+        updateData()
         setupViews()
         setupObservers()
         setupRecyclerView()
     }
+
+    private fun updateData() {
+        if (uiMainUpdate.getInstrumentsUpdate()) {
+            viewModel.getNotesByCompositorSelected(update = true)
+            uiMainUpdate.setInstrumentsUpdate(false)
+        } else if (uiMainUpdate.getVocalsUpdate()) {
+            viewModel.getNotesByCompositorSelected(update = true)
+            uiMainUpdate.setVocalsUpdate(false)
+        }
+    }
+
+    
 
     private fun setupObservers() {
         viewModel.compositorSelectedState.observe(viewLifecycleOwner, Observer {
@@ -155,7 +144,7 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
                         uiCommunicationListener.onAuthActivity()
                     }
                     ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
+                        operationErrorDialog(context)
                         viewModel.setErrorNull()
                     }
                 }
@@ -163,13 +152,13 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: UPDATE $it")
-            if (it) {
-                viewModel.getNotesByCompositorSelected(update = true)
-                viewModel.isUpdated.value = false
-            }
-        })
+//        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
+//            Log.d(TAG, "setupObservers: UPDATE $it")
+//            if (it) {
+//                viewModel.getNotesByCompositorSelected(update = true)
+//                viewModel.isUpdated.value = false
+//            }
+//        })
     }
 
     private fun setupRecyclerView() {
@@ -194,12 +183,14 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
                         if (
                             lastPosition == instrumentsAdapter?.itemCount?.minus(1)
                             && viewModel.compositorSelectedState.value?.isLoading == false
+                            && viewModel.isLastPage.value == false
                         ) {
                             viewModel.getNotesByCompositorSelected(next = true)
                         }
                     } else {
                         if (lastPosition == vocalsAdapter?.itemCount?.minus(1)
                             && viewModel.compositorSelectedState.value?.isLoading == false
+                            && viewModel.isLastPage.value == false
                         ) {
                             viewModel.getNotesByCompositorSelected(next = true)
                         }
@@ -225,7 +216,7 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
-        viewModel.setLoadingToFalse()
+//        viewModel.setLoadingToFalse()
         Log.d(TAG, "onTextChanged: ")
         viewModel.setSearchText(searchText)
         viewModel.getNotesByCompositorSelected()
@@ -247,11 +238,12 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onItemSelected(itemId: Int, nameOfCompositor: String) {
         var bundle: Bundle? = null
-        if (viewModel.compositorSelectedState.value?.filterSelected == INSTRUMENTAL_GROUP) {
-            bundle = bundleOf(ITEM_ID to itemId, FRAGMENT to NOTE_ID)
-        } else {
-            bundle = bundleOf(ITEM_ID to itemId, FRAGMENT to VOCALS_ID)
-        }
+        bundle =
+            if (viewModel.compositorSelectedState.value?.filterSelected == INSTRUMENTAL_GROUP) {
+                bundleOf(ITEM_ID to itemId, FRAGMENT to NOTE_ID)
+            } else {
+                bundleOf(ITEM_ID to itemId, FRAGMENT to VOCALS_ID)
+            }
         findNavController().navigate(
             R.id.action_homeCompositorSelectedFragment_to_itemSelectedInstrument,
             bundle
@@ -269,18 +261,4 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
         _binding = null
     }
 
-//    fun filterSearch(
-//        enable: CheckBox,
-//        disable: CheckBox,
-//        noteGroupType: String
-//    ) {
-//        if (enable.isChecked == true) {
-//            enable.setChecked(true)
-//            disable.setChecked(false)
-////            viewModel.noteGroupTypeCompositor(noteGroupType)
-//        } else {
-////            viewModel.noteGroupTypeCompositor("")
-//        }
-//
-//    }
 }

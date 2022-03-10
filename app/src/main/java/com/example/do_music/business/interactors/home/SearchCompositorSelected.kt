@@ -49,7 +49,6 @@ class SearchCompositorSelected(
         }
     }
 
-
     fun getInstrumentalNotesByCompositors(
         compositorId: Int,
         pageNumber: Int,
@@ -66,11 +65,15 @@ class SearchCompositorSelected(
                     searchText = searchText
                 ).rows
 
-                for (instrumentalNote in instrumentalNotes) {
-                    instrumentsDao.insertInstrument(instrumentalNote)
+                if(instrumentalNotes.isNotEmpty()) {
+                    for (instrumentalNote in instrumentalNotes) {
+                        instrumentsDao.insertInstrument(instrumentalNote)
+                    }
+                }
+                else{
+                    throw Exception(Constants.LAST_PAGE)
                 }
             }
-
         } catch (throwable: Throwable) {
             emit(Resource.error<List<Instrument>>(throwable))
         }
@@ -99,8 +102,13 @@ class SearchCompositorSelected(
                     searchText = searchText
                 ).rows
 
-                for (vocalNote in vocalNotes) {
-                    vocalsDao.insertVocal(vocalNote)
+                if(vocalNotes.isNotEmpty()){
+                    for (vocalNote in vocalNotes) {
+                        vocalsDao.insertVocal(vocalNote)
+                    }
+                }
+                else{
+                    throw Exception(Constants.LAST_PAGE)
                 }
             }
         } catch (throwable: Throwable) {

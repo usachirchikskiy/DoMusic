@@ -67,37 +67,15 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         fileUploadActivityResultLauncher =
             registerForActivityResult(filesUploadActivityResultContract) { uri ->
-                uri?.let {
-                    uiMainCommunicationListener.uploadPhotoToServer(uri,
-                        stateMessageCallback = object : StateMessageCallback {
-                            override fun yes() {
-
-                            }
-
-                            override fun uploadPhoto(selectedImagePath: String) {
-                                viewModel.addToUploadFiles(selectedImagePath)
-                            }
-                        }
-                    )
-                }
+                val path = uri?.let { getPath(it) }
+                path?.let { viewModel.addToUploadFiles(it) }
             }
 
         cropActivityResultLauncher =
             registerForActivityResult(cropActivityResultContract) { uri ->
-                uri?.let {
-                    uiMainCommunicationListener.uploadPhotoToServer(uri,
-                        stateMessageCallback = object : StateMessageCallback {
-                            override fun yes() {
-
-                            }
-
-                            override fun uploadPhoto(selectedImagePath: String) {
-                                viewModel.setUri(uri)
-                                viewModel.uploadPhoto(selectedImagePath)
-                            }
-                        }
-                    )
-                }
+                uri?.let { viewModel.setUri(it) }
+                val path = uri?.let { getPath(it) }
+                path?.let { viewModel.uploadPhoto(it) }
             }
 
     }
@@ -133,33 +111,32 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                             binding.profilePhoto.setImageResource(R.drawable.avatar_empty)
                         }
                     }
-                }
-                else{
+                } else {
                     binding.profilePhoto.setImageURI(state.uri)
                 }
 
                 content?.userLogin?.setText(userAccount.username)
                 content?.fio?.setText(userAccount.fio)
-                content?.telephonNumber?.setText(userAccount.phone)
+                content?.telephoneNumber?.setText(userAccount.phone)
 
                 userAccount.email?.let { email ->
                     val sb = StringBuilder(email)
                     val index = sb.indexOf("@")
 
                     if (sb.length > 20 && index != -1) {
-                        sb.replace(index - 6, index, "")
-                        sb.insertRange(index - 6, "...", 0, 3)
+                        sb.replace(8, index, "")
+                        sb.insertRange(8, "...", 0, 3)
                     }
                     content?.email?.setText(sb.toString())
                 }
-                userAccount.regionId?.let {
-                    content?.region?.setText(userAccount.regionId)
+                userAccount.regionName?.let { regionName ->
+                    content?.region?.setText(regionName)
                 }
-                userAccount.cityId?.let {
-                    content?.town?.setText(userAccount.cityId.toString())
+                userAccount.cityName?.let { cityName ->
+                    content?.town?.setText(cityName)
                 }
-                userAccount.schoolId?.let {
-                    content?.school?.setText(userAccount.schoolId.toString())
+                userAccount.schoolName?.let { schoolName->
+                    content?.school?.setText(schoolName)
                 }
 
             }
@@ -168,8 +145,14 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 uiCommunicationListener.onAuthActivity()
             }
 
-            state.error?.let {
-
+            state.error?.let { error ->
+                when (error.localizedMessage) {
+                    Constants.NO_INTERNET -> {
+                        uiCommunicationListener.showNoInternetDialog()
+                    }
+                    else -> context?.toast(getString(R.string.error))
+                }
+                viewModel.setErrorNull()
             }
 
         })
@@ -186,6 +169,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
 
         viewModel.thankForFeedBackState.observe(viewLifecycleOwner, {
             if (it) {
+                uiMainCommunicationListener.disableWaiting()
                 findNavController().navigate(R.id.action_accountFragment_to_feedbackSuccessFragment)
                 viewModel.setFeedbackOnRestore()
             }
@@ -211,7 +195,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
 
     private fun setupViews() {
         content = binding.contentPersonal
-        content?.telephonNumber?.hide {
+        content?.telephoneNumber?.hide {
             uiCommunicationListener.hideKeyboard()
         }
         content?.changePassword?.setOnClickListener(this)
@@ -292,12 +276,22 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
             }
 
             content?.changeNumber -> {
-                if (content?.telephonNumber?.text.toString().isNotBlank()) {
-                    viewModel.changeNumber(content?.telephonNumber?.text.toString())
+                if (content?.changeNumber?.text == getString(R.string.change)) {
+                    content?.telephoneNumber?.isEnabled = true
+                    content?.changeNumber?.text = getString(R.string.save)
+                    content?.telephoneNumber?.requestFocus()
                 } else {
-                    content?.telephonNumber?.hint = getString(R.string.input_phone)
-                    content?.telephonNumber?.setHintTextColor(Color.RED)
+                    if (content?.telephoneNumber?.text.toString().isNotBlank()) {
+                        viewModel.changeNumber(content?.telephoneNumber?.text.toString())
+                        content?.telephoneNumber?.clearFocus()
+                        content?.telephoneNumber?.isEnabled = false
+                        content?.changeNumber?.text = getString(R.string.change)
+                    } else {
+                        content?.telephoneNumber?.hint = getString(R.string.input_phone)
+                        content?.telephoneNumber?.setHintTextColor(Color.RED)
+                    }
                 }
+
             }
             binding.profilePhotoBtn -> {
                 cropActivityResultLauncher.launch(null)
@@ -310,10 +304,6 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                         override fun yes() {
                             viewModel.logout()
                         }
-
-                        override fun uploadPhoto(selectedImagePath: String) {
-
-                        }
                     }
                 )
             }
@@ -323,16 +313,21 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
             }
 
             feedBack?.sendMessage -> {
-                if (feedBack?.sendMessageField?.text.toString().isNotBlank()) {
-                    val selectedRadioButton: Int = radioGroup!!.checkedRadioButtonId
-                    val radioButton =
-                        feedBack?.root?.findViewById<RadioButton>(selectedRadioButton)
-                    viewModel.setData(radioButton?.text.toString() + " " + feedBack?.sendMessageField?.text.toString())
-                    viewModel.uploadButtonClicked()
-                    feedBack?.sendMessageField?.setText("")
+                if (isOnline(context) == true) {
+                    if (feedBack?.sendMessageField?.text.toString().isNotBlank()) {
+                        val selectedRadioButton: Int = radioGroup!!.checkedRadioButtonId
+                        val radioButton =
+                            feedBack?.root?.findViewById<RadioButton>(selectedRadioButton)
+                        viewModel.setData(radioButton?.text.toString() + " " + feedBack?.sendMessageField?.text.toString())
+                        viewModel.uploadButtonClicked()
+                        uiMainCommunicationListener.enableWaiting()
+                        feedBack?.sendMessageField?.setText("")
+                    } else {
+                        feedBack?.sendMessageField?.hint = getString(R.string.input_here)
+                        feedBack?.sendMessageField?.setHintTextColor(Color.RED)
+                    }
                 } else {
-                    feedBack?.sendMessageField?.hint = getString(R.string.input_here)
-                    feedBack?.sendMessageField?.setHintTextColor(Color.RED)
+                    uiCommunicationListener.showNoInternetDialog()
                 }
             }
 
@@ -343,6 +338,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 intent.setDataAndType(uri, "text/html")
                 startActivity(intent)
             }
+
             aboutUs?.publicOffert -> {
                 val fileUrl = ABOUT_US_OFFERT
                 val uri = Uri.parse(fileUrl)
@@ -350,6 +346,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 intent.setDataAndType(uri, "text/html")
                 startActivity(intent)
             }
+
             aboutUs?.rightsOwner -> {
                 val fileUrl = ABOUT_US_RIGHTS_OWNER
                 val uri = Uri.parse(fileUrl)
@@ -358,6 +355,22 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun getPath(uri: Uri): String {
+        var path = ""
+        val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
+        val cursor = context?.contentResolver?.query(
+            uri,
+            filePathColumn, null, null, null
+        )
+        if (cursor != null) {
+            cursor.moveToFirst()
+            val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
+            path = cursor.getString(columnIndex)
+            cursor.close()
+        }
+        return path
     }
 
     override fun onDestroyView() {

@@ -1,15 +1,18 @@
 package com.example.do_music.presentation.main.home.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
+import com.example.do_music.R
 import com.example.do_music.business.model.main.TheoryInfo
 import com.example.do_music.databinding.CardOfTheoryBinding
 import com.example.do_music.util.Constants.Companion.BASE_URL
 import com.example.do_music.util.shimmerDrawable
 
+private const val TAG = "TheoryAdapter"
 
 class TheoryAdapter(
     private val interaction: Interaction_Instrument? = null
@@ -61,14 +64,15 @@ class TheoryAdapter(
 
             binding.bookLike.setOnClickListener {
                 if (book.favorite) {
-                    interaction?.onLikeSelected(book.favoriteId!!, !book.favorite)
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_disabled_in_card)
                 } else {
-                    interaction?.onLikeSelected(book.bookId, !book.favorite)
+                    binding.bookLike.setImageResource(R.drawable.ic_favourite_enabled_in_card)
                 }
+                book.favorite=!book.favorite
+                interaction?.onLikeSelected(book.bookId, book.favorite)
             }
         }
     }
-
 
     internal inner class BookRecyclerChangeCallback(
         private val adapter: TheoryAdapter

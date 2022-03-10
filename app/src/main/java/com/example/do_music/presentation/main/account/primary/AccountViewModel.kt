@@ -130,6 +130,7 @@ constructor(
     }
 
     fun addToUploadFiles(selectedFilePath: String) {
+        Log.d(TAG, "addToUploadFiles: $selectedFilePath")
         state.value?.let { state ->
             state.filesPath.add(selectedFilePath)
             update.value = update.value!! + 1
@@ -166,17 +167,16 @@ constructor(
 
     fun uploadPhoto(selectedImagePath: String) {
         state.value?.let {
-            val imageFile = File(selectedImagePath)
-            val contentDisposition = getMimeType(imageFile)
-            Log.d(TAG, "uploadPhoto: $contentDisposition")
+            val file = File(selectedImagePath)
+            val contentDisposition = getMimeType(file)
             val requestBody =
                 RequestBody.create(
                     MediaType.parse(contentDisposition),
-                    imageFile
+                    file
                 )
             val multipartBody = MultipartBody.Part.createFormData(
                 "file",
-                imageFile.name,
+                file.name,
                 requestBody
             )
             Log.d(TAG, "uploadPhoto: " + multipartBody.headers())
@@ -201,4 +201,12 @@ constructor(
             this.state.value = state.copy(uri = uri)
         }
     }
+
+    fun setErrorNull() {
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+    }
+
+
 }

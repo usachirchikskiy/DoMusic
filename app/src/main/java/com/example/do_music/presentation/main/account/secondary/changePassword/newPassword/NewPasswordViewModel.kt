@@ -36,4 +36,10 @@ class NewPasswordViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
+
+    fun setErrorNull() {
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+    }
 }

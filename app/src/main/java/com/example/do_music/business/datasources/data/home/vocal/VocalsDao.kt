@@ -13,20 +13,11 @@ interface VocalsDao {
 
     @Query(
         """
-        SELECT * FROM vocals 
-        WHERE compositorId = :compositorId 
-        AND noteName LIKE '%' || :searchText || '%'
-        ORDER BY vocalsId DESC
-        LIMIT (:page * :pageSize)
-        """
+    SELECT favoriteId FROM vocals 
+    WHERE vocalsId =:vocalsId
+    """
     )
-    suspend fun getVocalNotesByCompositor(
-        compositorId: Int,
-        searchText: String,
-        page: Int,
-        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Vocal>
-
+    suspend fun getFavouriteId(vocalsId: Int):Int
 
     @Query(
         """
@@ -42,7 +33,23 @@ interface VocalsDao {
         WHERE favoriteId = :favoriteId
         """
     )
-    suspend fun updateVocalToFalse(favoriteId:Int?,favorite: Boolean)
+    suspend fun updateVocalToFalse(favoriteId: Int?, favorite: Boolean)
+
+    @Query(
+        """
+        SELECT * FROM vocals 
+        WHERE compositorId = :compositorId 
+        AND noteName LIKE '%' || :searchText || '%'
+        ORDER BY vocalsId DESC
+        LIMIT (:page * :pageSize)
+        """
+    )
+    suspend fun getVocalNotesByCompositor(
+        compositorId: Int,
+        searchText: String,
+        page: Int,
+        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
+    ): List<Vocal>
 
     @Query(
         """

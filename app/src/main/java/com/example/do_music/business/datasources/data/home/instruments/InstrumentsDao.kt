@@ -15,6 +15,25 @@ interface InstrumentsDao {
 
     @Query(
         """
+    SELECT favoriteId FROM instruments 
+    WHERE noteId =:noteId
+    """
+    )
+    suspend fun getFavouriteId(noteId: Int):Int
+
+    @Query("UPDATE instruments SET favoriteId = :favoriteId , favorite = :favorite WHERE noteId =:noteId")
+    suspend fun instrumentUpdate(favoriteId: Int?, favorite: Boolean, noteId: Int)
+
+    @Query(
+        """
+        UPDATE instruments SET favoriteId = null, favorite = :favorite
+        WHERE favoriteId = :favoriteId
+        """
+    )
+    suspend fun updateInstrumentToFalse(favoriteId: Int?, favorite: Boolean)
+
+    @Query(
+        """
         SELECT * FROM instruments 
         WHERE noteId = :noteId
         """
@@ -51,7 +70,6 @@ interface InstrumentsDao {
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<Instrument>
-
 
     @Query(
         """
@@ -102,8 +120,6 @@ interface InstrumentsDao {
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE,
         instrumentId: Int
     ): List<Instrument>
-//    ORDER BY noteName ASC
-//    LIMIT (:page * :pageSize)
 
     @Query(
         """
@@ -135,21 +151,13 @@ interface InstrumentsDao {
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
     ): List<Instrument>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInstrument(instrument: Instrument): Long
 
     @Query("DELETE FROM instruments")
     suspend fun deleteAllInstruments()
 
-    @Query("UPDATE instruments SET favoriteId = :favoriteId , favorite = :favorite WHERE noteId =:noteId")
-    suspend fun instrumentUpdate(favoriteId: Int?, favorite: Boolean, noteId: Int)
-
-    @Query("UPDATE instruments SET favoriteId = null , favorite = :favorite WHERE favoriteId =:favoriteId")
-    suspend fun instrumentUpdateToFalse(favorite: Boolean, favoriteId: Int)
-
 }
-
 
 suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
     noteGroupType: String,
@@ -225,7 +233,6 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
             searchText = searchText
         )
     }
-
     return getAllInstrumentsSearch(searchText = searchText, page = page)
 
 }

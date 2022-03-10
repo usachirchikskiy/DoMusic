@@ -1,10 +1,10 @@
 package com.example.do_music.presentation.main.account.primary
 
 import android.net.Uri
-import com.example.do_music.business.model.main.UserAccount
+import com.example.do_music.business.model.main.TeacherAccount
 
 data class UserAccountState(
-    val userAccount: UserAccount? =null,
+    val userAccount: TeacherAccount? =null,
     val uri: Uri? = null,
     val error: Throwable?=null,
     val filesPath:ArrayList<String> = arrayListOf(),

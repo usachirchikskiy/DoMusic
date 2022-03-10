@@ -6,9 +6,6 @@ import com.example.do_music.business.model.main.Vocal
 import okhttp3.ResponseBody
 
 data class ItemState(
-//    val nameOfFile:String = "",
-//    val body: ResponseBody?=null,
-    val error: Throwable?= null,
     val vocal: Vocal?=null,
     val instrument: Instrument?=null,
     val book: TheoryInfo?=null

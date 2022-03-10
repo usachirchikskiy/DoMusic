@@ -46,6 +46,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/rus"
+            android:background="?attr/selectableItemBackground"
             android:textSize="18sp"
             android:fontFamily="@font/montserrat_medium"
             android:text="@string/rus"
@@ -53,6 +54,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/ozb"
+            android:background="?attr/selectableItemBackground"
             android:textSize="18sp"
             android:fontFamily="@font/montserrat_medium"
             android:layout_marginStart="10dp"
@@ -61,6 +63,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/uzb"
+            android:background="?attr/selectableItemBackground"
             android:textSize="18sp"
             android:fontFamily="@font/montserrat_medium"
             android:layout_marginStart="10dp"

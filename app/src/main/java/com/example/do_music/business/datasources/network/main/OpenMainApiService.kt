@@ -1,7 +1,8 @@
 package com.example.do_music.business.datasources.network.main
 
+import com.example.do_music.business.model.main.TeacherAccount
 import com.example.do_music.business.datasources.network.main.favourite.FavouriteItem
-import com.example.do_music.business.model.main.UserAccount
+import com.example.do_music.business.datasources.network.main.account.UserAccount
 import com.example.do_music.business.datasources.network.main.account.UserChangeResponse
 import com.example.do_music.business.datasources.network.main.account.UserPhotoResponse
 import com.example.do_music.business.datasources.network.main.favourite.GetFavouritesResponse
@@ -15,6 +16,10 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface OpenMainApiService {
+
+    @GET("api/user/teacher/{userId}")
+    suspend fun teacherAccount(@Path ("userId") userId: String): TeacherAccount
+
     @Headers("Accept: */*")
     @GET("api/doc/download")
     suspend fun downloadFile(@Query("uniqueName") uniqueName: String): Response<ResponseBody>

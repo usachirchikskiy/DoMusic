@@ -23,7 +23,7 @@ import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
 import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
-import com.example.do_music.util.addToFavErrorDialog
+import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.hide
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 
@@ -54,16 +54,17 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(NOTES)
-            ?.observe(viewLifecycleOwner) { shouldRefresh ->
-                shouldRefresh?.run {
-                    viewModel.getPage(update = true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(NOTES, null)
-                }
-            }
+        updateInstruments()
         setupViews()
         setupObservers()
         setupRecyclerView()
+    }
+
+    private fun updateInstruments() {
+        if(uiMainUpdate.getInstrumentsUpdate()){
+            viewModel.getPage(update = true)
+            uiMainUpdate.setInstrumentsUpdate(false)
+        }
     }
 
     private fun setupViews() {
@@ -92,6 +93,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
                     if (
                         lastPosition == instrumentsAdapter?.itemCount?.minus(1)
                         && viewModel.state.value?.isLoading == false
+                        && viewModel.isLastPage.value == false
                     ) {
                         viewModel.getPage(true)
 //                        setPadding(0, 0, 0, 0)
@@ -105,7 +107,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
         binding.recvCheckboxes.apply {
             layoutManager = FlowLayoutManager()
             layoutManager?.apply {
-                setAutoMeasureEnabled(true)
+                isAutoMeasureEnabled = true
             }
             instrumentsFilterAdapter = InstrumentsFilterAdapter(this@InstrumentsFragment)
             adapter = instrumentsFilterAdapter
@@ -141,7 +143,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
                         uiCommunicationListener.onAuthActivity()
                     }
                     Constants.ERROR_ADD_TO_FAVOURITES -> {
-                        addToFavErrorDialog(context)
+                        operationErrorDialog(context)
                         viewModel.setErrorNull()
                     }
                 }
@@ -149,12 +151,12 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
 
         })
 
-        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.getPage(update = true)
-                viewModel.isUpdated.value = false
-            }
-        })
+//        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
+//            if (it) {
+//                viewModel.getPage(update = true)
+//                viewModel.isUpdated.value = false
+//            }
+//        })
 
     }
 
@@ -167,6 +169,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
         viewModel.isLiked(itemId, isFav)
+        uiMainUpdate.setFavouriteUpdate(true)
     }
 
     override fun onCheckBoxSelected(position: Int) {
@@ -181,7 +184,7 @@ class InstrumentsFragment : BaseFragment(), Interaction_Instrument, InteractionF
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
         Log.d(TAG, "onTextChanged: ")
-        viewModel.setLoadingToFalse()
+//        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getPage()
     }

@@ -15,6 +15,6 @@ data class Vocal(
     val opusEdition: String,
     @PrimaryKey(autoGenerate = false)
     val vocalsId: Int,
-    val favorite:Boolean?= null,
+    var favorite:Boolean,
     val favoriteId:Int?=null
 )

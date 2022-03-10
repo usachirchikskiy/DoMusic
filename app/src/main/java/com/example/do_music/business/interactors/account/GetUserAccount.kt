@@ -3,9 +3,9 @@ package com.example.do_music.business.interactors.account
 import android.util.Log
 import com.example.do_music.business.datasources.data.account.UserAccountDao
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
+import com.example.do_music.business.model.main.TeacherAccount
 import com.example.do_music.business.datasources.network.main.account.UserChangeResponse
 import com.example.do_music.business.datasources.network.main.account.UserPhotoResponse
-import com.example.do_music.business.model.main.UserAccount
 import com.example.do_music.util.Constants.Companion.SUCCESS
 import com.example.do_music.util.Constants.Companion.SUCCESS_CODE
 import com.example.do_music.util.Resource
@@ -22,17 +22,19 @@ class GetUserAccount(
     private val openMainApiService: OpenMainApiService
 ) {
 
-    fun execute(): Flow<Resource<UserAccount>> = flow {
-        emit(Resource.loading<UserAccount>())
-        var userAccount: UserAccount
+    fun execute(): Flow<Resource<TeacherAccount>> = flow {
+        emit(Resource.loading<TeacherAccount>())
+        var teacherAccount: TeacherAccount
         try {
-            userAccount = openMainApiService.getUserAccount()
-            userAccountDao.insertUserAccount(userAccount)
+            val userAccount = openMainApiService.getUserAccount()
+            teacherAccount = openMainApiService.teacherAccount(userAccount.id.toString())
+            userAccountDao.insertUserAccount(teacherAccount)
+
         } catch (throwable: Throwable) {
             Log.d(TAG, throwable.toString() + "\nMessage " + throwable.message.toString())
         }
-        userAccount = userAccountDao.getUserAccount()
-        emit(Resource.success(userAccount))
+        teacherAccount = userAccountDao.getUserAccount()
+        emit(Resource.success(teacherAccount))
     }.catch { error ->
         emit(Resource.error(error))
     }
@@ -82,7 +84,7 @@ class GetUserAccount(
         }
     }
 
-    fun changeNumber(number: String): Flow<Resource<UserAccount>> = flow {
+    fun changeNumber(number: String): Flow<Resource<TeacherAccount>> = flow {
         try {
             val userAccount = openMainApiService.userPhone(number)
             val phoneNumber = userAccount.phone

@@ -22,10 +22,12 @@ class ItemSelectedViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: MutableLiveData<ItemState> = MutableLiveData(ItemState())
-    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    val errorState: MutableLiveData<Throwable> = MutableLiveData(Throwable())
+
 
     fun getItem(itemId: Int, fragmentName: String) {
-        state.value?.let { state ->
+        state.value?.let {
             searchItem.execute(
                 itemId = itemId,
                 type = fragmentName
@@ -36,7 +38,7 @@ class ItemSelectedViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    errorState.value = error
                 }
 
             }.launchIn(viewModelScope)
@@ -44,52 +46,45 @@ class ItemSelectedViewModel @Inject constructor(
     }
 
     fun isLiked(favId: Int, isFav: Boolean, property: String) {
-        state.value?.let { state ->
-            var favouriteId = -1
-            var bookId = -1
-            var noteId = -1
-            var vocalsId = -1
+        state.value?.let {
+//            var favouriteId = -1
+//            var bookId = -1
+//            var noteId = -1
+//            var vocalsId = -1
+//            var id = -1
 
-            if (isFav) {
-                when (property) {
-                    BOOK_ID -> {
-                        bookId = favId
-                    }
-                    NOTE_ID -> {
-                        noteId = favId
-                    }
-                    else -> {
-                        vocalsId = favId
-                    }
-                }
-            }
-            if (!isFav) {
-                favouriteId = favId
-            }
+//            if (isFav) {
+//                when (property) {
+//                    BOOK_ID -> {
+//                        id = favId
+//                    }
+//                    NOTE_ID -> {
+//                        noteId = favId
+//                    }
+//                    else -> {
+//                        vocalsId = favId
+//                    }
+//                }
+//            }
+//            if (!isFav) {
+//                favouriteId = favId
+//            }
             update.execute(
-                bookId = bookId,
-                noteId = noteId,
-                vocalsId = vocalsId,
-                favouriteId = favouriteId,
+                id = favId,
                 isFavourite = isFav,
                 property = property
             ).onEach {
 
                 it.data?.let {
-                    isUpdated.value = true
+//                    isUpdated.value = true
                 }
 
                 it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
+                    errorState.value = error
                 }
 
             }.launchIn(viewModelScope)
         }
     }
 
-    fun setErrorNull() {
-        state.value?.let { state ->
-            this.state.value = state.copy(error = null)
-        }
-    }
 }

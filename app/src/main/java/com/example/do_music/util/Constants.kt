@@ -2,6 +2,7 @@ package com.example.do_music.util
 import com.example.do_music.presentation.main.home.adapter.InstrumentHelper
 
 class Constants {
+
     companion object {
         const val SUCCESS_CODE = 200
         const val PAGINATION_PAGE_SIZE = 10
@@ -39,9 +40,10 @@ class Constants {
         const val INCORRECT_CODE = "HTTP 400 "
         const val INCORRECT_EMAIL = "HTTP 304 "
         const val NO_INTERNET = "Unable to resolve host \"domusic.uz\": No address associated with hostname" //Unable to resolve host "domusic.uz"
-        const val ERROR_ADD_TO_FAVOURITES = "Favourite add Error"
+        const val ERROR_ADD_TO_FAVOURITES = "Favourite add error"
         const val SELECTED_LANGUAGE = "Locale.Helper.Selected.Language"
-        const val CHANNEL_ID = "Progress Notification"
+        const val CHANNEL_ID = "Progress notification"
+        const val LAST_PAGE = "Last page"
         const val PROGRESS_MAX = 100
 
         val FILTERS_RU = arrayListOf(
@@ -91,4 +93,5 @@ class Constants {
             InstrumentHelper(Ansamble = "STUDIES_AND_EXERCISES", name = "Этюд ва машқлар")
         )
     }
+
 }

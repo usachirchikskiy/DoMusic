@@ -13,11 +13,9 @@ interface FavouritesDao {
         page: Int,
         pageSize: Int = 10,
         searchText: String,
-//        favoriteClass: String,
         docType: String
     ): List<Favourite> {
         val defaultOrFavouriteClass = ""
-//        if (favoriteClass != "UNKNOWN") defaultOrFavouriteClass = favoriteClass
         return when (docType) {
             "NOTES" -> {
                 getFavNotes(page, pageSize, searchText, defaultOrFavouriteClass)
@@ -91,13 +89,13 @@ interface FavouritesDao {
     @Query("DELETE FROM favourites WHERE favoriteId = :favouriteId")
     suspend fun deleteFavourite(favouriteId: Int)
 
-    @Query("UPDATE favourites SET notesClass =:notesClass WHERE favoriteId=:favoriteId")
-    suspend fun addFavNoteClassDao(notesClass: String, favoriteId: Int)
-
-    @Query("UPDATE favourites SET bookClass =:bookClass WHERE favoriteId=:favoriteId")
-    suspend fun addFavBookClassDao(bookClass: String, favoriteId: Int)
-
-    @Query("UPDATE favourites SET vocalsClass =:vocalsClass WHERE favoriteId=:favoriteId")
-    suspend fun addFavVocalsClassDao(vocalsClass: String, favoriteId: Int)
+//    @Query("UPDATE favourites SET notesClass =:notesClass WHERE favoriteId=:favoriteId")
+//    suspend fun addFavNoteClassDao(notesClass: String, favoriteId: Int)
+//
+//    @Query("UPDATE favourites SET bookClass =:bookClass WHERE favoriteId=:favoriteId")
+//    suspend fun addFavBookClassDao(bookClass: String, favoriteId: Int)
+//
+//    @Query("UPDATE favourites SET vocalsClass =:vocalsClass WHERE favoriteId=:favoriteId")
+//    suspend fun addFavVocalsClassDao(vocalsClass: String, favoriteId: Int)
 
 }

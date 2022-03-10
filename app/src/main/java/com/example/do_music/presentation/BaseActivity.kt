@@ -23,7 +23,6 @@ abstract class BaseActivity : AppCompatActivity(), UICommunicationListener {
 
     override fun hideKeyboard() {
         if (currentFocus != null) {
-            Log.d(TAG, "hideKeyboard: ")
             val inputMethodManager = getSystemService(
                 Context.INPUT_METHOD_SERVICE
             ) as InputMethodManager
