@@ -230,10 +230,4 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 
     }
 
-//    override fun onRefresh() {
-//        viewModel.getPage()
-//        binding.refreshLayout.isRefreshing = false
-//    }
-
-
 }

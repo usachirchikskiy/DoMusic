@@ -53,33 +53,33 @@ class SessionManager @Inject constructor(
         }
     }
 
-    private fun setError(error: Throwable) {
-        state.value?.let { state ->
-            this.state.value = state.copy(
-                error = error
-            )
-        }
-    }
+//    private fun setError(error: Throwable) {
+//        state.value?.let { state ->
+//            this.state.value = state.copy(
+//                error = error
+//            )
+//        }
+//    }
 
     fun setPassword(password: String) {
-        state.value?.let { state ->
-            this.state.value = state.copy(
-                password = password
-            )
-        }
         sessionScope.launch {
+            state.value?.let { stateCopy ->
+                state.value = stateCopy.copy(
+                    password = password
+                )
+            }
             appDataStoreManager.setValue(PASSWORD, password)
         }
     }
 
-    fun login(login: String, password: String) {
-        state.value?.let { state ->
-            this.state.value = state.copy(
-                password = password,
-                login = login
-            )
-        }
+    fun login(login: String, password: String){
         sessionScope.launch {
+            state.value?.let { stateCopy ->
+                state.value = stateCopy.copy(
+                    password = password,
+                    login = login
+                )
+            }
             appDataStoreManager.setValue(LOGIN, login)
             appDataStoreManager.setValue(PASSWORD, password)
             startMain()
@@ -101,16 +101,4 @@ class SessionManager @Inject constructor(
         }
     }
 
-//
-//    private fun checkPrevAuth(login: String, password: String) {
-////        checkUserAuth.execute(login, password).onEach {
-////            it.data?.let {
-////                startMain()
-////            }
-////            it.error?.let { error ->
-////                setError(error)
-////            }
-////
-////        }.launchIn(sessionScope)
-//    }
 }

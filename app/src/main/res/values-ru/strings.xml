@@ -113,4 +113,7 @@
     <string name="save">Сохранить</string>
     <string name="account_exist" translatable="false">Введённая вами почта используется другим пользователем, пожалуйста, выберите другую почту.</string>
     <string name="password_exist">"Пожалуйста, для безопасности вашего аккаунта  придумайте другой пароль "</string>
+    <string name="main">Главная</string>
+    <string name="my_library">Моя библиотека</string>
+    <string name="profile">Профиль</string>
 </resources>

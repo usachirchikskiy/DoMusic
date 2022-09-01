@@ -252,6 +252,7 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
         viewModel.isLiked(itemId, isFav)
+        uiMainUpdate.setFavouriteUpdate(true)
     }
 
     override fun onDestroyView() {

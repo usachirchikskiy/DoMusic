@@ -1,164 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".presentation.main.favourites.FavouriteFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".presentation.main.favourites.FavouriteFragment">
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/favourite"
+        android:textAppearance="@style/CustomTabText"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txt"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.94" />
+
+    <EditText
+        android:id="@+id/search_et"
+        style="@style/SearchEditText"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/back_search_ed"
+        android:drawableLeft="@drawable/ic_baseline_search_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/black"
+        android:ems="10"
+        android:hint="@string/search_by_author_and_name"
+        android:imeOptions="actionSearch"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:paddingLeft="10dp"
+        android:saveEnabled="false"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/txt" />
+
+    <RadioGroup
+        android:id="@+id/group_doc_type"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="7dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@id/search_et">
+
+        <RadioButton
+            android:id="@+id/books"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/favourite"
-            android:textAppearance="@style/CustomTabText"
-            android:textColor="@color/black"
+            android:layout_height="28dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/back_btn_compositors"
+            android:button="@android:color/transparent"
+            android:elevation="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:paddingHorizontal="10dp"
+            android:text="@string/books"
+            android:textAllCaps="false"
+            android:textColor="@drawable/back_btn_compositors"
+            android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/guideline2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/search_et" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
+        <RadioButton
+            android:id="@+id/notes"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.06" />
+            android:layout_height="28dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/back_btn_compositors"
+            android:button="@android:color/transparent"
+            android:elevation="5dp"
+            android:focusable="true"
+            android:fontFamily="@font/montserrat_medium"
+            android:paddingHorizontal="10dp"
+            android:text="@string/notes"
+            android:textAllCaps="false"
+            android:textColor="@drawable/back_btn_compositors"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/books"
+            app:layout_constraintTop_toBottomOf="@id/search_et" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
+        <RadioButton
+            android:id="@+id/vocal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.94" />
+            android:layout_height="28dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/back_btn_compositors"
+            android:button="@android:color/transparent"
+            android:elevation="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:paddingHorizontal="10dp"
+            android:text="@string/vocals"
+            android:textAllCaps="false"
+            android:textColor="@drawable/back_btn_compositors"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/notes"
+            app:layout_constraintTop_toBottomOf="@id/search_et" />
+    </RadioGroup>
 
-        <EditText
-            android:id="@+id/search_et"
-            style="@style/SearchEditText"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/back_search_ed"
-            android:drawableLeft="@drawable/ic_baseline_search_24"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/black"
-            android:ems="10"
-            android:hint="@string/search_by_author_and_name"
-            android:imeOptions="actionSearch"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:paddingLeft="10dp"
-            android:saveEnabled="false"
-            app:layout_constraintEnd_toEndOf="@id/guideline3"
-            app:layout_constraintStart_toEndOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@id/txt" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline3"
+        app:layout_constraintStart_toEndOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/group_doc_type"
+        app:layout_constraintVertical_bias="0" />
 
-        <RadioGroup
-            android:id="@+id/group_doc_type"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="7dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@id/search_et">
+    <include
+        android:id="@+id/not_added_layout"
+        layout="@layout/not_added"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_doc_type" />
 
-            <RadioButton
-                android:id="@+id/books"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginTop="3dp"
-                android:background="@drawable/back_btn_compositors"
-                android:button="@android:color/transparent"
-                android:elevation="5dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:paddingHorizontal="10dp"
-                android:text="@string/books"
-                android:textAllCaps="false"
-                android:textColor="@drawable/back_btn_compositors"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@id/guideline2"
-                app:layout_constraintTop_toBottomOf="@id/search_et" />
-
-            <RadioButton
-                android:id="@+id/notes"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="1dp"
-                android:background="@drawable/back_btn_compositors"
-                android:button="@android:color/transparent"
-                android:elevation="5dp"
-                android:focusable="true"
-                android:fontFamily="@font/montserrat_medium"
-                android:paddingHorizontal="10dp"
-                android:text="@string/notes"
-                android:textAllCaps="false"
-                android:textColor="@drawable/back_btn_compositors"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@id/books"
-                app:layout_constraintTop_toBottomOf="@id/search_et" />
-
-            <RadioButton
-                android:id="@+id/vocal"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"
-                android:background="@drawable/back_btn_compositors"
-                android:button="@android:color/transparent"
-                android:elevation="5dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:paddingHorizontal="10dp"
-                android:text="@string/vocals"
-                android:textAllCaps="false"
-                android:textColor="@drawable/back_btn_compositors"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@id/notes"
-                app:layout_constraintTop_toBottomOf="@id/search_et" />
-        </RadioGroup>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guideline3"
-            app:layout_constraintStart_toEndOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/group_doc_type"
-            app:layout_constraintVertical_bias="0" />
-
-        <include
-            android:id="@+id/not_added_layout"
-            layout="@layout/not_added"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />
-
-        <include
-            android:id="@+id/no_results_layout"
-            layout="@layout/no_results"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_doc_type" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout><!--    <TextView-->
+    <include
+        android:id="@+id/no_results_layout"
+        layout="@layout/no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_doc_type" />
+</androidx.constraintlayout.widget.ConstraintLayout>
     <!--        android:id="@+id/classes"-->
     <!--        android:layout_width="wrap_content"-->
     <!--        android:layout_height="wrap_content"-->

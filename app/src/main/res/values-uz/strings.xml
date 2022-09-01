@@ -114,4 +114,7 @@
     <string name="save">Saqlash</string>
     <string name="account_exist">Siz kiritgan elektron pochta manzili boshqa foydalanuvchi tomonidan foydalanilmoqda, boshqa pochta manzilini tanlang</string>
     <string name="password_exist">Iltimos, akkauntingiz xavfsizligi uchun boshqa parol o\'ylab toping</string>
+    <string name="main">Главная</string>
+    <string name="my_library">Моя библиотека</string>
+    <string name="profile">Профиль</string>
 </resources>

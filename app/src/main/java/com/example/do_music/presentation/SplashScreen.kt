@@ -9,6 +9,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +31,14 @@ class SplashScreen : BaseActivity() {
     override fun displayProgressBar(isLoading: Boolean) {
 
     }
+
+    fun onMainActivity() {
+        Handler().postDelayed({
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }, 2000)
+    }
+
 
     override fun onAuthActivity() {
         Handler().postDelayed({
@@ -54,30 +63,36 @@ class SplashScreen : BaseActivity() {
 
                 readPermissionGranted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE]
                     ?: readPermissionGranted
+                Log.d(TAG, "onCreate: $writePermissionGranted and $readPermissionGranted")
                 if (writePermissionGranted && readPermissionGranted) {
                     setupObservers()
                 } else {
-                    updateOrRequestPermissions()
+                    val rationalFalgREAD =
+                        shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    val rationalFalgWRITE =
+                        shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    if (!rationalFalgREAD && !rationalFalgWRITE) {
+                        Toast.makeText(
+                            this,
+                            "Для корректной работы программы включите доступ к чтению и записи через настройки",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        updateOrRequestPermissions()
+                    }
                 }
             }
         updateOrRequestPermissions()
     }
 
     private fun setupObservers() {
-        sessionManager.state.observe(this, {
+        this.sessionManager.state.observe(this) {
             if (it.onStarAuthActivity) {
-                Log.d(TAG, "setupObservers: -" + it.onStarAuthActivity)
-                this.onAuthActivity()
+                onAuthActivity()
             } else if (it.onStarMainActivity) {
-
-                Log.d(TAG, "setupObservers: +" + it.onStarAuthActivity)
-                Handler().postDelayed({
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }, 2000)
-
+                onMainActivity()
             }
-        })
+        }
     }
 
 
@@ -88,28 +103,19 @@ class SplashScreen : BaseActivity() {
         ) == PackageManager.PERMISSION_GRANTED
         val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
-        writePermissionGranted = hasWritePermission || minSdk29
-
         val hasReadPermission = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
 
-        readPermissionGranted = hasReadPermission
-
         val permissionsToRequest = mutableListOf<String>()
-        if (!writePermissionGranted) {
+        if (!(hasWritePermission || minSdk29)) {
             permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-        if (!readPermissionGranted) {
+        if (!hasReadPermission) {
             permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
-        if (permissionsToRequest.isNotEmpty()) {
-            Log.d(TAG, "updateOrRequestPermissions: " + permissionsToRequest)
-            permissionsLauncher.launch(permissionsToRequest.toTypedArray())
-        } else {
-            setupObservers()
-        }
+        permissionsLauncher.launch(permissionsToRequest.toTypedArray())
     }
 
 }
