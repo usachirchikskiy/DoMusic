@@ -5,12 +5,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.common.DownloadFile
-import com.example.do_music.util.Constants.Companion.DOWNLOAD_LIMIT
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -19,34 +20,54 @@ private const val TAG = "MainActivityViewModel"
 @HiltViewModel
 class MainActivityViewModel @Inject
 constructor(
-    private val downloadFile: DownloadFile
+    private val downloadFile: DownloadFile,
+    private val addToFavourite: AddToFavourite
 ) : ViewModel() {
-    val state: MutableLiveData<MainActivityState> = MutableLiveData(MainActivityState())
-    val notificationState: MutableLiveData<NotificationState> = MutableLiveData(NotificationState())
-    val downloadProgressState: MutableLiveData<Int> = MutableLiveData(-1)
-    val updateState:UpdateState = UpdateState()
-    var noInternet = false
+    val state = MutableLiveData(MainActivityState())
+    val notificationState = MutableLiveData(NotificationState())
+    private var updateJob: Job? = null
+
+    fun isLiked(favId: Int, isFav: Boolean, property: String) {
+        updateJob?.cancel()
+        updateJob = viewModelScope.launch {
+            state.value?.let { st ->
+                viewModelScope.launch {
+                    val resource = addToFavourite.execute(
+                        id = favId,
+                        isFavourite = isFav,
+                        property = property
+                    )
+                    resource.data?.let {
+                        Log.d(TAG, "isLiked: $it")
+                    }
+
+                    resource.error?.let {
+                        state.value = st.copy(error = it)
+                    }
+                }
+            }
+        }
+    }
 
     fun downloadFile(
         uniqueName: String,
-        fileName: String,
-        context: Context
+        fileName: String
     ) {
         state.value?.let { state ->
-            downloadFile.downloadFile(uniqueName).onEach {
+            downloadFile.saveFile(
+                uniqueName,
+                fileName
+            ).onEach {
                 if (it.isLoading) {
-                    Log.d(TAG, "downloadFile: Begin")
                     beginNotification()
                 }
 
-                it.data?.let { responseBody ->
-                    this.state.value =
-                        state.copy(responseBody = responseBody, nameOfFile = fileName)
-                    saveFile(context)
+                it.data?.let {
+                    this.state.value = state.copy(fileName = fileName)
+                    onCompleteNotification()
                 }
 
                 it.error?.let { error ->
-                    Log.d(TAG, "downloadFile: $error")
                     this.state.value = state.copy(error = error)
                 }
 
@@ -55,63 +76,36 @@ constructor(
 
     }
 
-    private fun saveFile(context: Context) {
-        downloadProgressState.value?.let { downloadProgressState ->
-            Log.d(TAG, "saveFile: ${state.value?.nameOfFile!!}")
-            downloadFile.saveFile(
-                responseBody = state.value?.responseBody!!,
-                context = context,
-                fileName = state.value?.nameOfFile!!
-            ).onEach { progress ->
-                if (progress % 20 == 0 && progress > 0) {
-                    this.downloadProgressState.value = progress
-                    Log.d(TAG, "saveFile: $progress")
-                    delay(20)
-                } else if (progress == -100) {
-                    onCompleteNotification()
-                }
-            }.launchIn(viewModelScope)
-        }
-    }
-
     private fun beginNotification() {
         notificationState.value?.let { notificationState ->
-            this.notificationState.value = notificationState.copy(begin = true, onComplete = false)
+            this.notificationState.value =
+                notificationState.copy(begin = true, onComplete = false)
         }
     }
 
     private fun onCompleteNotification() {
         notificationState.value?.let { notificationState ->
-            this.notificationState.value = notificationState.copy(onComplete = true, begin = false)
+            this.notificationState.value =
+                notificationState.copy(onComplete = true, begin = false)
         }
-    }
-
-    fun updateVocals(vocals:Boolean){
-        updateState.vocals = vocals
-    }
-
-    fun updateInstruments(instruments:Boolean){
-        updateState.instruments = instruments
-    }
-
-    fun updateTheory(theory:Boolean){
-        updateState.theory = theory
-    }
-
-    fun updateFavourite(favourite:Boolean){
-        updateState.favourite = favourite
     }
 
     fun clearValues() {
         state.value?.let { state ->
             this.state.value =
-                state.copy(responseBody = null, nameOfFile = "", error = null)
+                state.copy(error = null, fileName = "",internet = false)
         }
         notificationState.value?.let { notificationState ->
             this.notificationState.value =
                 notificationState.copy(onComplete = false, begin = false)
         }
-        downloadProgressState.value = -1
+    }
+
+    fun setStateInternet(){
+        state.value?.let { state ->
+            this.state.value =
+                state.copy(internet = true)
+        }
     }
 
 }

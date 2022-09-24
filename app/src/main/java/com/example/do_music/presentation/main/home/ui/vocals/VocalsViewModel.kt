@@ -3,28 +3,22 @@ package com.example.do_music.presentation.main.home.ui.vocals
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchVocals
 import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants.Companion.LAST_PAGE
-import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-private const val TAG = "VocalsViewModel"
 
 @HiltViewModel
 class VocalsViewModel @Inject constructor(
     private val searchVocals: SearchVocals,
-    private val update: AddToFavourite,
     private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<VocalsState> = MutableLiveData(VocalsState())
-//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
     private var getVocalsJob: Job? = null
 
     init {
@@ -56,12 +50,6 @@ class VocalsViewModel @Inject constructor(
         }
     }
 
-//    fun setLoadingToFalse() {
-//        state.value?.let { state ->
-//            this.state.value = state.copy(isLoading = false)
-//        }
-//    }
-
     fun clearSessionValues() {
         sessionManager.clearValuesOfDataStore()
     }
@@ -72,50 +60,28 @@ class VocalsViewModel @Inject constructor(
         }
     }
 
-    fun isLikedVocalsNotes(favId: Int, isFav: Boolean) {
-        state.value?.let { state ->
-            update.execute(
-                id = favId,
-                isFavourite = isFav,
-                property = VOCALS_ID
-            ).onEach {
-
-                it.data?.let {
-//                    isUpdated.value = true
-                }
-
-                it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
-                }
-            }.launchIn(viewModelScope)
-        }
-    }
-
-    fun getPage(next: Boolean = false, update: Boolean = false) {
+    fun getPage(next: Boolean = false) {
         getVocalsJob?.cancel()
         if (next) {
             incrementPageVocalsNotes()
         } else {
-            if (!update) {
-                pageToZeroVocalsNotes()
-                clearListVocalsNotes()
-                isLastPage.value = false
+            pageToZeroVocalsNotes()
+            clearListVocalsNotes()
+            state.value?.let { state ->
+                this.state.value = state.copy(isLastPage = false)
             }
         }
         state.value?.let { state ->
             getVocalsJob = searchVocals.execute(
                 searchText = state.searchText,
-                page = state.pageNumber,
-                update = update
+                page = state.pageNumber
             ).onEach {
 
-                if (!update) {
-                    this.state.value = state.copy(isLoading = it.isLoading)
-                }
+                this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.error?.let { error ->
                     if (error.message == LAST_PAGE) {
-                        isLastPage.value = true
+                        this.state.value = state.copy(isLastPage = true)
                     } else {
                         this.state.value = state.copy(error = error)
                     }
@@ -127,7 +93,6 @@ class VocalsViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-
 
             }.launchIn(viewModelScope)
         }

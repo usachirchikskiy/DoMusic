@@ -90,7 +90,7 @@
         <entry key="app/src/main/res/layout/fragment_new_password.xml" value="0.18" />
         <entry key="app/src/main/res/layout/fragment_prepare_email.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_success.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_theory.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/fragment_theory.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_vocals.xml" value="0.25" />
         <entry key="app/src/main/res/layout/limit_exceeded.xml" value="0.22" />
         <entry key="app/src/main/res/layout/logout_dialog.xml" value="0.22" />

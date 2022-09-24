@@ -9,11 +9,10 @@ import com.example.do_music.util.Constants.Companion.LAST_PAGE
 import com.example.do_music.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-private const val TAG = "SearchInstruments"
 
 class SearchInstruments(
     private val service: OpenMainApiService,
@@ -25,21 +24,19 @@ class SearchInstruments(
                 for (note in notes_response) {
                     instrumentsDao.insertInstrument(note)
                 }
-            }
-            else{
+            } else {
                 throw Exception(LAST_PAGE)
             }
         }
 
     fun getGroupOfInstruments(instrumentGroupName: String): Flow<Resource<List<InstrumentByGroup>>> =
         flow {
-
             try {
                 val groups = service.getInstrumentsByGroupName(instrumentGroupName)
                 emit(Resource.success(data = groups))
             } catch (throwable: Throwable) {
                 emit(
-                    Resource.error<List<InstrumentByGroup>>(throwable)
+                    Resource.error(throwable)
                 )
             }
         }
@@ -49,35 +46,33 @@ class SearchInstruments(
         instrumentGroupName: String = "",
         noteGroupType: String = "",
         searchText: String = " ",
-        page: Int,
-        update: Boolean
+        page: Int
     ): Flow<Resource<List<Instrument>>> = flow {
         emit(Resource.loading())
 
         lateinit var instrumentsResponse: List<Instrument>
-        if (!update) {
-            try {
-                if (instrumentId != -1) {
-                    instrumentsResponse = service.getInstruments(
-                        pageNumber = page,
-                        instrumentType = instrumentGroupName,
-                        noteGroupType = noteGroupType,
-                        instrument = instrumentId,
-                        searchText = searchText
-                    ).rows
-                } else {
-                    instrumentsResponse = service.getInstruments(
-                        pageNumber = page,
-                        instrumentType = instrumentGroupName,
-                        noteGroupType = noteGroupType,
-                        searchText = searchText
-                    ).rows
-                }
-                serviceAndDb(instrumentsResponse)
 
-            } catch (throwable: Throwable) {
-                emit(Resource.error<List<Instrument>>(throwable))
+        try {
+            if (instrumentId != -1) {
+                instrumentsResponse = service.getInstruments(
+                    pageNumber = page,
+                    instrumentType = instrumentGroupName,
+                    noteGroupType = noteGroupType,
+                    instrument = instrumentId,
+                    searchText = searchText
+                ).rows
+            } else {
+                instrumentsResponse = service.getInstruments(
+                    pageNumber = page,
+                    instrumentType = instrumentGroupName,
+                    noteGroupType = noteGroupType,
+                    searchText = searchText
+                ).rows
             }
+            serviceAndDb(instrumentsResponse)
+
+        } catch (throwable: Throwable) {
+            emit(Resource.error<List<Instrument>>(throwable))
         }
 
         val cashedInstruments = instrumentsDao.returnOrderedInstrumentsQuery(
@@ -87,9 +82,9 @@ class SearchInstruments(
             page = page + 1,
             noteGroupType = noteGroupType
         )
-        emit(Resource.success(data = cashedInstruments))
 
-    }.catch { e ->
-        emit(Resource.error(e))
+        cashedInstruments.collect {
+            emit(Resource.success(data = it))
+        }
     }
 }

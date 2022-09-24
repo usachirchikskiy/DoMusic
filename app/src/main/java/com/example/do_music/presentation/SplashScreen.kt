@@ -14,13 +14,16 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.do_music.R
 import com.example.do_music.databinding.ActivitySplashBinding
 import com.example.do_music.presentation.auth.AuthActivity
 import com.example.do_music.presentation.main.MainActivity
 import com.example.do_music.presentation.session.SessionManager
+import com.example.do_music.util.toast
 import javax.inject.Inject
 
 private const val TAG = "SplashScreen"
+
 class SplashScreen : BaseActivity() {
 
     private var writePermissionGranted = false
@@ -58,12 +61,13 @@ class SplashScreen : BaseActivity() {
 
         permissionsLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+
                 writePermissionGranted = permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE]
                     ?: writePermissionGranted
 
                 readPermissionGranted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE]
                     ?: readPermissionGranted
-                Log.d(TAG, "onCreate: $writePermissionGranted and $readPermissionGranted")
+
                 if (writePermissionGranted && readPermissionGranted) {
                     setupObservers()
                 } else {
@@ -72,11 +76,7 @@ class SplashScreen : BaseActivity() {
                     val rationalFalgWRITE =
                         shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
                     if (!rationalFalgREAD && !rationalFalgWRITE) {
-                        Toast.makeText(
-                            this,
-                            "Для корректной работы программы включите доступ к чтению и записи через настройки",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        toast(getString(R.string.permission_handling))
                     } else {
                         updateOrRequestPermissions()
                     }
@@ -109,12 +109,16 @@ class SplashScreen : BaseActivity() {
         ) == PackageManager.PERMISSION_GRANTED
 
         val permissionsToRequest = mutableListOf<String>()
-        if (!(hasWritePermission || minSdk29)) {
+        writePermissionGranted = hasWritePermission || minSdk29
+        readPermissionGranted = hasReadPermission
+
+        if (!(writePermissionGranted)) {
             permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-        if (!hasReadPermission) {
+        if (!readPermissionGranted) {
             permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
+
         permissionsLauncher.launch(permissionsToRequest.toTypedArray())
     }
 

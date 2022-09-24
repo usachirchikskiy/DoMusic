@@ -1,6 +1,7 @@
 package com.example.do_music.di.main
 
 
+import android.app.Application
 import com.example.do_music.business.datasources.data.account.UserAccountDao
 import com.example.do_music.business.datasources.data.home.compositors.CompositorsDao
 import com.example.do_music.business.datasources.data.favourites.FavouritesDao
@@ -26,10 +27,21 @@ object MainModule {
     @Singleton
     @Provides
     fun provideSearchCompositors(
+        openMainApiService: OpenMainApiService,
         compositorsDao: CompositorsDao,
-        openMainApiService: OpenMainApiService
+        favouritesDao: FavouritesDao,
+        instrumentsDao: InstrumentsDao,
+        vocalsDao: VocalsDao,
+        theoryDao: TheoryDao
     ): SearchCompositors {
-        return SearchCompositors(openMainApiService, compositorsDao)
+        return SearchCompositors(
+            openMainApiService,
+            compositorsDao,
+            favouritesDao,
+            instrumentsDao,
+            vocalsDao,
+            theoryDao
+        )
     }
 
     @Singleton
@@ -83,7 +95,10 @@ object MainModule {
         openMainApiService: OpenMainApiService,
         favouritesDao: FavouritesDao
     ): SearchFavourites {
-        return SearchFavourites(openMainApiService, favouritesDao)
+        return SearchFavourites(
+            openMainApiService,
+            favouritesDao
+        )
     }
 
     @Singleton
@@ -94,7 +109,7 @@ object MainModule {
         instrumentsDao: InstrumentsDao,
         theoryDao: TheoryDao
     ): SearchItem {
-        return SearchItem(openMainApiService,vocalsDao, instrumentsDao, theoryDao)
+        return SearchItem(openMainApiService, vocalsDao, instrumentsDao, theoryDao)
     }
 
     @Singleton
@@ -135,9 +150,10 @@ object MainModule {
     @Singleton
     @Provides
     fun provideDownloadFile(
-        openMainApiService: OpenMainApiService
+        openMainApiService: OpenMainApiService,
+        application: Application
     ): DownloadFile {
-        return DownloadFile(openMainApiService)
+        return DownloadFile(openMainApiService,application)
     }
 
 }

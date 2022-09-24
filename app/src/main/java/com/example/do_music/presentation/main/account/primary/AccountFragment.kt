@@ -96,7 +96,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(viewLifecycleOwner, { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             state.userAccount?.let { userAccount ->
                 Log.d(TAG, "setupObservers: $userAccount")
                 if (state.uri == null) {
@@ -135,7 +135,7 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 userAccount.cityName?.let { cityName ->
                     content?.town?.setText(cityName)
                 }
-                userAccount.schoolName?.let { schoolName->
+                userAccount.schoolName?.let { schoolName ->
                     content?.school?.setText(schoolName)
                 }
 
@@ -155,9 +155,9 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
                 viewModel.setErrorNull()
             }
 
-        })
+        }
 
-        viewModel.update.observe(viewLifecycleOwner, {
+        viewModel.update.observe(viewLifecycleOwner) {
             if (it != 0) {
                 val text = getString(R.string.attached) + it.toString()
                 binding.contentTechSupport.sizeOfFileUpload.text = text
@@ -165,15 +165,15 @@ class AccountFragment : BaseFragment(), View.OnClickListener {
             } else {
                 binding.contentTechSupport.sizeOfFileUpload.visibility = View.INVISIBLE
             }
-        })
+        }
 
-        viewModel.thankForFeedBackState.observe(viewLifecycleOwner, {
+        viewModel.thankForFeedBackState.observe(viewLifecycleOwner) {
             if (it) {
                 uiMainCommunicationListener.disableWaiting()
                 findNavController().navigate(R.id.action_accountFragment_to_feedbackSuccessFragment)
                 viewModel.setFeedbackOnRestore()
             }
-        })
+        }
 
     }
 

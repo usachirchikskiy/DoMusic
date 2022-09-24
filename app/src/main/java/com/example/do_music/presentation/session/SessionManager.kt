@@ -87,15 +87,15 @@ class SessionManager @Inject constructor(
     }
 
     fun clearValuesOfDataStore() {
-        state.value?.let { state ->
-            this.state.value = state.copy(
-                password = "",
-                login = "",
-                onStarAuthActivity = false,
-                onStarMainActivity = false
-            )
-        }
         sessionScope.launch {
+            state.value?.let { stateCopy ->
+                state.value = stateCopy.copy(
+                    password = "",
+                    login = "",
+                    onStarAuthActivity = false,
+                    onStarMainActivity = false
+                )
+            }
             appDataStoreManager.setValue(LOGIN, "")
             appDataStoreManager.setValue(PASSWORD, "")
         }

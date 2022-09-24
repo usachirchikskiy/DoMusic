@@ -1,7 +1,6 @@
 package com.example.do_music.presentation.common.itemSelected
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,9 +21,6 @@ import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.setGradient
 import com.example.do_music.util.shimmerDrawable
 
-
-private const val TAG = "ItemSelectedInstrument"
-
 class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
     private val viewModel: ItemSelectedViewModel by viewModels()
     private var _binding: FragmentItemSelectedInstrumentBinding? = null
@@ -34,7 +30,6 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
     private var itemId: Int = 0
     private var fragment: String = ""
 
-    //
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +49,6 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         setupListener()
         setupObservers()
-
     }
 
     private fun setupListener() {
@@ -195,10 +189,8 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
                     }
                 }
             }
+            isLiked(itemId,isFav,fragment)
             changeIcon(isFav)
-            viewModel.isLiked(itemId, isFav, fragment)
-            Log.d(TAG, "onClick: $itemId,$isFav,$fragment")
-            updateOtherFragments()
         } else {
             if (v == binding.instrumentDownload) {
                 if (fragment == NOTE_ID) {
@@ -222,22 +214,6 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
             binding.isFavourite.setImageResource(R.drawable.ic_favourite_disabled_in_card)
         }
     }
-
-    private fun updateOtherFragments() {
-        when (fragment) {
-            BOOK_ID -> {
-                uiMainUpdate.setTheoryUpdate(true)
-            }
-            VOCALS_ID -> {
-                uiMainUpdate.setVocalsUpdate(true)
-            }
-            NOTE_ID -> {
-                uiMainUpdate.setInstrumentsUpdate(true)
-            }
-        }
-        uiMainUpdate.setFavouriteUpdate(true)
-    }
-
 
     private fun downloadBook() {
         uiMainCommunicationListener.downloadFile(
@@ -265,6 +241,10 @@ class ItemSelectedInstrument : BaseFragment(), View.OnClickListener {
             viewModel.state.value?.instrument?.clavierId!!,
             viewModel.state.value?.instrument?.clavierFileName!!,
         )
+    }
+
+    private fun isLiked(favId: Int, isFav: Boolean, property: String){
+        uiMainUpdate.isLiked(favId,isFav,property)
     }
 
     override fun onDestroyView() {

@@ -16,18 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentVocalsBinding
-
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.presentation.main.home.adapter.VocalsAdapter
 import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
-import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.hide
-
-private const val TAG = "VocalsFragment"
 
 class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
     private var vocalsAdapter: VocalsAdapter? = null
@@ -45,18 +41,17 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateVocals()
         setupViews()
         setupObservers()
         setupRecyclerView()
     }
 
-    private fun updateVocals(){
-        if(uiMainUpdate.getVocalsUpdate()){
-            viewModel.getPage(update = true)
-            uiMainUpdate.setVocalsUpdate(false)
-        }
-    }
+//    private fun updateVocals(){
+//        if(uiMainUpdate.getVocalsUpdate()){
+//            viewModel.getPage(update = true)
+//            uiMainUpdate.setVocalsUpdate(false)
+//        }
+//    }
 
     private fun setupViews() {
         binding.searchEt.hide {
@@ -72,8 +67,6 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: " + it)
-
             uiCommunicationListener.displayProgressBar(it.isLoading)
             vocalsAdapter?.apply {
                 if(!it.isLoading && it.instruments.isEmpty() && it.searchText.isNotBlank()){
@@ -120,12 +113,10 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
                     if (
                         lastPosition == vocalsAdapter?.itemCount?.minus(1)
                         && viewModel.state.value?.isLoading == false
-                        && viewModel.isLastPage.value == false
+                        && viewModel.state.value?.isLastPage == false
                     ) {
                         viewModel.getPage(true)
-//                        setPadding(0, 0, 0, 0)
                     }
-
                 }
             })
             adapter = vocalsAdapter
@@ -155,8 +146,7 @@ class VocalsFragment : BaseFragment(), TextWatcher, Interaction_Instrument {
     }
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
-        viewModel.isLikedVocalsNotes(itemId, isFav)
-        uiMainUpdate.setFavouriteUpdate(true)
+        uiMainUpdate.isLiked(itemId,isFav, VOCALS_ID)
     }
 
     override fun onDestroyView() {

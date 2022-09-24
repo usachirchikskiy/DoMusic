@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.do_music.business.model.main.Instrument
 import com.example.do_music.util.Constants
+import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "InstrumentsDao"
 
@@ -19,7 +20,7 @@ interface InstrumentsDao {
     WHERE noteId =:noteId
     """
     )
-    suspend fun getFavouriteId(noteId: Int):Int
+    suspend fun getFavouriteId(noteId: Int): Int
 
     @Query("UPDATE instruments SET favoriteId = :favoriteId , favorite = :favorite WHERE noteId =:noteId")
     suspend fun instrumentUpdate(favoriteId: Int?, favorite: Boolean, noteId: Int)
@@ -49,12 +50,12 @@ interface InstrumentsDao {
         LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getInstrumentalNotesByCompositor(
+    fun getInstrumentalNotesByCompositor(
         compositorId: Int,
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Instrument>
+    ): Flow<List<Instrument>>
 
     @Query(
         """
@@ -65,11 +66,11 @@ interface InstrumentsDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getAllInstrumentsSearch(
+    fun getAllInstrumentsSearch(
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Instrument>
+    ): Flow<List<Instrument>>
 
     @Query(
         """
@@ -81,13 +82,12 @@ interface InstrumentsDao {
     LIMIT (:page * :pageSize)
     """
     )
-
-    suspend fun getInstrumentsByGroupId(
+    fun getInstrumentsByGroupId(
         instrumentGroupName: String,
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Instrument>
+    ): Flow<List<Instrument>>
 
     @Query(
         """
@@ -107,7 +107,7 @@ interface InstrumentsDao {
     
     """
     )
-    suspend fun getInstrumentsByInstrumentId(
+    fun getInstrumentsByInstrumentId(
         ensembles: String,
         instrumentGroupName: String,
         introductionsAndVariations: String,
@@ -119,7 +119,7 @@ interface InstrumentsDao {
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE,
         instrumentId: Int
-    ): List<Instrument>
+    ): Flow<List<Instrument>>
 
     @Query(
         """
@@ -138,7 +138,7 @@ interface InstrumentsDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getInstrumentsByEnsembles(
+    fun getInstrumentsByEnsembles(
         ensembles: String,
         instrumentGroupName: String,
         introductionsAndVariations: String,
@@ -149,7 +149,7 @@ interface InstrumentsDao {
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Instrument>
+    ): Flow<List<Instrument>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInstrument(instrument: Instrument): Long
@@ -159,13 +159,13 @@ interface InstrumentsDao {
 
 }
 
-suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
+fun InstrumentsDao.returnOrderedInstrumentsQuery(
     noteGroupType: String,
     instrumentId: Int,
     instrumentGroupName: String,
     searchText: String,
     page: Int
-): List<Instrument> {
+): Flow<List<Instrument>> {
     var ensembles = "-1"
     var introductionsAndVariations = "-1"
     var concertsAndFantasies = "-1"
@@ -212,7 +212,6 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
             page = page
         )
     } else if (instrumentId != -1) {
-        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "instrumentId")
         return getInstrumentsByInstrumentId(
             instrumentId = instrumentId,
             ensembles = ensembles,
@@ -226,7 +225,6 @@ suspend fun InstrumentsDao.returnOrderedInstrumentsQuery(
             page = page
         )
     } else if (instrumentGroupName != "") {
-        Log.d(TAG, "returnOrderedInstrumentsQuery: " + "instrumentGroupName")
         return getInstrumentsByGroupId(
             instrumentGroupName = instrumentGroupName,
             page = page,

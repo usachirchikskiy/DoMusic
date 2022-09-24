@@ -1,13 +1,11 @@
 package com.example.do_music.presentation.main.home.ui.instruments
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchInstruments
 import com.example.do_music.business.datasources.network.main.home.InstrumentByGroup
-import com.example.do_music.presentation.main.home.adapter.InstrumentHelper
+import com.example.do_music.presentation.main.home.adapter.helpers.InstrumentHelper
 import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants
 import com.example.do_music.util.Constants.Companion.FILTERS_DEFAULT
@@ -16,26 +14,21 @@ import com.example.do_music.util.Constants.Companion.FILTERS_RU
 import com.example.do_music.util.Constants.Companion.FILTERS_RU_ENSEMBLE
 import com.example.do_music.util.Constants.Companion.FILTERS_UZ
 import com.example.do_music.util.Constants.Companion.FILTERS_UZ_ENSEMBLE
-import com.example.do_music.util.Constants.Companion.NOTE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-private const val TAG = "InstrumentsViewModel"
 
 @HiltViewModel
 class InstrumentsViewModel @Inject constructor(
     private val searchInstruments: SearchInstruments,
-    private val update: AddToFavourite,
     private val sessionManager: SessionManager
 ) : ViewModel() {
     val state: MutableLiveData<InstrumentState> = MutableLiveData(InstrumentState())
-//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> = MutableLiveData(listOf())
+    private val instrumentsGroup: MutableLiveData<List<InstrumentByGroup>> =
+        MutableLiveData(listOf())
     private var getInstrumentsJob: Job? = null
 
     private fun getFilters(lang: String): ArrayList<InstrumentHelper> {
@@ -67,7 +60,6 @@ class InstrumentsViewModel @Inject constructor(
     }
 
     private fun setFilters(listGroup: List<InstrumentHelper>) {
-        Log.d(TAG, "setFilters: " + listGroup.toString())
         state.value?.let { state ->
             this.state.value = state.copy(instrumentsGroup = listGroup)
         }
@@ -130,46 +122,19 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    private fun setLoadingToFalse() {
-        state.value?.let { state ->
-            this.state.value = state.copy(isLoading = false)
-        }
-    }
-
     fun getInstrumentHelper(position: Int): InstrumentHelper? {
         return state.value?.let {
             this.state.value!!.instrumentsGroup[position]
         }
     }
 
-    fun clearSessionValues(){
+    fun clearSessionValues() {
         sessionManager.clearValuesOfDataStore()
     }
 
-    fun setErrorNull(){
+    fun setErrorNull() {
         state.value?.let { state ->
             this.state.value = state.copy(error = null)
-        }
-    }
-
-    fun isLiked(favId: Int, isFav: Boolean) {
-        state.value?.let { state ->
-            update.execute(
-                id = favId,
-                isFavourite = isFav,
-                property = NOTE_ID
-            ).onEach {
-
-                it.data?.let {
-//                    isUpdated.value = true
-//                    getPage(true)
-                }
-
-                it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
-                }
-
-            }.launchIn(viewModelScope)
         }
     }
 
@@ -243,15 +208,15 @@ class InstrumentsViewModel @Inject constructor(
         }
     }
 
-    fun getPage(next: Boolean = false, update: Boolean = false) {
+    fun getPage(next: Boolean = false) {
         getInstrumentsJob?.cancel()
         if (next) {
             incrementPage()
         } else {
-            if (!update) {
-                pageToZero()
-                clearList()
-                isLastPage.value = false
+            pageToZero()
+            clearList()
+            state.value?.let { state ->
+                this.state.value = state.copy(isLastPage = false)
             }
         }
         state.value?.let { state ->
@@ -260,10 +225,9 @@ class InstrumentsViewModel @Inject constructor(
                 instrumentGroupName = state.instrumentGroupName,
                 noteGroupType = state.noteGroupType,
                 searchText = state.searchText,
-                page = state.page,
-                update = update
+                page = state.page
             ).onEach {
-                if (!update) this.state.value = state.copy(isLoading = it.isLoading)
+                this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
                     this.state.value = state.copy(
@@ -273,12 +237,11 @@ class InstrumentsViewModel @Inject constructor(
                 }
                 it.error?.let { error ->
                     if (error.message == Constants.LAST_PAGE) {
-                        isLastPage.value = true
+                        this.state.value = state.copy(isLastPage = false)
                     } else {
                         this.state.value = state.copy(error = error)
                     }
                 }
-
             }.launchIn(viewModelScope)
         }
     }

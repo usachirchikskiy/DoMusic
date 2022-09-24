@@ -15,15 +15,13 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import retrofit2.Response
 
-private const val TAG = "GetUserAccount"
-
 class GetUserAccount(
     private val userAccountDao: UserAccountDao,
     private val openMainApiService: OpenMainApiService
 ) {
 
     fun execute(): Flow<Resource<TeacherAccount>> = flow {
-        emit(Resource.loading<TeacherAccount>())
+        emit(Resource.loading())
         var teacherAccount: TeacherAccount
         try {
             val userAccount = openMainApiService.getUserAccount()
@@ -31,7 +29,7 @@ class GetUserAccount(
             userAccountDao.insertUserAccount(teacherAccount)
 
         } catch (throwable: Throwable) {
-            Log.d(TAG, throwable.toString() + "\nMessage " + throwable.message.toString())
+            emit(Resource.error(throwable))
         }
         teacherAccount = userAccountDao.getUserAccount()
         emit(Resource.success(teacherAccount))
@@ -74,7 +72,6 @@ class GetUserAccount(
             } else {
                 openMainApiService.uploadFilesAndCommentToServer(comment = comment, file = files)
             }
-            Log.d(TAG, "uploadFilesToServer: " + response.body())
             emit(Resource.success(SUCCESS))
 
         } catch (throwable: Throwable) {
@@ -91,7 +88,7 @@ class GetUserAccount(
             val id = userAccount.id!!
             userAccountDao.changeUserPhone(phoneNumber!!, id)
         } catch (throwable: Throwable) {
-            Log.d(TAG, throwable.toString() + "\nMessage " + throwable.message.toString())
+            emit(Resource.error(throwable))
         }
         val userAccountChanged = userAccountDao.getUserAccount()
         emit(Resource.success(userAccountChanged))

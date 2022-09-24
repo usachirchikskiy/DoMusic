@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.json.JSONObject
 
-private const val TAG = "CheckUserAuth"
 
 class CheckUserAuth(
     private val api: OpenAuthApiService,
@@ -37,7 +36,6 @@ class CheckUserAuth(
             api.logout()
             emit(Resource.success(SUCCESS))
         } catch (throwable: Exception) {
-            Log.d(TAG, "logout: " + throwable.message)
             emit(
                 Resource.error<String>(throwable)
             )
@@ -61,7 +59,6 @@ class CheckUserAuth(
                 emit(Resource.success(response))
             }
         } catch (throwable: Exception) {
-            Log.d(TAG, "loginRestore: " + throwable.message)
             emit(
                 Resource.error<Boolean>(throwable)
             )
@@ -88,7 +85,6 @@ class CheckUserAuth(
                 emit(Resource.success(SUCCESS))
             }
         } catch (throwable: Exception) {
-            Log.d(TAG, "execute: " + throwable.message)
             emit(
                 Resource.error<String>(throwable)
             )

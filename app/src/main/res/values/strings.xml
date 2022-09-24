@@ -121,8 +121,11 @@
     <string name="every_day_limit">Кунлик юклаб олиш лимити тугади</string>
     <string name="save">Сақлаш</string>
     <string name="account_exist">Сиз киритган электрон почта манзили бошқа фойдаланувчи томонидан фойдаланилмоқда, бошқа почта манзилини танланг</string>
-    <string name="password_exist">Илтимос, аккаунтингиз  хавфсизлиги учун бошқа пароль ўйлаб топинг</string>
-    <string name="main">Главная</string>
-    <string name="my_library">Моя библиотека</string>
+    <string name="password_exist">Илтимос, аккаунтингиз хавфсизлиги учун бошқа пароль ўйлаб топинг</string>
+    <string name="main">Бош сахифа</string>
+    <string name="my_library">Менинг кутубхонам</string>
     <string name="profile">Профиль</string>
+    <string name="permission_handling">Дастур тўгри ишлаши учун созламалар орқали уқиш ва ёзиш имкониятини ёқинг</string>
+    <string name="download_complete">Юклаш тугалланди</string>
+    <string name="choreography">Рақс</string>
 </resources>

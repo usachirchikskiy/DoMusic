@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/login_text"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <EditText
         android:id="@+id/user_login"
@@ -34,7 +35,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/password"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginBottom="5dp"
@@ -76,7 +78,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/FIO"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <EditText
         android:id="@+id/fio"
@@ -96,7 +99,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/email"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginBottom="5dp"
@@ -138,7 +142,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/telephone_number"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -183,7 +188,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/region"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <EditText
         android:id="@+id/region"
@@ -203,7 +209,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/town"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp"/>
 
     <EditText
         android:id="@+id/town"
@@ -223,7 +230,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold"
         android:text="@string/school"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_marginBottom="5dp" />
 
     <EditText
         android:id="@+id/school"

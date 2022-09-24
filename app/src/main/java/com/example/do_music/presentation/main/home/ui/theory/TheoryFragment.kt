@@ -3,7 +3,6 @@ package com.example.do_music.presentation.main.home.ui.theory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,21 +16,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentTheoryBinding
 import com.example.do_music.presentation.BaseFragment
+import com.example.do_music.presentation.main.home.adapter.InstrumentsFilterAdapter
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.presentation.main.home.adapter.TheoryAdapter
 import com.example.do_music.util.Constants
-import com.example.do_music.util.Constants.Companion.BOOK
 import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.FRAGMENT
 import com.example.do_music.util.Constants.Companion.ITEM_ID
 import com.example.do_music.util.operationErrorDialog
 import com.example.do_music.util.hide
+import com.xiaofeng.flowlayoutmanager.FlowLayoutManager
 
-
-private const val TAG = "TheoryFragment"
 
 class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Interaction_Instrument {
-
     private var theoryAdapter: TheoryAdapter? = null
     private var _binding: FragmentTheoryBinding? = null
     private val binding get() = _binding!!
@@ -48,18 +45,9 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateTheory()
         setupObservers()
         setupRecyclerView()
         setupViews()
-
-    }
-
-    private fun updateTheory(){
-        if(uiMainUpdate.getTheoryUpdate()){
-            viewModel.getPage(update = true)
-            uiMainUpdate.setTheoryUpdate(false)
-        }
     }
 
     private fun setupViews() {
@@ -69,13 +57,13 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
         binding.searchEt.addTextChangedListener(this)
         binding.theorySalfedjo.setOnClickListener(this)
         binding.literature.setOnClickListener(this)
+        binding.choreography.setOnClickListener(this)
         viewModel.state.value?.let {
             if (it.searchText.isNotBlank()) {
                 binding.searchEt.setText(it.searchText)
             }
         }
     }
-
 
     private fun setupRecyclerView() {
         binding.recv.apply {
@@ -89,7 +77,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
                     if (
                         lastPosition == theoryAdapter?.itemCount?.minus(1)
                         && viewModel.state.value?.isLoading == false
-                        && viewModel.isLastPage.value == false
+                        && viewModel.state.value?.isLastPage == false
                     ) {
                         viewModel.getPage(true)
                     }
@@ -103,7 +91,6 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: " + it)
             uiCommunicationListener.displayProgressBar(it.isLoading)
 
             theoryAdapter?.apply {
@@ -134,25 +121,16 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
         })
 
-//        viewModel.isUpdated.observe(viewLifecycleOwner, Observer
-//        {
-//            if (it) {
-//                viewModel.getPage(update = true)
-//                viewModel.isUpdated.value = false
-//            }
-//        })
     }
 
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
     }
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
-        Log.d(TAG, "onTextChanged: ")
-//        viewModel.setLoadingToFalse()
         viewModel.setSearchText(searchText)
         viewModel.getPage()
-
     }
 
     override fun afterTextChanged(p0: Editable?) {
@@ -161,12 +139,14 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     private fun filterSearch(
         enable: CheckBox,
-        disable: CheckBox,
+        disable1: CheckBox,
+        disable2: CheckBox,
         filter: String
     ) {
         if (enable.isChecked) {
             enable.isChecked = true
-            disable.isChecked = false
+            disable1.isChecked = false
+            disable2.isChecked = false
             setBookType(filter)
         } else {
             setBookType("")
@@ -181,9 +161,26 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
 
     override fun onClick(p0: View?) {
         if (p0 == binding.theorySalfedjo) {
-            filterSearch(binding.theorySalfedjo, binding.literature, "SOLFEGGIO_AND_THEORY")
+            filterSearch(
+                binding.theorySalfedjo,
+                binding.literature,
+                binding.choreography,
+                "SOLFEGGIO_AND_THEORY"
+            )
         } else if (p0 == binding.literature) {
-            filterSearch(binding.literature, binding.theorySalfedjo, "MUSICAL_LITERATURE")
+            filterSearch(
+                binding.literature,
+                binding.theorySalfedjo,
+                binding.choreography,
+                "MUSICAL_LITERATURE"
+            )
+        } else if (p0 == binding.choreography) {
+            filterSearch(
+                binding.choreography,
+                binding.literature,
+                binding.theorySalfedjo,
+                "CHOREOGRAPHY"
+            )
         }
     }
 
@@ -195,8 +192,7 @@ class TheoryFragment : BaseFragment(), TextWatcher, View.OnClickListener, Intera
     }
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
-        viewModel.isLiked(itemId, isFav)
-        uiMainUpdate.setFavouriteUpdate(true)
+        uiMainUpdate.isLiked(itemId, isFav, BOOK_ID)
     }
 
     override fun onDestroyView() {

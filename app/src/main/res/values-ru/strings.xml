@@ -112,8 +112,11 @@
     <string name="every_day_limit">Ежедневный лимит скачиваний закончился</string>
     <string name="save">Сохранить</string>
     <string name="account_exist" translatable="false">Введённая вами почта используется другим пользователем, пожалуйста, выберите другую почту.</string>
-    <string name="password_exist">"Пожалуйста, для безопасности вашего аккаунта  придумайте другой пароль "</string>
+    <string name="password_exist">Пожалуйста, для безопасности вашего аккаунта придумайте другой пароль</string>
     <string name="main">Главная</string>
     <string name="my_library">Моя библиотека</string>
     <string name="profile">Профиль</string>
+    <string name="permission_handling">Для корректной работы программы включите доступ к чтению и записи через настройки</string>
+    <string name="download_complete">Загрузка завершена</string>
+    <string name="choreography">Хореография</string>
 </resources>

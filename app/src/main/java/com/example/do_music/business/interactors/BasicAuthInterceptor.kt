@@ -25,10 +25,10 @@ class BasicAuthInterceptor (
             request = request.newBuilder().header(AUTHORIZATION, credentials).build()
         }
 
-        Log.d(
-            TAG,
-            "\nRequest " + request.url() + "\n" + request.body() + "\ncredentials: " + sessionManager.state.value?.login + "\n" + sessionManager.state.value?.password
-        )
+//        Log.d(
+//            TAG,
+//            "\nRequest " + request.url() + "\n" + request.body() + "\ncredentials: " + sessionManager.state.value?.login + "\n" + sessionManager.state.value?.password
+//        )
 
         return chain.proceed(request)
     }

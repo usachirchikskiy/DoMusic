@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.do_music.presentation.BaseFragment
 import com.example.do_music.R
 import com.example.do_music.databinding.FragmentHomeCompositorsBinding
-
 import com.example.do_music.presentation.main.home.adapter.CompositorsAdapter
 import com.example.do_music.presentation.main.home.adapter.Interaction_Instrument
 import com.example.do_music.util.Constants.Companion.AUTH_ERROR
@@ -30,7 +29,6 @@ import com.example.do_music.util.Constants.Companion.NAME_OF_COMPOSITOR
 import com.example.do_music.util.Constants.Companion.NO_INTERNET
 import com.example.do_music.util.hide
 
-private const val TAG = "HomeCompositors"
 
 class HomeCompositors : BaseFragment(), TextWatcher,
     View.OnClickListener, Interaction_Instrument {
@@ -38,13 +36,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
     private var _binding: FragmentHomeCompositorsBinding?=null
     private val binding get() = _binding!!
     private val viewModel: HomeCompositorViewModel by viewModels()
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: " + viewModel.toString())
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,7 +54,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
 
     private fun setupViews() {
         binding.searchEt.hide {
-            Log.d(TAG, "setupViews: ")
             uiCommunicationListener.hideKeyboard()
         }
         binding.searchEt.addTextChangedListener(this)
@@ -92,7 +82,7 @@ class HomeCompositors : BaseFragment(), TextWatcher,
                     if (
                         lastPosition == homeAdapter!!.itemCount.minus(1)
                         && viewModel.state.value?.isLoading == false
-                        && viewModel.isLastPage.value == false
+                        && viewModel.state.value?.isLastPage == false
                     ) {
                         viewModel.getPage(true)
                     }
@@ -107,7 +97,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
 
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: " + it)
             uiCommunicationListener.displayProgressBar(it.isLoading)
 
             homeAdapter?.apply {
@@ -138,7 +127,6 @@ class HomeCompositors : BaseFragment(), TextWatcher,
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         val searchText = "" + p0.toString()
-        Log.d(TAG, "onTextChanged: " + searchText)
         viewModel.setSearchText(searchText)
         viewModel.getPage()
     }

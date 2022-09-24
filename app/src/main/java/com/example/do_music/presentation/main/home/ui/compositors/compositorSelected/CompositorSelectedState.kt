@@ -11,7 +11,8 @@ data class CompositorSelectedState(
     val groupFilters: List<String> = listOf(),
     var filterSelected:String = "",
     val instrumentalCompositions: List<Instrument> = listOf(),
-    var error: Throwable?=null,
-    val vocalCompositions: List<Vocal> = listOf()
+    val error: Throwable?=null,
+    val vocalCompositions: List<Vocal> = listOf(),
+    val isLastPage:Boolean = false
 )
 

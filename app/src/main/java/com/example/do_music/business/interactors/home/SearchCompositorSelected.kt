@@ -1,6 +1,5 @@
 package com.example.do_music.business.interactors.home
 
-import android.util.Log
 import com.example.do_music.business.datasources.data.home.instruments.InstrumentsDao
 import com.example.do_music.business.datasources.data.home.vocal.VocalsDao
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
@@ -9,10 +8,9 @@ import com.example.do_music.business.model.main.Vocal
 import com.example.do_music.util.Constants
 import com.example.do_music.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
-private const val TAG = "SelectedInteractor"
 
 class SearchCompositorSelected(
     private val service: OpenMainApiService,
@@ -52,75 +50,73 @@ class SearchCompositorSelected(
     fun getInstrumentalNotesByCompositors(
         compositorId: Int,
         pageNumber: Int,
-        searchText: String,
-        update: Boolean
+        searchText: String
     ): Flow<Resource<List<Instrument>>> = flow {
-
         try {
-            if (!update) {
-                emit(Resource.loading<List<Instrument>>())
-                val instrumentalNotes = service.getInstrumentalNotesByCompositor(
-                    compositorId = compositorId,
-                    pageNumber = pageNumber,
-                    searchText = searchText
-                ).rows
+            emit(Resource.loading())
+            val instrumentalNotes = service.getInstrumentalNotesByCompositor(
+                compositorId = compositorId,
+                pageNumber = pageNumber,
+                searchText = searchText
+            ).rows
 
-                if(instrumentalNotes.isNotEmpty()) {
-                    for (instrumentalNote in instrumentalNotes) {
-                        instrumentsDao.insertInstrument(instrumentalNote)
-                    }
+            if (instrumentalNotes.isNotEmpty()) {
+                for (instrumentalNote in instrumentalNotes) {
+                    instrumentsDao.insertInstrument(instrumentalNote)
                 }
-                else{
-                    throw Exception(Constants.LAST_PAGE)
-                }
+            } else {
+                throw Exception(Constants.LAST_PAGE)
             }
-        } catch (throwable: Throwable) {
-            emit(Resource.error<List<Instrument>>(throwable))
+
+        } catch (e: Throwable) {
+            emit(Resource.error(e))
         }
+
         val cashedInstrumentalNotes = instrumentsDao.getInstrumentalNotesByCompositor(
             compositorId = compositorId,
             searchText = searchText,
             page = pageNumber + 1
         )
-        emit(Resource.success(data = cashedInstrumentalNotes))
-    }.catch { error ->
-        emit(Resource.error(error))
+
+        cashedInstrumentalNotes.collect {
+            emit(Resource.success(data = it))
+        }
     }
 
     fun getVocalNotesByCompositors(
         compositorId: Int,
         pageNumber: Int,
-        searchText: String,
-        update: Boolean
+        searchText: String
     ): Flow<Resource<List<Vocal>>> = flow {
         try {
-            if (!update) {
-                emit(Resource.loading<List<Vocal>>())
-                val vocalNotes = service.getVocalNotesByCompositor(
-                    compositorId = compositorId,
-                    pageNumber = pageNumber,
-                    searchText = searchText
-                ).rows
 
-                if(vocalNotes.isNotEmpty()){
-                    for (vocalNote in vocalNotes) {
-                        vocalsDao.insertVocal(vocalNote)
-                    }
+            emit(Resource.loading())
+            val vocalNotes = service.getVocalNotesByCompositor(
+                compositorId = compositorId,
+                pageNumber = pageNumber,
+                searchText = searchText
+            ).rows
+
+            if (vocalNotes.isNotEmpty()) {
+                for (vocalNote in vocalNotes) {
+                    vocalsDao.insertVocal(vocalNote)
                 }
-                else{
-                    throw Exception(Constants.LAST_PAGE)
-                }
+            } else {
+                throw Exception(Constants.LAST_PAGE)
             }
+
+            val cashedVocalNotes = vocalsDao.getVocalNotesByCompositor(
+                compositorId = compositorId,
+                searchText = searchText,
+                page = pageNumber + 1
+            )
+
+            cashedVocalNotes.collect{
+                emit(Resource.success(data = it))
+            }
+
         } catch (throwable: Throwable) {
-            emit(Resource.error<List<Vocal>>(throwable))
+            emit(Resource.error(throwable))
         }
-        val cashedVocalNotes = vocalsDao.getVocalNotesByCompositor(
-            compositorId = compositorId,
-            searchText = searchText,
-            page = pageNumber + 1
-        )
-        emit(Resource.success(data = cashedVocalNotes))
-    }.catch { error ->
-        emit(Resource.error(error))
     }
 }

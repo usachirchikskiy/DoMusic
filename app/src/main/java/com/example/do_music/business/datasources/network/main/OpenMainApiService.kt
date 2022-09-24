@@ -20,9 +20,10 @@ interface OpenMainApiService {
     @GET("api/user/teacher/{userId}")
     suspend fun teacherAccount(@Path ("userId") userId: String): TeacherAccount
 
+    @Streaming
     @Headers("Accept: */*")
     @GET("api/doc/download")
-    suspend fun downloadFile(@Query("uniqueName") uniqueName: String): Response<ResponseBody>
+    suspend fun downloadFile(@Query("uniqueName") uniqueName: String): ResponseBody
 
     @Multipart
     @POST("api/doc/avatar")

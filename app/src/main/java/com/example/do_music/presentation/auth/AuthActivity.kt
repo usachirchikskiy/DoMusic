@@ -20,15 +20,11 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun setupObservers() {
-        sessionManager.state.observe(this, {
+        sessionManager.state.observe(this) {
             if (it.onStarMainActivity) {
-                Handler().postDelayed({
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }, 2000)
+                onMainActivity()
             }
         }
-        )
     }
 
     override fun displayProgressBar(isLoading: Boolean) {
@@ -37,6 +33,13 @@ class AuthActivity : BaseActivity() {
         } else {
             binding.progressBar.visibility = View.GONE
         }
+    }
+
+    fun onMainActivity() {
+        Handler().postDelayed({
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }, 2000)
     }
 
     override fun onAuthActivity() {

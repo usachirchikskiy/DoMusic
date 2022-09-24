@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.do_music.business.model.main.TheoryInfo
 import com.example.do_music.util.Constants
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TheoryDao {
@@ -15,7 +16,7 @@ interface TheoryDao {
     WHERE bookId =:bookId
     """
     )
-    suspend fun getFavouriteId(bookId: Int):Int
+    suspend fun getFavouriteId(bookId: Int): Int
 
     @Query(
         """
@@ -52,7 +53,23 @@ interface TheoryDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getAllBooks(
+    fun getAllBooks(
+        searchText: String,
+        page: Int,
+        pageSize: Int = Constants.PAGINATION_PAGE_SIZE
+    ): Flow<List<TheoryInfo>>
+
+
+    @Query(
+        """
+    SELECT * FROM theory_and_literature 
+    WHERE bookName LIKE '%' || :searchText || '%'
+    OR authorName  LIKE '%' || :searchText || '%'
+    ORDER BY bookId DESC
+    LIMIT (:page * :pageSize)
+    """
+    )
+    fun getAllBooksNotFlow(
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
@@ -68,12 +85,12 @@ interface TheoryDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getBooksByType(
+    fun getBooksByType(
         bookType: String,
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<TheoryInfo>
+    ): Flow<List<TheoryInfo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBook(book: TheoryInfo): Long
@@ -83,11 +100,11 @@ interface TheoryDao {
 
 }
 
-suspend fun TheoryDao.returnOrderedBooksQuery(
+fun TheoryDao.returnOrderedBooksQuery(
     bookType: String,
     searchText: String,
     page: Int
-): List<TheoryInfo> {
+): Flow<List<TheoryInfo>> {
 
     when {
         bookType != "" -> {

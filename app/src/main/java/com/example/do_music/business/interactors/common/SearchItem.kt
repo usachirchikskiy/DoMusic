@@ -33,41 +33,37 @@ class SearchItem(
         type: String
     ): Flow<Resource<ItemState>> = flow {
         emit(Resource.loading())
-        try {
-            when (type) {
-                BOOK_ID -> {
-                    try {
-                        theoryDao.insertBook(openMainApiService.getBookById(itemId))
-                    } catch (e: Exception) {
-                        Log.d("SearchItem", "execute: $e")
-                    }
-                    val book = theoryDao.getBook(itemId)
-                    emit(Resource.success(ItemState(book = book)))
+        when (type) {
+            BOOK_ID -> {
+                try {
+                    theoryDao.insertBook(openMainApiService.getBookById(itemId))
+                } catch (e: Exception) {
+                    Log.d("SearchItem", "execute: $e")
+                    emit(Resource.error(e))
                 }
-                VOCALS_ID -> {
-                    try {
-                        vocalsDao.insertVocal(openMainApiService.getVocalById(itemId))
-                    } catch (e: Exception) {
-                        Log.d("SearchItem", "execute: $e")
-                    }
-                    val vocal = vocalsDao.getVocal(itemId)
-                    emit(Resource.success(ItemState(vocal = vocal)))
-                }
-                else -> {
-                    try {
-                        instrumentsDao.insertInstrument(openMainApiService.getInstrumentById(itemId))
-                    } catch (e: Exception) {
-                        Log.d("SearchItem", "execute: $e")
-                    }
-                    val instrument = instrumentsDao.getInstrument(itemId)
-                    emit(Resource.success(ItemState(instrument = instrument)))
-                }
+                val book = theoryDao.getBook(itemId)
+                emit(Resource.success(ItemState(book = book)))
             }
-        } catch (throwable: Throwable) {
-            Log.d("Error", throwable.message.toString())
-            emit(
-                Resource.error<ItemState>(throwable)
-            )
+            VOCALS_ID -> {
+                try {
+                    vocalsDao.insertVocal(openMainApiService.getVocalById(itemId))
+                } catch (e: Exception) {
+                    Log.d("SearchItem", "execute: $e")
+                    emit(Resource.error(e))
+                }
+                val vocal = vocalsDao.getVocal(itemId)
+                emit(Resource.success(ItemState(vocal = vocal)))
+            }
+            else -> {
+                try {
+                    instrumentsDao.insertInstrument(openMainApiService.getInstrumentById(itemId))
+                } catch (e: Exception) {
+                    Log.d("SearchItem", "execute: $e")
+                    emit(Resource.error(e))
+                }
+                val instrument = instrumentsDao.getInstrument(itemId)
+                emit(Resource.success(ItemState(instrument = instrument)))
+            }
         }
     }
 }

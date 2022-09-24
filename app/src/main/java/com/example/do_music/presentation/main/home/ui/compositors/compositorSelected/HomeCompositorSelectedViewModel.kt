@@ -1,10 +1,8 @@
 package com.example.do_music.presentation.main.home.ui.compositors.compositorSelected
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.home.SearchCompositorSelected
 import com.example.do_music.presentation.session.SessionManager
 import com.example.do_music.util.Constants
@@ -19,21 +17,23 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 
-private const val TAG = "SelectedViewModel"
-
 @HiltViewModel
 class HomeCompositorSelectedViewModel
 @Inject constructor(
     private val searchCompositorSelected: SearchCompositorSelected,
-    private val update: AddToFavourite,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private var getSelectedCompositorJob: Job? = null
     val compositorSelectedState: MutableLiveData<CompositorSelectedState> =
         MutableLiveData(CompositorSelectedState())
-//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLastPage: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    init {
+        compositorSelectedState.value?.let { state ->
+            this.compositorSelectedState.value =
+                state.copy(isLoading = true)
+        }
+    }
 
     fun setCompositorId(compositorId: Int) {
         compositorSelectedState.value?.let { state ->
@@ -44,9 +44,9 @@ class HomeCompositorSelectedViewModel
     fun getNotesGroupTypes(compositorId: Int) {
         compositorSelectedState.value?.let { state ->
             searchCompositorSelected.getNoteGroupTypes(compositorId).onEach {
+
                 it.data?.let { list ->
                     this.compositorSelectedState.value = state.copy(groupFilters = list)
-                    Log.d(TAG, "getNotesGroupTypes: " + list)
                     if (list.contains(INSTRUMENTAL_GROUP)) {
                         compositorSelectedState.value!!.filterSelected = INSTRUMENTAL_GROUP
                     } else {
@@ -63,15 +63,15 @@ class HomeCompositorSelectedViewModel
 
     }
 
-    fun getNotesByCompositorSelected(next: Boolean = false, update: Boolean = false) {
+    fun getNotesByCompositorSelected(next: Boolean = false) {
         getSelectedCompositorJob?.cancel()
         if (next) {
             incrementPageCompositorsNotes()
         } else {
-            if (!update) {
-                pageToZeroCompositorsNotes()
-                clearListCompositorsNotes()
-                isLastPage.value = false
+            pageToZeroCompositorsNotes()
+            clearListCompositorsNotes()
+            compositorSelectedState.value?.let { state ->
+                compositorSelectedState.value = state.copy(isLastPage = false)
             }
         }
         compositorSelectedState.value?.let { state ->
@@ -81,10 +81,9 @@ class HomeCompositorSelectedViewModel
                         searchCompositorSelected.getInstrumentalNotesByCompositors(
                             searchText = state.searchText,
                             pageNumber = state.pageNumber,
-                            compositorId = state.compositorId,
-                            update = update
+                            compositorId = state.compositorId
                         ).onEach {
-                            if (!update) this.compositorSelectedState.value =
+                            this.compositorSelectedState.value =
                                 state.copy(isLoading = it.isLoading)
 
                             it.data?.let { instruments ->
@@ -97,7 +96,7 @@ class HomeCompositorSelectedViewModel
 
                             it.error?.let { error ->
                                 if (error.message == Constants.LAST_PAGE) {
-                                    isLastPage.value = true
+                                    compositorSelectedState.value = state.copy(isLastPage = true)
                                 } else {
                                     this.compositorSelectedState.value = state.copy(error = error)
                                 }
@@ -109,10 +108,9 @@ class HomeCompositorSelectedViewModel
                     getSelectedCompositorJob = searchCompositorSelected.getVocalNotesByCompositors(
                         searchText = state.searchText,
                         pageNumber = state.pageNumber,
-                        compositorId = state.compositorId,
-                        update = update
+                        compositorId = state.compositorId
                     ).onEach {
-                        if (!update) this.compositorSelectedState.value =
+                        this.compositorSelectedState.value =
                             state.copy(isLoading = it.isLoading)
 
                         it.data?.let { vocals ->
@@ -125,7 +123,7 @@ class HomeCompositorSelectedViewModel
 
                         it.error?.let { error ->
                             if (error.message == Constants.LAST_PAGE) {
-                                isLastPage.value = true
+                                compositorSelectedState.value = state.copy(isLastPage = true)
                             } else {
                                 this.compositorSelectedState.value = state.copy(error = error)
                             }
@@ -134,48 +132,6 @@ class HomeCompositorSelectedViewModel
                     }.launchIn(viewModelScope)
                 }
             }
-        }
-    }
-
-    private fun instrumentalCompositionLiked(favId: Int, isFav: Boolean) {
-        compositorSelectedState.value?.let { state ->
-            update.execute(
-                id = favId,
-                isFavourite = isFav,
-                property = NOTE_ID
-            ).onEach {
-
-                it.data?.let {
-//                    isUpdated.value = true
-                }
-
-                it.error?.let { error ->
-                    this.compositorSelectedState.value = state.copy(error = error)
-                }
-
-
-            }.launchIn(viewModelScope)
-        }
-    }
-
-    private fun vocalCompositionLiked(favId: Int, isFav: Boolean) {
-        compositorSelectedState.value?.let { state ->
-            update.execute(
-                id = favId,
-                isFavourite = isFav,
-                property = VOCALS_ID
-            ).onEach {
-
-                it.data?.let {
-//                    isUpdated.value = true
-                }
-
-                it.error?.let { error ->
-                    this.compositorSelectedState.value = state.copy(error = error)
-                }
-
-
-            }.launchIn(viewModelScope)
         }
     }
 
@@ -190,12 +146,6 @@ class HomeCompositorSelectedViewModel
             this.compositorSelectedState.value = state.copy(searchText = searchText)
         }
     }
-
-//    fun setLoadingToFalse() {
-//        compositorSelectedState.value?.let { state ->
-//            this.compositorSelectedState.value = state.copy(isLoading = false)
-//        }
-//    }
 
     private fun clearListCompositorsNotes() {
         compositorSelectedState.value?.let { state ->
@@ -220,14 +170,16 @@ class HomeCompositorSelectedViewModel
         }
     }
 
-    fun isLiked(favId: Int, isFav: Boolean) {
+    fun isLiked(): String {
+        var property = ""
         compositorSelectedState.value?.let {
             if (it.filterSelected == INSTRUMENTAL_GROUP) {
-                instrumentalCompositionLiked(favId = favId, isFav = isFav)
+                property = NOTE_ID
             } else {
-                vocalCompositionLiked(favId = favId, isFav = isFav)
+                property = VOCALS_ID
             }
         }
+        return property
     }
 
     fun clearSessionValues() {

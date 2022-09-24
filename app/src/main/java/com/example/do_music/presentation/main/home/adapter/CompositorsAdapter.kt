@@ -11,12 +11,11 @@ import com.example.do_music.util.shimmerDrawable
 
 class CompositorsAdapter(
     private val interaction: Interaction_Instrument
-): RecyclerView.Adapter<RecyclerView.ViewHolder>()
-{
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val differCallback = object : DiffUtil.ItemCallback<Compositor>() {
         override fun areItemsTheSame(oldItem: Compositor, newItem: Compositor): Boolean {
-            return newItem.id==oldItem.id
+            return newItem.id == oldItem.id
         }
 
         override fun areContentsTheSame(oldItem: Compositor, newItem: Compositor): Boolean {
@@ -24,36 +23,35 @@ class CompositorsAdapter(
         }
     }
 
-
     private val differ =
         AsyncListDiffer(
             BlogRecyclerChangeCallback(this),
             AsyncDifferConfig.Builder(differCallback).build()
         )
 
-class CompositorViewHolder (
-    private val interaction: Interaction_Instrument,//InteractionCompositor,
-    private val binding: CardOfHomeBinding
+    class CompositorViewHolder(
+        private val interaction: Interaction_Instrument,//InteractionCompositor,
+        private val binding: CardOfHomeBinding
     ) :
-    RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(compositor: Compositor) {
-                binding.root.setOnClickListener{
-                    interaction.onItemSelected(compositor.id,compositor.name)
-                }
-                 Glide.with(binding.root)
-                    .load(BASE_URL + "api/doc/logo?mini=true&uniqueName="+compositor.fileId)
-                     .placeholder(shimmerDrawable)
-                    .into(binding.compositorImage)
-
-                binding.compositorName.text = compositor.name
+            binding.root.setOnClickListener {
+                interaction.onItemSelected(compositor.id, compositor.name)
             }
+            Glide.with(binding.root)
+                .load(BASE_URL + "api/doc/logo?mini=true&uniqueName=" + compositor.fileId)
+                .placeholder(shimmerDrawable)
+                .into(binding.compositorImage)
+
+            binding.compositorName.text = compositor.name
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompositorViewHolder {
         val binding =
             CardOfHomeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CompositorViewHolder(interaction,binding)
+        return CompositorViewHolder(interaction, binding)
     }
 
     internal inner class BlogRecyclerChangeCallback(
@@ -85,7 +83,8 @@ class CompositorViewHolder (
             }
         }
     }
-    fun submitList(compositorList: List<Compositor>?, ){
+
+    fun submitList(compositorList: List<Compositor>?) {
         val newList = compositorList?.toMutableList()
         differ.submitList(newList)
     }

@@ -29,20 +29,6 @@ interface UIMainCommunicationListener {
 
 interface UIMainUpdate{
 
-    fun setFavouriteUpdate(toUpdate:Boolean)
-
-    fun getFavouriteUpdate():Boolean
-
-    fun setVocalsUpdate(toUpdate:Boolean)
-
-    fun getVocalsUpdate():Boolean
-
-    fun setTheoryUpdate(toUpdate:Boolean)
-
-    fun getTheoryUpdate():Boolean
-
-    fun setInstrumentsUpdate(toUpdate:Boolean)
-
-    fun getInstrumentsUpdate():Boolean
+    fun isLiked(favId: Int, isFav: Boolean, property: String)
 
 }

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.do_music.business.model.main.Vocal
 import com.example.do_music.util.Constants
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -17,7 +18,7 @@ interface VocalsDao {
     WHERE vocalsId =:vocalsId
     """
     )
-    suspend fun getFavouriteId(vocalsId: Int):Int
+    suspend fun getFavouriteId(vocalsId: Int): Int
 
     @Query(
         """
@@ -25,7 +26,7 @@ interface VocalsDao {
         WHERE vocalsId = :vocalsId
         """
     )
-    suspend fun updateVocal(favoriteId:Int?,favorite: Boolean,vocalsId: Int)
+    suspend fun updateVocal(favoriteId: Int?, favorite: Boolean, vocalsId: Int)
 
     @Query(
         """
@@ -44,12 +45,12 @@ interface VocalsDao {
         LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getVocalNotesByCompositor(
+    fun getVocalNotesByCompositor(
         compositorId: Int,
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Vocal>
+    ): Flow<List<Vocal>>
 
     @Query(
         """
@@ -60,11 +61,11 @@ interface VocalsDao {
     LIMIT (:page * :pageSize)
     """
     )
-    suspend fun getAllVocals(
+    fun getAllVocals(
         searchText: String,
         page: Int,
         pageSize: Int = Constants.PAGINATION_PAGE_SIZE
-    ): List<Vocal>
+    ): Flow<List<Vocal>>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

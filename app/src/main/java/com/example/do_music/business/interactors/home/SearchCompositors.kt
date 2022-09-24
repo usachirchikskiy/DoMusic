@@ -1,6 +1,10 @@
 package com.example.do_music.business.interactors.home
 
+import com.example.do_music.business.datasources.data.favourites.FavouritesDao
 import com.example.do_music.business.datasources.data.home.compositors.CompositorsDao
+import com.example.do_music.business.datasources.data.home.instruments.InstrumentsDao
+import com.example.do_music.business.datasources.data.home.theory.TheoryDao
+import com.example.do_music.business.datasources.data.home.vocal.VocalsDao
 import com.example.do_music.business.datasources.network.main.OpenMainApiService
 import com.example.do_music.business.model.main.Compositor
 import com.example.do_music.util.Constants
@@ -12,15 +16,20 @@ import kotlinx.coroutines.flow.flow
 
 class SearchCompositors(
     private val service: OpenMainApiService,
-    private val compositors: CompositorsDao
+    private val compositors: CompositorsDao,
+    private val favouritesDao: FavouritesDao,
+    private val instrumentsDao: InstrumentsDao,
+    private val vocalsDao: VocalsDao,
+    private val theoryDao: TheoryDao
 ) {
 
     fun execute(
         searchText: String,
         country_filter: String,
-        page: Int
+        page: Int,
+        isFirst: ()->Boolean
     ): Flow<Resource<List<Compositor>>> = flow {
-        emit(Resource.loading<List<Compositor>>())
+        emit(Resource.loading())
 
         try {
             // catch network exception
@@ -29,6 +38,15 @@ class SearchCompositors(
                 searchText = searchText,
                 country = country_filter
             ).rows
+
+            if(isFirst()){
+                favouritesDao.deleteAllFavourites()
+                compositors.deleteAllCompositors()
+                theoryDao.deleteAllBooks()
+                instrumentsDao.deleteAllInstruments()
+                vocalsDao.deleteAllVocals()
+            }
+
             if (compositorsResponse.isNotEmpty()) {
                 for (compositor in compositorsResponse) {
                     val name = compositor.name.replace("\\s+".toRegex(), " ").trim()
@@ -41,7 +59,7 @@ class SearchCompositors(
 
         } catch (throwable: Throwable) {
             emit(
-                Resource.error<List<Compositor>>(throwable)
+                Resource.error(throwable)
             )
         }
         var cashedCompositors = compositors.getCompositors(
@@ -51,9 +69,5 @@ class SearchCompositors(
         )
 
         emit(Resource.success(data = cashedCompositors))
-    }.catch { throwable ->
-        emit(
-            Resource.error<List<Compositor>>(throwable)
-        )
     }
 }

@@ -1,38 +1,24 @@
 package com.example.do_music.presentation.main.favourites
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.do_music.business.interactors.common.AddToFavourite
 import com.example.do_music.business.interactors.favourite.SearchFavourites
-import com.example.do_music.util.Constants.Companion.BOOK
-import com.example.do_music.util.Constants.Companion.BOOK_ID
 import com.example.do_music.util.Constants.Companion.LAST_PAGE
-import com.example.do_music.util.Constants.Companion.NOTES
-import com.example.do_music.util.Constants.Companion.NOTE_ID
-import com.example.do_music.util.Constants.Companion.VOCALS_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-
-private const val TAG = "FavouriteViewModel"
-
 @HiltViewModel
 class FavouriteViewModel
 @Inject
 constructor(
-    private val searchFavourites: SearchFavourites,
-    private val update: AddToFavourite
+    private val searchFavourites: SearchFavourites
 ) : ViewModel() {
 
     val state: MutableLiveData<FavouriteState> = MutableLiveData(FavouriteState())
-//    val isUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
-    var isLastPage = false
-
     private var getFavouriteJob: Job? = null
 
     init {
@@ -45,28 +31,25 @@ constructor(
         }
     }
 
-    fun getPage(next: Boolean = false, update: Boolean = false) {
-        Log.d(TAG, "getPage: " + state.value!!.docType)
+    fun getPage(next: Boolean = false) {
         getFavouriteJob?.cancel()
         if (next) {
             incrementPage()
         } else {
-            if (!update) {
-                pageToZero()
-                clearList()
+            pageToZero()
+            clearList()
+            state.value?.let { state ->
+                this.state.value = state.copy(isLastPage = true)
             }
         }
         state.value?.let { state ->
             getFavouriteJob = searchFavourites.execute(
                 pageNumber = state.page,
                 docType = state.docType,
-                searchText = state.searchText,
-                updated = update
+                searchText = state.searchText
             ).onEach {
 
-                if (!update) {
-                    this.state.value = state.copy(isLoading = it.isLoading)
-                }
+                this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
 
@@ -79,7 +62,7 @@ constructor(
 
                 it.error?.let { error ->
                     if (error.message == LAST_PAGE) {
-                        isLastPage = true
+                        this.state.value = state.copy(isLastPage = true)
                     } else {
                         this.state.value = state.copy(error = error)
                     }
@@ -93,12 +76,6 @@ constructor(
             this.state.value = state.copy(favouriteItems = listOf())
         }
     }
-
-//    fun setFavClass(favClass: String) {
-//        state.value?.let { state ->
-//            this.state.value = state.copy(favClass = favClass)
-//        }
-//    }
 
     fun setSearchText(searchText: String) {
         state.value?.let { state ->
@@ -115,38 +92,6 @@ constructor(
     private fun incrementPage() {
         state.value?.let { state ->
             this.state.value = state.copy(page = state.page + 1)
-        }
-    }
-
-    fun isLiked(itemId: Int, isFavourite: Boolean) {
-
-        state.value?.let { state ->
-            val property = when (state.docType) {
-                NOTES -> {
-                    NOTE_ID
-                }
-                BOOK -> {
-                    BOOK_ID
-                }
-                else -> {
-                    VOCALS_ID
-                }
-            }
-            Log.d(TAG, "isLiked: $itemId, $isFavourite,$property")
-
-            update.execute(
-                id = itemId,
-                isFavourite = isFavourite,
-                property = property
-            ).onEach {
-                it.data?.let {
-                    getPage(update=true)
-                }
-
-                it.error?.let { error ->
-                    this.state.value = state.copy(error = error)
-                }
-            }.launchIn(viewModelScope)
         }
     }
 

@@ -8,6 +8,7 @@ data class TheoryState(
     val books: List<TheoryInfo> = listOf(),
     val searchText: String = "",
     val page:Int = 0,
-    var error: Throwable? = null,
-    val bookType:String = ""
+    val error: Throwable? = null,
+    val bookType:String = "",
+    val isLastPage:Boolean = false
     )

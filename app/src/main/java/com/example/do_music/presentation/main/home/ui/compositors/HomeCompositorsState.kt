@@ -9,4 +9,5 @@ data class HomeCompositorsState(
     val page:Int = 0,
     val error: Throwable?=null,
     val country_filter:String = "",
+    val isLastPage:Boolean = false
 )

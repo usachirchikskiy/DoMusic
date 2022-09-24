@@ -3,11 +3,9 @@ package com.example.do_music.presentation.main.favourites
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -26,11 +24,7 @@ import com.example.do_music.util.Constants.Companion.NOTES
 import com.example.do_music.util.Constants.Companion.NOTE_ID
 import com.example.do_music.util.Constants.Companion.VOCALS
 import com.example.do_music.util.Constants.Companion.VOCALS_ID
-import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "FavouriteFragment"
-
-@AndroidEntryPoint
 class FavouriteFragment : BaseFragment(), TextWatcher,
     Interaction_Favourite, View.OnClickListener {
     private var _binding: FragmentFavouriteBinding? = null
@@ -52,20 +46,11 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 
         val docType = viewModel.state.value?.docType
         setupViews(docType!!)
-        updateFavourite()
         setupObservers()
         setupRecyclerView()
     }
 
-    private fun updateFavourite() {
-        if(uiMainUpdate.getFavouriteUpdate()){
-            viewModel.getPage()
-            uiMainUpdate.setFavouriteUpdate(false)
-        }
-    }
-
     private fun setupRecyclerView() {
-        Log.d(TAG, "setupRecyclerView: ")
         binding.recv.apply {
             layoutManager = LinearLayoutManager(this@FavouriteFragment.context)
             favouriteAdapter = FavouriteAdapter(interaction = this@FavouriteFragment)
@@ -76,10 +61,10 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
                     if (
                         (lastPosition == favouriteAdapter?.itemCount?.minus(1)
-                                && viewModel.state.value?.isLoading == false) && !viewModel.isLastPage
+                                && viewModel.state.value?.isLoading == false)
+                        && viewModel.state.value?.isLastPage == false
                     ) {
                         viewModel.getPage(true)
-//                        setPadding(0, 0, 0, 0)
                     }
 
                 }
@@ -90,10 +75,9 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(viewLifecycleOwner, {
+        viewModel.state.observe(viewLifecycleOwner) {
 
             uiCommunicationListener.displayProgressBar(it.isLoading)
-            Log.d(TAG, "setupObservers: $it")
             favouriteAdapter?.apply {
                 submitList(favourites = it.favouriteItems)
                 if (it.favouriteItems.isEmpty() && !it.isLoading && it.searchText.isBlank()) {
@@ -118,7 +102,7 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
                 }
             }
 
-        })
+        }
 
     }
 
@@ -150,7 +134,6 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
-        Log.d(TAG, "onTextChanged: " + s.toString())
         viewModel.setSearchText(searchText)
         viewModel.getPage()
     }
@@ -189,22 +172,21 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
             compositorName = compositorName,
             stateMessageCallback = object : StateMessageCallback {
                 override fun yes() {
-                    viewModel.isLiked(itemId = itemId, isFavourite = isFavourite)
-                    setUpdate()
+                    setUpdate(itemId,isFavourite)
                 }
             })
     }
 
-    private fun setUpdate(){
+    private fun setUpdate(itemId: Int, isFavourite: Boolean){
         when(viewModel.state.value?.docType){
                 NOTES -> {
-                    uiMainUpdate.setInstrumentsUpdate(true)
+                    uiMainUpdate.isLiked(itemId,isFavourite, NOTE_ID)
                 }
                 BOOK -> {
-                    uiMainUpdate.setTheoryUpdate(true)
+                    uiMainUpdate.isLiked(itemId,isFavourite, BOOK_ID)
                 }
                 else -> {
-                    uiMainUpdate.setVocalsUpdate(true)
+                    uiMainUpdate.isLiked(itemId,isFavourite, VOCALS_ID)
                 }
         }
     }
@@ -227,7 +209,6 @@ class FavouriteFragment : BaseFragment(), TextWatcher,
         super.onDestroyView()
         favouriteAdapter = null
         _binding = null
-
     }
 
 }

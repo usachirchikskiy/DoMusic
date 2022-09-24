@@ -10,5 +10,5 @@ data class FavouriteState(
     val page:Int = 0,
     val error: Throwable?=null,
     val docType:String = BOOK,
-//    val favClass:String = "UNKNOWN",
+    val isLastPage:Boolean = false
 )

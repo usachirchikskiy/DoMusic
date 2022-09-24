@@ -30,11 +30,10 @@ import com.example.do_music.presentation.auth.AuthActivity
 import com.example.do_music.presentation.main.account.secondary.changeSuccess.ChangeSuccessFragment
 import com.example.do_music.util.*
 import com.example.do_music.util.Constants.Companion.CHANNEL_ID
+import com.example.do_music.util.Constants.Companion.NO_INTERNET
 import com.example.do_music.util.Constants.Companion.PROGRESS_MAX
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.File
-
-private const val TAG = "MainActivity"
 
 class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
     NavController.OnDestinationChangedListener {
@@ -73,38 +72,32 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
     private fun setupObservers() {
         viewModel.state.observe(this, Observer {
             it.error?.let { error ->
-                if (error.localizedMessage == Constants.DOWNLOAD_LIMIT) {
-                    showNotificationError()
-                    limitExceededDialog(this)
-                } else {
-                    toast(error.localizedMessage)
+                when (error.localizedMessage) {
+                    Constants.DOWNLOAD_LIMIT -> {
+                        showNotificationError()
+                        limitExceededDialog(this)
+                    }
+                    NO_INTERNET -> {
+                        showNoInternetDialog()
+                    }
+                    else -> {
+                        toast(error.localizedMessage)
+                    }
                 }
             }
         })
 
-        viewModel.notificationState.observe(this, Observer { notificationState ->
+        viewModel.notificationState.observe(this) { notificationState ->
             if (notificationState.begin) {
                 showNotificationBegin()
-            }
-
-            else if (notificationState.onComplete) {
+            } else if (notificationState.onComplete) {
                 showNotificationDownloaded()
                 viewModel.clearValues()
             }
 
-        })
-
-        viewModel.downloadProgressState.observe(this, Observer { progress ->
-            showProgressNotification(progress)
-        })
-    }
-
-    private fun showProgressNotification(progress: Int) {
-        if (progress > 0) {
-            notification.setContentText("$progress%")
-                .setProgress(PROGRESS_MAX, progress, false)
-            notificationManager.notify(1, notification.build())
         }
+
+
     }
 
     private fun showNotificationBegin() {
@@ -125,7 +118,7 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
         val file = File(
             (Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS
-            )).absolutePath + File.separator.toString() + viewModel.state.value!!.nameOfFile
+            )).absolutePath + File.separator.toString() + viewModel.state.value!!.fileName
         )
         val mimeType = getMimeType(file.extension)
 
@@ -149,17 +142,17 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT
             )
-        Log.d(TAG, "setupObservers: ${file.name},${file.path}")
 
-        notification.setContentText("Download complete")
+        notification
             .setProgress(0, 0, false)
             .setOngoing(false)
             .setContentIntent(pendingIntent)
+            .setContentText(getString(R.string.download_complete))
         notificationManager.notify(1, notification.build())
     }
 
     private fun showNotificationError() {
-        notification.setContentText("Failed")
+        notification.setContentText(getString(R.string.error))
             .setProgress(0, 0, false)
             .setOngoing(false)
         notificationManager.notify(1, notification.build())
@@ -167,7 +160,7 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
 
     override fun downloadFile(uniqueName: String, fileName: String) {
         if (isOnline(this) == true) {
-            viewModel.downloadFile(uniqueName, fileName, this)
+            viewModel.downloadFile(uniqueName, fileName)
         }
         else{
             operationErrorDialog(this)
@@ -226,10 +219,7 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
     }
 
     override fun showNoInternetDialog() {
-        if (!viewModel.noInternet) {
-            viewModel.noInternet = true
-            noInternetDialog(this)
-        }
+        noInternetDialog(this)
     }
 
     override fun onDestinationChanged(
@@ -266,36 +256,9 @@ class MainActivity : BaseActivity(), UIMainCommunicationListener,UIMainUpdate,
         }
     }
 
-    override fun setFavouriteUpdate(toUpdate: Boolean) {
-        viewModel.updateFavourite(toUpdate)
+    override fun isLiked(favId: Int, isFav: Boolean, property: String) {
+        viewModel.isLiked(favId,isFav,property)
     }
 
-    override fun getFavouriteUpdate(): Boolean {
-        return viewModel.updateState.favourite
-    }
-
-    override fun setVocalsUpdate(toUpdate: Boolean) {
-        viewModel.updateVocals(toUpdate)
-    }
-
-    override fun getVocalsUpdate(): Boolean {
-        return viewModel.updateState.vocals
-    }
-
-    override fun setTheoryUpdate(toUpdate: Boolean) {
-        viewModel.updateTheory(toUpdate)
-    }
-
-    override fun getTheoryUpdate(): Boolean {
-        return viewModel.updateState.theory
-    }
-
-    override fun setInstrumentsUpdate(toUpdate: Boolean) {
-        viewModel.updateInstruments(toUpdate)
-    }
-
-    override fun getInstrumentsUpdate(): Boolean {
-        return viewModel.updateState.instruments
-    }
 }
 

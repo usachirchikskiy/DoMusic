@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 
-private const val TAG = "HomeCompositorViewModel"
-
 @HiltViewModel
 class HomeCompositorViewModel @Inject constructor(
     private val searchCompositors: SearchCompositors,
@@ -23,11 +21,13 @@ class HomeCompositorViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: MutableLiveData<HomeCompositorsState> = MutableLiveData(HomeCompositorsState())
-    val isLastPage:MutableLiveData<Boolean> = MutableLiveData(false)
     private var getCompositorJob: Job? = null
 
     init {
-        getPage()
+        state.value?.let { state ->
+            this.state.value = state.copy(error = null)
+        }
+        getPage(first = true)
     }
 
     private fun clearList() {
@@ -35,10 +35,6 @@ class HomeCompositorViewModel @Inject constructor(
             this.state.value = state.copy(compositors = listOf())
         }
     }
-
-//    fun setLoadingToFalse() {
-//        this.state.value = state.value?.copy(isLoading = false)
-//    }
 
     fun setSearchText(searchText: String) {
         this.state.value = state.value?.copy(searchText = searchText)
@@ -58,33 +54,35 @@ class HomeCompositorViewModel @Inject constructor(
         }
     }
 
-    fun clearSessionValues(){
+    fun clearSessionValues() {
         sessionManager.clearValuesOfDataStore()
     }
 
-    fun setErrorNull(){
+    fun setErrorNull() {
         state.value?.let { state ->
             this.state.value = state.copy(error = null)
         }
     }
 
-    fun getPage(next: Boolean = false) {
+    fun getPage(next: Boolean = false, first: Boolean = false) {
         getCompositorJob?.cancel()
         if (next) {
             incrementPage()
         } else {
             pageToZero()
             clearList()
-            isLastPage.value = false
+            state.value?.let { state ->
+                this.state.value = state.copy(isLastPage = false)
+            }
         }
 
         state.value?.let { state ->
             getCompositorJob = searchCompositors.execute(
                 page = state.page,
                 country_filter = state.country_filter,
-                searchText = state.searchText
+                searchText = state.searchText,
+                isFirst = { first }
             ).onEach {
-
                 this.state.value = state.copy(isLoading = it.isLoading)
 
                 it.data?.let { list ->
@@ -95,10 +93,9 @@ class HomeCompositorViewModel @Inject constructor(
                 }
 
                 it.error?.let { error ->
-                    if(error.message == Constants.LAST_PAGE){
-                        isLastPage.value = true
-                    }
-                    else {
+                    if (error.message == Constants.LAST_PAGE) {
+                        this.state.value = state.copy(isLastPage = false)
+                    } else {
                         this.state.value = state.copy(error = error)
                     }
                 }
@@ -106,6 +103,6 @@ class HomeCompositorViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
-
 }
+
 

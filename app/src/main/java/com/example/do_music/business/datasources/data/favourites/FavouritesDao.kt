@@ -5,26 +5,26 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.do_music.business.model.main.Favourite
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavouritesDao {
 
-    suspend fun getFavItems(
+    fun getFavItems(
         page: Int,
         pageSize: Int = 10,
         searchText: String,
         docType: String
-    ): List<Favourite> {
-        val defaultOrFavouriteClass = ""
+    ): Flow<List<Favourite>> {
         return when (docType) {
             "NOTES" -> {
-                getFavNotes(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavNotes(page, pageSize, searchText)
             }
             "BOOK" -> {
-                getFavBooks(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavBooks(page, pageSize, searchText)
             }
             else ->
-                getFavVocals(page, pageSize, searchText, defaultOrFavouriteClass)
+                getFavVocals(page, pageSize, searchText)
         }
     }
 
@@ -33,17 +33,15 @@ interface FavouritesDao {
         SElECT *FROM favourites WHERE
         (noteName  LIKE '%' || :searchText || '%'
         OR compositorName LIKE '%' || :searchText || '%')
-        AND (noteId is not null
-        AND notesClass LIKE '%' || :noteClass || '%')
+        AND (noteId is not null)
         LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getFavNotes(
+    fun getFavNotes(
         page: Int,
         pageSize: Int,
-        searchText: String,
-        noteClass: String
-    ): List<Favourite>
+        searchText: String
+    ): Flow<List<Favourite>>
 
 
     @Query(
@@ -51,37 +49,36 @@ interface FavouritesDao {
         SElECT *FROM favourites WHERE
        (noteName  LIKE '%' || :searchText || '%'
         OR compositorName LIKE '%' || :searchText || '%')
-        AND (vocalsId is not null
-        AND vocalsClass LIKE '%' || :vocalsClass || '%')
+        AND (vocalsId is not null)
         LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getFavVocals(
+    fun getFavVocals(
         page: Int,
         pageSize: Int,
-        searchText: String,
-        vocalsClass: String
-    ): List<Favourite>
+        searchText: String
+    ): Flow<List<Favourite>>
 
     @Query(
         """
         SElECT *FROM favourites WHERE
         (noteName  LIKE '%' || :searchText || '%'
         OR compositorName LIKE '%' || :searchText || '%')
-        AND ( bookId is not null
-        AND bookClass LIKE '%' || :bookClass || '%')
+        AND (bookId is not null)
         LIMIT (:page * :pageSize)
         """
     )
-    suspend fun getFavBooks(
+    fun getFavBooks(
         page: Int,
         pageSize: Int,
-        searchText: String,
-        bookClass: String
-    ): List<Favourite>
+        searchText: String
+    ): Flow<List<Favourite>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavourite(favourite: List<Favourite>)
+    suspend fun insertFavouriteList(favourite: List<Favourite>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavouriteItem(favourite:Favourite)
 
     @Query("DELETE FROM favourites")
     suspend fun deleteAllFavourites()

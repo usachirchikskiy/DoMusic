@@ -3,7 +3,6 @@ package com.example.do_music.presentation.main.home.ui.compositors.compositorSel
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,8 +30,6 @@ import com.example.do_music.util.Constants.Companion.VOCAL_GROUP
 import com.example.do_music.util.hide
 import com.example.do_music.util.operationErrorDialog
 
-
-private const val TAG = "CompositorSelected"
 
 class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClickListener,
     Interaction_Instrument {
@@ -63,27 +60,13 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateData()
         setupViews()
         setupObservers()
         setupRecyclerView()
     }
 
-    private fun updateData() {
-        if (uiMainUpdate.getInstrumentsUpdate()) {
-            viewModel.getNotesByCompositorSelected(update = true)
-            uiMainUpdate.setInstrumentsUpdate(false)
-        } else if (uiMainUpdate.getVocalsUpdate()) {
-            viewModel.getNotesByCompositorSelected(update = true)
-            uiMainUpdate.setVocalsUpdate(false)
-        }
-    }
-
-    
-
     private fun setupObservers() {
         viewModel.compositorSelectedState.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: " + it)
 
             uiCommunicationListener.displayProgressBar(it.isLoading)
 
@@ -151,14 +134,6 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
             }
 
         })
-
-//        viewModel.isUpdated.observe(viewLifecycleOwner, Observer {
-//            Log.d(TAG, "setupObservers: UPDATE $it")
-//            if (it) {
-//                viewModel.getNotesByCompositorSelected(update = true)
-//                viewModel.isUpdated.value = false
-//            }
-//        })
     }
 
     private fun setupRecyclerView() {
@@ -183,14 +158,14 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
                         if (
                             lastPosition == instrumentsAdapter?.itemCount?.minus(1)
                             && viewModel.compositorSelectedState.value?.isLoading == false
-                            && viewModel.isLastPage.value == false
+                            && viewModel.compositorSelectedState.value?.isLastPage == false
                         ) {
                             viewModel.getNotesByCompositorSelected(next = true)
                         }
                     } else {
                         if (lastPosition == vocalsAdapter?.itemCount?.minus(1)
                             && viewModel.compositorSelectedState.value?.isLoading == false
-                            && viewModel.isLastPage.value == false
+                            && viewModel.compositorSelectedState.value?.isLastPage == false
                         ) {
                             viewModel.getNotesByCompositorSelected(next = true)
                         }
@@ -216,8 +191,6 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         val searchText = "" + s.toString()
-//        viewModel.setLoadingToFalse()
-        Log.d(TAG, "onTextChanged: ")
         viewModel.setSearchText(searchText)
         viewModel.getNotesByCompositorSelected()
     }
@@ -251,8 +224,7 @@ class HomeCompositorSelectedFragment : BaseFragment(), TextWatcher, View.OnClick
     }
 
     override fun onLikeSelected(itemId: Int, isFav: Boolean) {
-        viewModel.isLiked(itemId, isFav)
-        uiMainUpdate.setFavouriteUpdate(true)
+        uiMainUpdate.isLiked(itemId,isFav,viewModel.isLiked())
     }
 
     override fun onDestroyView() {

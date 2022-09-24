@@ -7,5 +7,6 @@ data class VocalsState(
     val instruments: List<Vocal> = listOf(),
     val searchText: String = " ",
     val pageNumber: Int = 0,
-    var error: Throwable? = null,
+    val error: Throwable? = null,
+    val isLastPage:Boolean = false
 )

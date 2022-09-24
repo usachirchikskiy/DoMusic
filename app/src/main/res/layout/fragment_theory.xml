@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.main.home.ui.theory.TheoryFragment">
 
     <EditText
         android:id="@+id/search_et"
         style="@style/SearchEditText"
-        android:maxLines="1"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginTop="20dp"
@@ -22,52 +21,75 @@
         android:imeOptions="actionSearch"
         android:importantForAutofill="no"
         android:inputType="text"
+        android:maxLines="1"
         android:paddingStart="10dp"
         android:saveEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_marginLeft="1dp"
+        android:id="@+id/flow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:constraint_referenced_ids="theory_salfedjo,literature,choreography"
+        app:flow_horizontalBias="0"
+        app:flow_horizontalGap="10dp"
+        app:flow_horizontalStyle="packed"
+        app:flow_maxElementsWrap="3"
+        app:flow_verticalGap="8dp"
+        app:flow_wrapMode="chain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_et" />
+    />
 
     <CheckBox
-        android:layout_marginStart="1dp"
-        android:elevation="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_et"
         android:id="@+id/theory_salfedjo"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginTop="10dp"
         android:background="@drawable/back_btn_compositors"
         android:button="@android:color/transparent"
+        android:elevation="5dp"
         android:focusable="true"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
         android:text="@string/theory_salfedgio_filter"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
-        android:textSize="12sp"
-        />
+        android:textSize="12sp" />
 
     <CheckBox
-        android:elevation="5dp"
         android:id="@+id/literature"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
         android:background="@drawable/back_btn_compositors"
         android:button="@android:color/transparent"
+        android:elevation="5dp"
         android:fontFamily="@font/montserrat_medium"
         android:paddingHorizontal="10dp"
         android:text="@string/literature"
         android:textAllCaps="false"
         android:textColor="@drawable/back_btn_compositors"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/theory_salfedjo"
-        app:layout_constraintTop_toBottomOf="@id/search_et" />
+        android:textSize="12sp" />
+
+    <CheckBox
+        android:id="@+id/choreography"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:background="@drawable/back_btn_compositors"
+        android:button="@android:color/transparent"
+        android:elevation="5dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:paddingHorizontal="10dp"
+        android:text="@string/choreography"
+        android:textAllCaps="false"
+        android:textColor="@drawable/back_btn_compositors"
+        android:textSize="12sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/card_of_theory"
         android:id="@+id/recv"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -75,19 +97,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/theory_salfedjo"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/flow"
+        tools:listitem="@layout/card_of_theory" />
 
 
     <include
         android:id="@+id/no_results_layout"
+        layout="@layout/no_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/theory_salfedjo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/no_results" />
+        app:layout_constraintTop_toBottomOf="@id/flow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
