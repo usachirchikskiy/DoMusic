@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.main.home.ui.compositors.compositorSelected.HomeCompositorSelectedFragment"
+    tools:context="com.sili.do_music.presentation.main.home.ui.compositors.compositorSelected.HomeCompositorSelectedFragment"
     >
 
     <androidx.constraintlayout.widget.Guideline

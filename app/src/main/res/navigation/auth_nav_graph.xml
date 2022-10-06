@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.do_music.presentation.auth.ui.login.LoginFragment"
+        android:name="com.sili.do_music.presentation.auth.ui.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPassword"
-        android:name="com.example.do_music.presentation.auth.ui.forgot_password.primary.ForgotPassword"
+        android:name="com.sili.do_music.presentation.auth.ui.forgot_password.primary.ForgotPassword"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" >
         <action
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/successFragment"
-        android:name="com.example.do_music.presentation.auth.ui.forgot_password.secondary.SuccessFragment"
+        android:name="com.sili.do_music.presentation.auth.ui.forgot_password.secondary.SuccessFragment"
         android:label="fragment_success"
         tools:layout="@layout/fragment_success" />
 

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/accountFragment"
-        android:name="com.example.do_music.presentation.main.account.primary.AccountFragment"
+        android:name="com.sili.do_music.presentation.main.account.primary.AccountFragment"
         android:label="AccountFragment" >
         <action
             android:id="@+id/action_accountFragment_to_changePasswordFragment"
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/changeEmailFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.changeEmail.checkCodeEmail.ChangeEmailFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.changeEmail.checkCodeEmail.ChangeEmailFragment"
         android:label="fragment_change_email"
         tools:layout="@layout/fragment_change_email" >
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.changePassword.checkCode.ChangePasswordFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.changePassword.checkCode.ChangePasswordFragment"
         android:label="fragment_change_password"
         tools:layout="@layout/fragment_change_password" >
         <action
@@ -44,13 +44,13 @@
     </fragment>
     <fragment
         android:id="@+id/changeSuccessFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.changeSuccess.ChangeSuccessFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.changeSuccess.ChangeSuccessFragment"
         android:label="fragment_change_success"
         tools:layout="@layout/fragment_change_success"
        />
     <fragment
         android:id="@+id/newPasswordFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.changePassword.newPassword.NewPasswordFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.changePassword.newPassword.NewPasswordFragment"
         android:label="fragment_new_password"
         tools:layout="@layout/fragment_new_password" >
         <action
@@ -60,7 +60,7 @@
     </fragment>
     <fragment
         android:id="@+id/prepareEmailFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.changeEmail.prepareEmail.PrepareEmailFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.changeEmail.prepareEmail.PrepareEmailFragment"
         android:label="fragment_prepare_email"
         tools:layout="@layout/fragment_prepare_email"
         >
@@ -70,7 +70,7 @@
     </fragment>
     <fragment
         android:id="@+id/feedbackSuccessFragment"
-        android:name="com.example.do_music.presentation.main.account.secondary.feedbackSuccess.FeedbackSuccessFragment"
+        android:name="com.sili.do_music.presentation.main.account.secondary.feedbackSuccess.FeedbackSuccessFragment"
         android:label="fragment_feedback_success"
         tools:layout="@layout/fragment_feedback_success" />
 </navigation>

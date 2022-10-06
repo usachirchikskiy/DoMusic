@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         resConfigs("en","ru","uz")
-        applicationId "com.example.do_music"
+        applicationId "com.sili.do_music"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -105,10 +105,6 @@ dependencies {
     //material dialogs
     def material_dialogs_version = "3.1.0"
     implementation "com.afollestad.material-dialogs:core:$material_dialogs_version"
-
-    //Leak Canary
-    def leak_canary_version = "2.7"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
 
     //glide
     def glide_version = "4.12.0"

@@ -5,7 +5,7 @@
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.auth.ui.login.LoginFragment">
+    tools:context="com.sili.do_music.presentation.auth.ui.login.LoginFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

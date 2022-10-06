@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.main.home.ui.theory.TheoryFragment">
+    tools:context="com.sili.do_music.presentation.main.home.ui.theory.TheoryFragment">
 
     <EditText
         android:id="@+id/search_et"
